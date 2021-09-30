@@ -27,7 +27,32 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [],
+
     'channels': [],
+
+    'channels_details': [     
+            #Input channel_id to track
+            #{
+            #'channel_id': 1234, 
+            #'channel_statu': True(True == public),
+            #'channels_members': [ 
+            #        {
+            #        'u_id': 1,
+            #        'email':1@email.com, 
+            #        'name_first':1first, 
+            #        'name_last':'1last', 
+            #        'handle_str': '1str'
+            #        },
+            #        
+            #        {
+            #       'u_id': 2,
+            #        'email':2@email.com, 
+            #        'name_first':2first, 
+            #        'name_last':'2last', 
+            #        'handle_str': '2str'
+            #},             
+        ],
+    
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
@@ -47,4 +72,31 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
+
+
+'''  
+        Input channel_id to track
+        {
+        'channel_id': 1234, 
+        'channel_statu': True(True == public),
+        'channels_members': [ 
+                {
+                'u_id': 1,
+                'email':1@email.com, 
+                'name_first':1first, 
+                'name_last':'1last', 
+                'handle_str': '1str'
+                },
+                
+                {
+                'u_id': 2,
+                'email':2@email.com, 
+                'name_first':2first, 
+                'name_last':'2last', 
+                'handle_str': '2str'
+                },
+                         
+            ]
+        },
+ '''     
 

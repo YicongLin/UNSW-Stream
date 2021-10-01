@@ -45,16 +45,24 @@ def test_register_invalid_lastname():
         auth_register_v1("testperson@email.com", "password", "Test", "")
 
 # LOGIN TESTS 
-@pytest.fixture
-def setup_account():
-    return auth_register_v1("testperson@email.com", "password", "Test", "Person")
 
-# incorrect password 
-def test_login_incorrect_pw():
+# correct password 
+def test_login_correct_pw():
+    assert auth_register_v1("testperson@email.com", "password", "Test", "Person") == auth_login_v1("testperson@email.com", "password")
+   
+# incorrect password
+def test_wrong_password(): 
     clear_v1()
-    assert auth_login_v1("testperson@email.com", "password") == setup_account.auth_user_id  
+    auth_register_v1("testperson@email.com", "password", "Test", "Person")
+    with pytest.raises(InputError):
+        auth_login_v1("testperson@email.com", "wrongpassword")
 
-# email is not registered 
-def test_unregistered(): 
+# unregistered email 
+def test_unregistered_email():
     clear_v1()
+    auth_register_v1("testperson@email.com", "password", "Test", "Person")
+    with pytest.raises(InputError):
+        auth_login_v1("testperson1@email.com", "password")
+    
+
     

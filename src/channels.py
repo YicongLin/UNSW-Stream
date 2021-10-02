@@ -43,7 +43,22 @@ def channels_listall_v1(auth_user_id):
     return {'channels': out_channels}
 
 def channels_create_v1(auth_user_id, name, is_public):
+    if len(name) > 20:
+        raise InputError("Invalid name: Too long")
+    elif len(name) == 0:
+        raise InputError("Invalid name: Too short")
+
+    data = data_store.get()
+    users_info = data['users']
+    count = 0
+    while count < len(users_info):
+        channel_id = users_info[count]
+        if (channel_id['id'] == auth_user_id):
+            data['channels'].append(auth_user_id, name, is_public)
+        count += 1
+    data_store.set(data)
     return {
-        'channel_id': 1,
+        'channel_id': auth_user_id
     }
+
 

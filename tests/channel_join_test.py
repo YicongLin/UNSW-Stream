@@ -41,9 +41,9 @@ def test_empty():
     with pytest.raises(AccessError):
         channel_join_v1("", "")
 
-def test_integers():
+def test_symbols():
     with pytest.raises(AccessError):
-        channel_join_v1("12345", "678910")
+        channel_join_v1("#&$_*%", "#$\(%}(")
 
 def test_invalid_strings():
     with pytest.raises(AccessError):
@@ -53,9 +53,9 @@ def test_combination():
     with pytest.raises(AccessError):
         channel_join_v1("", "invalid_channel")
         channel_join_v1("invalid_id", "")
-        channel_join_v1("", "12345")
-        channel_join_v1("12345", "")
-        channel_join_v1("12345", "invalid_channel")
-        channel_join_v1("invalid_id", "12345") 
+        channel_join_v1("", "#$\(%}(")
+        channel_join_v1("#&$_*%", "")
+        channel_join_v1("#&$_*%", "invalid_channel")
+        channel_join_v1("invalid_id", "#$\(%}(") 
 
 

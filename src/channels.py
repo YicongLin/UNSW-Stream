@@ -57,7 +57,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     # check for invalid id
     flag = 0
     for user in users_info:
-        if (users_info[user]['user_id'] == auth_user_id):
+        if (user['user_id'] == auth_user_id):
             flag = 1
 
     if (flag == 0):
@@ -82,7 +82,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     channels_detail_dict = {
         'channel_id': new_channel_id,
         'u_name': owner_first_name,
-        'channel_statu': is_public,
+        'channel_status': is_public,
         'channel_members': [
             users_info[auth_user_id - 1]
         ]
@@ -92,8 +92,6 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels'].append(channels_dict)
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
-    return {
-        new_channel_id
-    }
+    return new_channel_id
 
 

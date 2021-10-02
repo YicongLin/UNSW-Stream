@@ -17,18 +17,48 @@ def create_valid_channels():
     
 
 def test_invalid_channel():
+    clear_v1()
     with pytest.raises(InputError):
         channel_join_v1(valid_id_1, "00000")
 
 def test_already_a_member():
+    clear_v1()
     with pytest.raises(InputError):
         channel_join_v1(valid_id_1, valid_channel_id_1)
         channel_join_v1(valid_id_2, valid_channel_id_2)
         
 def test_private_channel():
+    clear_v1()
     with pytest.raises(AccessError):
         channel_join_v1(valid_id_1, valid_channel_2)
         channel_join_v1(valid_id_3, valid_channel_2)
+
+def test_empty():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_join_v1("", "")
         
+def test_integers():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_join_v1("12345", "678910")
+
+def test_invalid_strings():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_join_v1("invalid_id", "invalid_channel")
+
+def test_combination():
+    clear_v1()
+    with pytest.raises(AccessError):
+        channel_join_v1("", "invalid_channel")
+        channel_join_v1("invalid_id", "")
+        channel_join_v1("", "12345")
+        channel_join_v1("12345", "")
+        channel_join_v1("12345", "invalid_channel")
+        channel_join_v1("invalid_id", "12345") 
+        
+        
+
     
     

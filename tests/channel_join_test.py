@@ -19,7 +19,7 @@ def create_two_channels():
 def test_invalid_channel():
     create_two_channels()
     with pytest.raises(InputError):
-        channel_join_v1(valid_id_1, "00000")
+        channel_join_v1(valid_id_1, "invalid_channel")
 
 # Testing for a case where the user is already a member
 def test_already_a_member():

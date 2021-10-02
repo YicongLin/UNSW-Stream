@@ -43,15 +43,18 @@ def channels_listall_v1(auth_user_id):
     return {'channels': out_channels}
 
 def channels_create_v1(auth_user_id, name, is_public):
+    # check for invalid name
     if len(name) > 20:
         raise InputError("Invalid name: Too long")
     elif len(name) == 0:
         raise InputError("Invalid name: Too short")
 
+    # get data from datastore
     data = data_store.get()
     users_info = data['users']
     channels_info = data['channels']
     new_channel_id = len(channels_info) + 1
+    # check for invalid id
     flag = 0
     for user in users_info:
         if (users_info[user]['user_id'] == auth_user_id):
@@ -62,10 +65,11 @@ def channels_create_v1(auth_user_id, name, is_public):
     # find owner name
     owner_name = users_info[0]['last_name']
     for owner in users_info:
-        # since user id = counter - 1, for example 1st user's id is 1 and is equal to users[0]['id']
+        # since user id = counter - 1, for example 1st user's id is 1 and it is equal to users[0]['id']
         if (users_info[owner]['last_name'] == users_info[auth_user_id - 1]['last_name']):
             owner_name = users_info[owner]['last_name']
     
+    # a dictionary for the channel
     channels_dict = {
         'channel_id': new_channel_id,
         'channel_name': name,
@@ -74,6 +78,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         'members': owner_name
     }
 
+    # append all data and return
     data['channels'].append(channels_dict)
     data_store.set(data)
     return {

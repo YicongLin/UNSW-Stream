@@ -64,9 +64,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         raise AccessError("Invalid ID")
     # find owner name
     owner_first_name = users_info[auth_user_id - 1]['first_name']
-    owner_last_name = users_info[auth_user_id - 1]['last_name']
-    owner_email = users_info[auth_user_id - 1]['email']
-    handle_str = owner_first_name + owner_last_name
+    
     """ for owner in users_info:
         # since user id = counter - 1, for example 1st user's id is 1 and it is equal to users[0]['id']
         if (users_info[owner]['first_name'] == users_info[auth_user_id - 1]['first_name']):
@@ -82,26 +80,13 @@ def channels_create_v1(auth_user_id, name, is_public):
     }
 
     channels_detail_dict = {
+        'channel_id': new_channel_id,
         'u_name': owner_first_name,
-        'is_public': is_public,
-        'owner_members': [
-            {
-                'u_id': auth_user_id,
-                'email': owner_email,
-                'name_first': owner_first_name,
-                'name_last': owner_last_name,
-                'handle_str': handle_str.lower()
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': auth_user_id,
-                'email': owner_email,
-                'name_first': owner_first_name,
-                'name_last': owner_last_name,
-                'handle_str': handle_str.lower()
-            }
+        'channel statu': is_public,
+        'channel_members': [
+            users_info[auth_user_id - 1]
         ]
+        
     }
     # append all data and return
     data['channels'].append(channels_dict)

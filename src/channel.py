@@ -99,7 +99,7 @@ def channel_join_v1(auth_user_id, channel_id):
     # Assumption: a valid and authorised user ID is provided
    
     # Creating a list of all valid channel IDs.
-    channels = data["channel_details"]
+    channels = data["channels_details"]
     valid_channel_ids = []
     for channel in channels:
         valid_channel_ids.append(channel["channel_id"])

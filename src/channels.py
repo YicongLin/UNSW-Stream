@@ -56,7 +56,8 @@ def channels_create_v1(auth_user_id, name, is_public):
     new_channel_id = len(channels_info) + 1
     # check for invalid id
     flag = 0
-    for user in users_info:
+    user = 0
+    while user < len(users_info):
         if (users_info[user]['user_id'] == auth_user_id):
             flag = 1
 
@@ -92,8 +93,6 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels'].append(channels_dict)
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
-    return {
-        new_channel_id
-    }
+    return new_channel_id
 
 

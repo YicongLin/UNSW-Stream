@@ -50,15 +50,34 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     data = data_store.get()
     users_info = data['users']
-    count = 0
-    while count < len(users_info):
-        channel_id = users_info[count]
-        if (channel_id['id'] == auth_user_id):
-            data['channels'].append(auth_user_id, name, is_public)
-        count += 1
+    channels_info = data['channels']
+    new_channel_id = len(channels_info) + 1
+    flag = 0
+    for user in users_info:
+        if (users_info[user]['user_id'] == auth_user_id):
+            flag = 1
+
+    if (flag == 0):
+        raise InputError("Invalid ID")
+    # find owner name
+    owner_name = users_info[0]['last_name']
+    for owner in users_info:
+        # since user id = counter - 1, for example 1st user's id is 1 and is equal to users[0]['id']
+        if (users_info[owner]['last_name'] == users_info[auth_user_id - 1]['last_name']):
+            owner_name = users_info[owner]['last_name']
+    
+    channels_dict = {
+        'channel_id': new_channel_id,
+        'channel_name': name,
+        'is_public': is_public,
+        'owner': owner_name,
+        'members': owner_name
+    }
+
+    data['channels'].append(channels_dict)
     data_store.set(data)
     return {
-        'channel_id': auth_user_id
+        new_channel_id
     }
 
 

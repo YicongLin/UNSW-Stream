@@ -3,7 +3,7 @@ from src.error import InputError
 from src.error import AccessError
 
  
- def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
@@ -69,7 +69,7 @@ def channel_join_v1(auth_user_id, channel_id):
     for channel in channels:
         if channel_id == channel["channel_id"]:
             break
-        i ++
+        i += 1
     given_channel = channels[i]
     given_channel_members = given_channel["channels_members"]
     for member in given_channel_members:

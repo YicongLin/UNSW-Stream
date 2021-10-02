@@ -5,6 +5,8 @@ def clear_v1():
     store['users'] = []
     store['channels'] = []
     store['channel'] = []
+    store['channel_details'] = []
+    
     data_store.set(store)
    
 

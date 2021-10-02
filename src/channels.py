@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import InputError
+from src.error import AccessError, InputError
 
 def channels_list_v1(auth_user_id):
     return {
@@ -58,7 +58,7 @@ def channels_create_v1(auth_user_id, name, is_public):
             flag = 1
 
     if (flag == 0):
-        raise InputError("Invalid ID")
+        raise AccessError("Invalid ID")
     # find owner name
     owner_name = users_info[0]['last_name']
     for owner in users_info:

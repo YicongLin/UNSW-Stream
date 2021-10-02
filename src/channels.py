@@ -1,23 +1,51 @@
-from src.data_store import data_store
-from src.error import InputError
+from data_store import data_store
+from error import InputError, AccessError
 
 def channels_list_v1(auth_user_id):
     data = data_store.get()
     channel_info = data['channels']
+    channel_detail_info = data['channels_details']
+    users_info = data['users']
     found_channel = []
+    
+    
+    flag = 0
     count = 0
-    # loop through the channel to find the channel(s) of the given user with auth_user_id
-    while count < len(channel_info):
-        channel_id = channel_info[count]
-        # if the channel id in datastore match the given id, then append the channel info to a list
-        if (channel_id['id'] == auth_user_id):
-            found_channel.append(channel_info[count])
+    while count < len(users_info):
+        if (users_info[count]['user_id'] == auth_user_id):
+            flag = 1
         count += 1
+    if (flag == 0):
+        raise AccessError("Invalid ID")
 
+    # looks for the users in channel detail by checking the channel members in each channel
+    users = 0
+    channels = 0
+    member = 0
+    flag1 = 0
+    while users < len(channel_detail_info):
+        channel_member_info = channel_detail_info[users]['channels_members']
+        # if an user id matches the given id, save that id and got to channels datastore
+        while member < len(channel_member_info):
+            if (channel_member_info[member]['u_id'] == auth_user_id):
+                channel_id_info = channel_detail_info[users]['channel_id']
+                flag1 = 1
+            member += 1
+            if (flag1 == 1):
+                while channels < len(channel_info):
+                    if (channel_id_info == channel_info[channels]['channel_id']):
+                        found_channel.append(channel_info[channels])
+                    channels += 1
+        flag1 = 0
+        member = 0
+        channels = 0    
+        users += 1
+    
     data_store.set(data)
     
     return {
         'channels': found_channel
+        
     }
 
 

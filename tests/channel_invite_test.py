@@ -50,18 +50,18 @@ def test_empty():
 
 def test_invalid_strings():
     with pytest.raises(AccessError):
-        channel_join_v1("invalid_id_1", "invalid_channel", "invalid_id_2")
+        channel_invite_v1("invalid_id_1", "invalid_channel", "invalid_id_2")
 
 def test_symbols():
     with pytest.raises(AccessError):
-        channel_join_v1("#&$_*%", "#$\(%}(", "!@#$%^")
+        channel_invite_v1("#&$_*%", "#$(%}(", "!@#$%^")
 
 def test_combination():
     with pytest.raises(AccessError):
-        channel_join_v1("", "", "invalid_id_1")
-        channel_join_v1("", "#$\(%}(", "")
-        channel_join_v1("invalid_id_1", "", "!@#$%^")
-        channel_join_v1("invalid_id_1", "invalid_channel", "!@#$%^")
-        channel_join_v1("#&$_*%", "", "!@#$%^")
-        channel_join_v1("!@#$%^", "invalid_channel", "invalid_id_1")
+        channel_invite_v1("", "", "invalid_id_1")
+        channel_invite_v1("", "#$(%}(", "")
+        channel_invite_v1("invalid_id_1", "", "!@#$%^")
+        channel_invite_v1("invalid_id_1", "invalid_channel", "!@#$%^")
+        channel_invite_v1("#&$_*%", "", "!@#$%^")
+        channel_invite_v1("!@#$%^", "invalid_channel", "invalid_id_1")
 

@@ -110,41 +110,32 @@ def channel_join_v1(auth_user_id, channel_id):
         raise InputError("Invalid channel_id")
     
     # Raising an error if the authorised user is already a member of the channel
-    i = 0
+    channel_count = 0
     for channel in channels:
         if channel_id == channel["channel_id"]:
             break
-        i += 1
-    given_channel = channels[i]
-    given_channel_members = given_channel["channels_members"]
-    for member in given_channel_members:
+        channel_count += 1
+    members = channels[channel_count]["channel_members"]
+    for member in members:
         if auth_user_id == member["u_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the channel is private
-    given_channel_status = given_channel["channel_status"]
-    if given_channel_status != TRUE:
+    if channels[channel_count]["channel_status"] != True:
         raise AccessError("Channel is private") 
-   
-    
-    
-    
-    
-    
-    
         
-    
-    
-    
-    
-    
-    
-     
-    
+    # Otherwise, add the user to the channel
+  
+    # Extracting the given user's information
+    users = data["users"]
+    user_count = 0
+    for user in users:
+        if user["user_id"] == auth_user_id:
+            break
+        user_count += 1
 
-
-
+    # Appending the user information to the channel
+    channels[channel_count]["channel_members"].append(users[user_count])
     
-    return {
-    }
+    
 

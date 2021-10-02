@@ -1,5 +1,5 @@
-from data_store import data_store
-from error import InputError, AccessError
+from src.data_store import data_store
+from src.error import InputError, AccessError
 
 def channels_list_v1(auth_user_id):
     data = data_store.get()

@@ -5,14 +5,15 @@ from src.channels import channels_create_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
+
 # Creating valid channel and user IDs, 
 # with one public channel and one private channel
 @pytest.fixture
 def create_valid_channels():
     clear_v1()
-    valid_id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def"
-    valid_id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu"
-    valid_id_3 = auth_register_v1("mno@jkl.com", "password", "mno", "jkl"
+    valid_id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")
+    valid_id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")
+    valid_id_3 = auth_register_v1("mno@jkl.com", "password", "mno", "jkl")
     valid_channel_id_1 = channels_create_v1(valid_id_1, "abc", TRUE) 
     valid_channel_id_2 = channels_create_v1(valid_id_2, "zyx", FALSE) 
     
@@ -35,7 +36,7 @@ def test_private_channel():
     with pytest.raises(AccessError):
         channel_join_v1(valid_id_1, valid_channel_2)
         channel_join_v1(valid_id_3, valid_channel_2)
-        
+
 # Testing cases for wrong input
 def test_empty():
     clear_v1()

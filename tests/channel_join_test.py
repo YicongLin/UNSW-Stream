@@ -20,7 +20,7 @@ def valid():
 def test_invalid_channel():
     id_1, *_ = valid()
     with pytest.raises(InputError):
-        channel_join_v1(valid_id_1, "invalid_channel")
+        channel_join_v1(id_1, "invalid_channel")
 
 # Testing for a case where the user is already a member
 def test_already_a_member():
@@ -43,7 +43,7 @@ def test_empty():
 
 def test_symbols():
     with pytest.raises(AccessError):
-        channel_join_v1("#&$_*%", "#$\(%}(")
+        channel_join_v1("#&$_*%", "#$(%}(")
 
 def test_invalid_strings():
     with pytest.raises(AccessError):
@@ -53,9 +53,9 @@ def test_combination():
     with pytest.raises(AccessError):
         channel_join_v1("", "invalid_channel")
         channel_join_v1("invalid_id", "")
-        channel_join_v1("", "#$\(%}(")
+        channel_join_v1("", "#$(%}(")
         channel_join_v1("#&$_*%", "")
         channel_join_v1("#&$_*%", "invalid_channel")
-        channel_join_v1("invalid_id", "#$\(%}(") 
+        channel_join_v1("invalid_id", "#$(%}(") 
 
 

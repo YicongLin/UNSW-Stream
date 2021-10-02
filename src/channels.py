@@ -2,14 +2,24 @@ from src.data_store import data_store
 from src.error import InputError
 
 def channels_list_v1(auth_user_id):
+    data = data_store.get()
+    channel_info = data['channels']
+    found_channel = []
+    count = 0
+    # loop through the channel to find the channel(s) of the given user with auth_user_id
+    while count < len(channel_info):
+        channel_id = channel_info[count]
+        # if the channel id in datastore match the given id, then append the channel info to a list
+        if (channel_id['id'] == auth_user_id):
+            found_channel.append(channel_info[count])
+        count += 1
+
+    data_store.set(data)
+    
     return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+        'channels': found_channel
     }
+
 
 def channels_listall_v1(auth_user_id):
     # Obtain data alreaday existed

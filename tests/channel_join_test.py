@@ -20,7 +20,7 @@ def valid():
 def test_invalid_channel():
     id_1, *_ = valid()
     with pytest.raises(InputError):
-        channel_join_v1(id_1, "00000")
+        channel_join_v1(valid_id_1, "invalid_channel")
 
 # Testing for a case where the user is already a member
 def test_already_a_member():

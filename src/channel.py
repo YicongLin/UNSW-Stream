@@ -136,6 +136,4 @@ def channel_join_v1(auth_user_id, channel_id):
 
     # Appending the user information to the channel
     channels[channel_count]["channel_members"].append(users[user_count])
-    
-    
 

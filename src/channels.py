@@ -82,7 +82,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     channels_detail_dict = {
         'channel_id': new_channel_id,
         'u_name': owner_first_name,
-        'channel statu': is_public,
+        'channel_statu': is_public,
         'channel_members': [
             users_info[auth_user_id - 1]
         ]

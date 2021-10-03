@@ -8,4 +8,6 @@ Assumption 4)
 When we return function clear_v1, we are not expecting to get an empty dictionary otherwise everytime that we call 'clear' we would receive a '{}' in return. 
 Assumption 5)
 In section 6.2 in the project overview, everytime it has return {} for a function such as for channel_join_v1, {} does not represent a dictionary. 
+Assumption 6)
+For function channel_messages_v1, 'start' is an integer and cannot be an empty case.
 

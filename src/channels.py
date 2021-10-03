@@ -30,11 +30,7 @@ def channels_list_v1(auth_user_id):
         count += 1
     if (flag == 0):
         raise AccessError("Invalid ID")
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> origin/zami/auth_register
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
     while users < len(channel_detail_info):

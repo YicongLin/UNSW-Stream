@@ -23,7 +23,6 @@ def auth_login_v1(email, password):
                 raise InputError('Incorrect password')
 
         
-
 def auth_register_v1(email, password, name_first, name_last):
     store = data_store.get()
     
@@ -63,19 +62,23 @@ def auth_register_v1(email, password, name_first, name_last):
         # if handle has been taken  
         if (user['handle_str'])[:20] == user_handle:
             # create new handle using next 
-            number = int(user['handle_str'][20]) + 1
+            if len(user['handle_str']) == 20:
+                number = 0
+            elif len(user['handle_str']) == 21:
+                number = int(user['handle_str'][20]) + 1
             user_handle = 'user_handle' + 'number'
             
     # first create user dictionary 
     user = {
-        'u_id' : new_id, 
+        'user_id' : new_id, 
         'email' : email, 
         'password' : password, 
+        'handle_str' : user_handle,
         'first_name' : name_first, 
         'last_name' : name_last
     }
     # add dictionary into the list 'users'
-    store['users'].append(user_dict)
+    store['users'].append(user)
      
     data_store.set(store)
-    return user_dict['user_id']
+    return user['user_id']

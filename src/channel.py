@@ -117,7 +117,7 @@ def channel_join_v1(auth_user_id, channel_id):
         channel_count += 1
     members = channels[channel_count]["channel_members"]
     for member in members:
-        if auth_user_id == member["u_id"]:
+        if auth_user_id == member["user_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the channel is private

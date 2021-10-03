@@ -33,9 +33,8 @@ def test_valid_channel(valid):
 # total number of messages in the channel
 def test_valid_channel(valid):
     id_1, _, channel_id_1, _, _, start_10 = valid
-    data = data_store.get()
-    messages = data["channels_details"]["messages"]
-    assert len(messages) == 3
+    messages = range(0, 5)
+    assert len(messages) == 5
     with pytest.raises(InputError):
         channel_messages_v1(id_1, channel_id_1, start_10)
 

@@ -34,7 +34,7 @@ def test_register_invalid_firstname():
     with pytest.raises(InputError):
         auth_register_v1("testperson@email.com", "password", "", "Person")
 
-#invalid last name - length of name_last is not between 1 and 50 characters inclusive
+# invalid last name - length of name_last is not between 1 and 50 characters inclusive
 def test_register_invalid_lastname():
     clear_v1()
     with pytest.raises(InputError):

@@ -21,19 +21,28 @@ def test_invalid_channel(valid_2_users):
     id_1, *_ = valid_2_users
     with pytest.raises(InputError):
         channel_join_v1(id_1, "invalid_channel")
-
+        
 # Testing for a case where the user is already a member
 def test_already_a_member(valid_2_users):
     id_1, _, channel_id_1, _ = valid_2_users
     with pytest.raises(InputError):
         channel_join_v1(id_1, channel_id_1)
-
+        
+# Testing for valid channel ID, and user is not already a member
+def test_valid(valid_2_users):
+    _, id_2, channel_id_1, _ = valid_2_users
+    channel_join_v1(id_2, channel_id_1)
 
 # Testing for users attempting to join private channels
 def test_private_channel(valid_2_users):
     id_1, _, _, channel_id_2 = valid_2_users
     with pytest.raises(AccessError):
         channel_join_v1(id_1, channel_id_2)
+
+# Testing for users attempting to join public channels
+def test_public_channel(valid_2_users):
+    _, id_2, channel_id_1, _ = valid_2_users  
+    channel_join_v1(id_2, channel_id_1)
 
 
 # Testing cases for wrong input

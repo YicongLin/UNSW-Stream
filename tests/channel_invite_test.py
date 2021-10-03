@@ -32,7 +32,7 @@ def test_invalid_user(valid_3_users):
 # Testing for valid channel ID and u_id
 def test_valid(valid_3_users):
     id_1, id_2, _, channel_id_1, _ = valid_3_users
-        channel_invite_v1(id_1, channel_id_1, id_2)
+    channel_invite_v1(id_1, channel_id_1, id_2)
 
 # Testing for a case where u_id refers to a user 
 # who is already a member of the channel
@@ -59,8 +59,8 @@ def test_not_a_member(valid_3_users):
 # is a member of the valid channel
 
 def test_member(valid_3_users):
-    id_1, _, id_3, _, channel_id_2 = valid_3_users
-        channel_invite_v1(id_1, channel_id_1, id_3)
+    id_1, _, id_3, channel_id_1, channel_id_2 = valid_3_users
+    channel_invite_v1(id_1, channel_id_1, id_3)
 
 
 # Testing cases for other invalid input

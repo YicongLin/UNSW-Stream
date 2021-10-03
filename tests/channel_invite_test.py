@@ -22,12 +22,17 @@ def test_invalid_channel(valid_3_users):
     id_1, id_2, *_ = valid_3_users
     with pytest.raises(InputError):
         channel_invite_v1(id_1, "invalid_channel", id_2)
-
+        
 # Testing for invalid u_id
 def test_invalid_user(valid_3_users):
     id_1, _, _, channel_id_1, _ = valid_3_users
     with pytest.raises(InputError):
         channel_invite_v1(id_1, channel_id_1, "invalid_id")
+        
+# Testing for valid channel ID and u_id
+def test_valid(valid_3_users):
+    id_1, id_2, _, channel_id_1, _ = valid_3_users
+        channel_invite_v1(id_1, channel_id_1, id_2)
 
 # Testing for a case where u_id refers to a user 
 # who is already a member of the channel
@@ -50,7 +55,15 @@ def test_not_a_member(valid_3_users):
     with pytest.raises(AccessError):
         channel_invite_v1(id_1, channel_id_2, id_3)
 
-# Testing cases for wrong input
+# Testing for a case where the authorised user 
+# is a member of the valid channel
+
+def test_member(valid_3_users):
+    id_1, _, id_3, _, channel_id_2 = valid_3_users
+        channel_invite_v1(id_1, channel_id_1, id_3)
+
+
+# Testing cases for other invalid input
 def test_empty():
     with pytest.raises(InputError):
         channel_invite_v1("", "", "")

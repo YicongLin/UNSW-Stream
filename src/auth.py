@@ -18,7 +18,7 @@ def auth_login_v1(email, password):
         # if registered, see if password matches the email password & then return auth_user_id 
         if user['email'] == email:
             if user['password'] == password:
-                return user['user_id']
+                return user['u_id']
             elif user['password'] != password:
                 raise InputError('Incorrect password')
 
@@ -70,7 +70,7 @@ def auth_register_v1(email, password, name_first, name_last):
             
     # first create user dictionary 
     user = {
-        'user_id' : new_id, 
+        'u_id' : new_id, 
         'email' : email, 
         'password' : password, 
         'handle_str' : user_handle,
@@ -81,4 +81,4 @@ def auth_register_v1(email, password, name_first, name_last):
     store['users'].append(user)
      
     data_store.set(store)
-    return user['user_id']
+    return user['u_id']

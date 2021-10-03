@@ -15,7 +15,7 @@ def valid():
     id_3 = auth_register_v1("asd@fgh.com", "password", "jkl", "asd")
     channel_id_1 = channels_create_v1(id_1, "qwe", True)
     channel_id_2 = channels_create_v1(id_2, "asd", False)
-    start = [0, 50]
+    start = [0, len(channel[‘messages’]]
     return id_1, id_2, id_3, channel_id_1, channel_id_2
 
 # Testing for an invalid channel

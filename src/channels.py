@@ -97,7 +97,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     # check for invalid id
     flag = 0
     for user in users_info:
-        if (user['user_id'] == auth_user_id):
+        if (user['u_id'] == auth_user_id):
             flag = 1
 
     if (flag == 0):

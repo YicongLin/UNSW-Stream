@@ -21,7 +21,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     users = data["users"]
     valid_user_ids = []
     for user in users:
-        valid_user_ids.append(user["user_id"])
+        valid_user_ids.append(user["u_id"])
   
     # Raising an error if u_id is not a valid user 
     # in the created list
@@ -36,14 +36,14 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         channel_count += 1
     members = channels[channel_count]["channel_members"]
     for member in members:
-        if u_id == member["user_id"]:
+        if u_id == member["u_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the authorised user 
     # is not a member of the valid channel
     member_of_channel = False
     for member in members:
-        if auth_user_id == member["user_id"]:
+        if auth_user_id == member["u_id"]:
             member_of_channel = True
     if member_of_channel == False:
         raise AccessError("You are not a member of the channel")
@@ -53,7 +53,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Extracting the given user's information
     user_count = 0
     for user in users:
-        if user["user_id"] == u_id:
+        if user["u_id"] == u_id:
             break
         user_count += 1
 
@@ -259,7 +259,7 @@ def channel_join_v1(auth_user_id, channel_id):
         channel_count += 1
     members = channels[channel_count]["channel_members"]
     for member in members:
-        if auth_user_id == member["user_id"]:
+        if auth_user_id == member["u_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the channel is private
@@ -272,7 +272,7 @@ def channel_join_v1(auth_user_id, channel_id):
     users = data["users"]
     user_count = 0
     for user in users:
-        if user["user_id"] == auth_user_id:
+        if user["u_id"] == auth_user_id:
             break
         user_count += 1
 

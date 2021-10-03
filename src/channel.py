@@ -130,19 +130,57 @@ def channel_details_v1(auth_user_id, channel_id):
 
 
 def channel_messages_v1(auth_user_id, channel_id, start):
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
-    }
+    # Accessing the data store
+    data = data_store.get()
     
+    # Defining the end index
+    end = start + 50
+    
+    # Creating a list of valid channel IDS
+    channels = data["channels_details"]
+    valid_channel_ids = []
+    for channel in channels:
+        valid_channel_ids.append(channel["channel_id"])
+    
+    # Error raised if the given channel ID is not found in the list
+    if channel_id not in valid_channel_ids:
+        raise InputError("Invalid channel_id")
+    
+    # List of valid user IDS
+    users = data["users"]
+    valid_user_ids = []
+    for user in users:
+        valid_user_ids.append(user["u_id"])
+        
+    # Raising an error if start is greater than 
+    # the total number of messages in the given channel
+    messages = data["channels_details"]["messages"]
+    if start > len(messages):
+        raise InputError("Exceeded total number of messages in this channel")
+    
+    # Error if the auth_user is not a member of the valid channel
+    count = 0
+    for channel in channels:
+        if channel_id == channel["channel_id"]:
+            break
+        count += 1
+    members = channels[count]["channel_members"]
+    member_of_channel = False
+    for member in members:
+        if auth_user_id == member["u_id"]:
+            member_of_channel = True
+    if member_of_channel == False:
+        raise AccessError("You are not a member of the channel")
+        
+    # Append all messages in a list
+    message_list = []
+    for message in messages:
+        message_list.append(message["message"])
+    
+    if len(messages) < 50:
+        return { message_list[start:end], start, "-1" }
+    else:
+        return { message_list[start:end], start, end }
 
 def channel_join_v1(auth_user_id, channel_id):
 

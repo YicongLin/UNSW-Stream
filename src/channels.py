@@ -108,14 +108,15 @@ def channels_create_v1(auth_user_id, name, is_public):
     new_channel_id = len(channels_info) + 1
     # check for invalid id
     flag = 0
-    for user in users_info:
-        if (user['user_id'] == auth_user_id):
+    user = 0
+    while user < len(users_info):
+        if (users_info[user]['u_id'] == auth_user_id):
             flag = 1
 
     if (flag == 0):
         raise AccessError("Invalid ID")
     # find owner name
-    owner_first_name = users_info[auth_user_id - 1]['first_name']
+    owner_first_name = users_info[auth_user_id - 1]['name_first']
     
     """ for owner in users_info:
         # since user id = counter - 1, for example 1st user's id is 1 and it is equal to users[0]['id']

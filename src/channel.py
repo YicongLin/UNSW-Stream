@@ -181,58 +181,6 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         return { message_list[start:end], start, "-1" }
     else:
         return { message_list[start:end], start, end }
-    
-    
-    
-        
-'''
-    # Function returns up to 50 messages
-    start = int(start)
-    max_messages = 50
-    messages_total = 0
-    
-    # Creating dictionary 
-    messages_dict = {
-        'messages_id' : 1
-        'u_id' : 1
-        'message' : 'Hello World'
-        'time_created' : 1582426789
-    }
-    
-
-    # Creating a messages dictionary
-    messages_dict = {"message_id", "u_id", "message", "time_created"}
-    messages_list = []
-    dict_copy = messages_dict.copy()
-    messages_list.append(dict_copy)
-
-    # Check most recent message is 0 and the start is less than number of messages
-    if start >= messages_total and start != 0:
-        raise InputError("Start is greater than or equal to the total number of messages in the channel")
-    
-    # Index between start and start + 50
-    end = start + max_messages
-    if end > total_message:
-        # Indicating there are no more messages to load 
-        end = -1
-        
-    return {'messages': messages, 'start': 0, 'end': 50}
-
-
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
-    }
-
-'''
 
 def channel_join_v1(auth_user_id, channel_id):
 

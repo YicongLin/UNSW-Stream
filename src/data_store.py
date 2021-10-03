@@ -50,6 +50,7 @@ initial_object = {
             'user_id': 4
         } """
     ],
+    'emailpw' : [],
 
     'channels': [
         """ {

@@ -12,7 +12,7 @@ def channels_list_v1(auth_user_id):
     flag = 0
     count = 0
     while count < len(users_info):
-        if (users_info[count]['user_id'] == auth_user_id):
+        if (users_info[count]['u_id'] == auth_user_id):
             flag = 1
         count += 1
     if (flag == 0):

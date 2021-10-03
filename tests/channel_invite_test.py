@@ -45,19 +45,19 @@ def test_not_a_member():
 
 # Testing cases for wrong input
 def test_empty():
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channel_invite_v1("", "", "")
 
 def test_invalid_strings():
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channel_invite_v1("invalid_id_1", "invalid_channel", "invalid_id_2")
 
 def test_symbols():
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channel_invite_v1("#&$_*%", "#$(%}(", "!@#$%^")
 
 def test_combination():
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channel_invite_v1("", "", "invalid_id_1")
         channel_invite_v1("", "#$(%}(", "")
         channel_invite_v1("invalid_id_1", "", "!@#$%^")

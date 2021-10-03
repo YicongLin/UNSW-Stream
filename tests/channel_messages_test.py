@@ -64,24 +64,24 @@ def test_channel_member(valid):
 # Testing cases for other invalid input
 def test_empty():
     with pytest.raises(InputError):
-        channel_messages_v1("", "", "")
+        channel_messages_v1("", "", 0)
 
 def test_invalid_strings():
     with pytest.raises(InputError):         
-        channel_invite_v1("invalid_id_1", "invalid_channel", "invalid_start")
+        channel_messages_v1("invalid_id_1", "invalid_channel", 1)
 
 def test_symbols():
     with pytest.raises(InputError):
-        channel_invite_v1("#&$_*%", "#$(%}(", "!@#$%^")
+        channel_messages_v1("#&$_*%", "#$(%}(", 1)
 
 def test_combination():
     with pytest.raises(InputError):
-        channel_invite_v1("", "", "invalid_start")
-        channel_invite_v1("", "#$(%}(", "")
-        channel_invite_v1("invalid_id_1", "", "!@#$%^")
-        channel_invite_v1("invalid_id_1", "invalid_channel", "!@#$%^")
-        channel_invite_v1("#&$_*%", "", "!@#$%^")
-        channel_invite_v1("!@#$%^", "invalid_channel", "invalid_start")
+        channel_messages_v1("", "", 1)
+        channel_messages_v1("", "#$(%}(", 1)
+        channel_messages_v1("invalid_id_1", "", 1)
+        channel_messages_v1("invalid_id_1", "invalid_channel", 1)
+        channel_messages_v1("#&$_*%", "", 1)
+        channel_messages_v1("!@#$%^", "invalid_channel", 1)
 
 
  

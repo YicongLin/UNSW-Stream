@@ -133,13 +133,16 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # Accessing the data store
     data = data_store.get()
     
+    # Defining the end index
+    end = start + 50
+    
     # Creating a list of valid channel IDS
-    channels = data["channel_details"]
+    channels = data["channels_details"]
     valid_channel_ids = []
     for channel in channels:
         valid_channel_ids.append(channel["channel_id"])
     
-    # Error if channel ID is invalid 
+    # Error raised if the given channel ID is not found in the list
     if channel_id not in valid_channel_ids:
         raise InputError("Invalid channel_id")
     
@@ -147,17 +150,42 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     users = data["users"]
     valid_user_ids = []
     for user in users:
-        valid_user_ids.append(user["user_id"])
-
+        valid_user_ids.append(user["u_id"])
+        
+    # Raising an error if start is greater than 
+    # the total number of messages in the given channel
+    messages = data["channels_details"]["messages"]
+    if start > len(messages):
+        raise InputError("Exceeded total number of messages in this channel")
+    
     # Error if the auth_user is not a member of the valid channel
-    members = channels[channel_count]["channel_members"]
+    count = 0
+    for channel in channels:
+        if channel_id == channel["channel_id"]:
+            break
+        count += 1
+    members = channels[count]["channel_members"]
     member_of_channel = False
     for member in members:
-        if auth_user_id == member["user_id"]:
+        if auth_user_id == member["u_id"]:
             member_of_channel = True
     if member_of_channel == False:
         raise AccessError("You are not a member of the channel")
-
+        
+    # Append all messages in a list
+    message_list = []
+    for message in messages:
+        message_list.append(message["message"])
+    
+    if len(messages) < 50:
+        return { message_list[start:end], start, "-1" }
+    else:
+        return { message_list[start:end], start, end }
+    
+    
+    
+        
+'''
     # Function returns up to 50 messages
     start = int(start)
     max_messages = 50
@@ -171,13 +199,13 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'time_created' : 1582426789
     }
     
-    '''
+
     # Creating a messages dictionary
     messages_dict = {"message_id", "u_id", "message", "time_created"}
     messages_list = []
     dict_copy = messages_dict.copy()
     messages_list.append(dict_copy)
-    '''
+
     # Check most recent message is 0 and the start is less than number of messages
     if start >= messages_total and start != 0:
         raise InputError("Start is greater than or equal to the total number of messages in the channel")
@@ -190,7 +218,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         
     return {'messages': messages, 'start': 0, 'end': 50}
 
-'''
+
     return {
         'messages': [
             {
@@ -203,6 +231,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'start': 0,
         'end': 50,
     }
+
 '''
 
 def channel_join_v1(auth_user_id, channel_id):

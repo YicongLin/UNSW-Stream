@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import InputError
+from src.error import AccessError
 
 def channels_list_v1(auth_user_id):
     return {
@@ -22,11 +22,11 @@ def channels_listall_v1(auth_user_id):
     users_id = []
     while users_element < len(users_data):
         each_dict = users_data[users_element]
-        users_id.append(each_dict['id'])
+        users_id.append(each_dict['user_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:
-            raise InputError("Invalid ID")
+            raise AccessError("Invalid ID")
     # Finish auth_user_id test
 
     # Localized channels data, make while loop more easy to look
@@ -53,7 +53,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     count = 0
     while count < len(users_info):
         channel_id = users_info[count]
-        if (channel_id['id'] == auth_user_id):
+        if (channel_id['u_id'] == auth_user_id):
             data['channels'].append(auth_user_id, name, is_public)
         count += 1
     data_store.set(data)

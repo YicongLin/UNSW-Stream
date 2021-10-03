@@ -50,7 +50,8 @@ initial_object = {
             #        'name_first':2first, 
             #        'name_last':'2last', 
             #        'handle_str': '2str'
-            #},             
+            #       },      
+            # ]       
         ],
     
 }

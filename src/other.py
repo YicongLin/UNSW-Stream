@@ -9,6 +9,4 @@ def clear_v1():
     
     data_store.set(store)
     
-    return {}
-
     

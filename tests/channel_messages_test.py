@@ -17,17 +17,25 @@ def valid():
     return id_1, id_2, id_3, channel_id_1, channel_id_2
 
 # Testing for an invalid channel
-def test_invalid_channel_message(valid)
+def test_invalid_channel_message(valid):
 id_1, *_ = valid()
     with pytest.raises(InputError):
     channel_messages_v1(id_1, "00000")
 
-# Testing for authorised member in a valid channel
-def test_authorised_member_message
+# Testing for when the authorised member is not a member of the channel
+def test_not_channel_member(valid):
+    id_1, _, id_3, _, channel_id_2 = valid
     with pytest.raises(AccessError):
+        channel_messages_v1(id_1, channel_id_2, id_3)
 
-# Testing if the start is greater than the total number of messages in the channel
-def test_invalid_start
+# Testing for when the authorised member is a member of the channel
+def test_channel_member(valid):
+    id_1, _, id_3, channel_id_1, channel_id_2 = valid
+    channel_messages_v1(id_1, channel_id_1, id_3)
+
+# Testing if the start is greater than the total 
+# number of messages in the channel
+def test_invalid_start:
     with pytest.raises(InputError):
 
 # Testing functionality

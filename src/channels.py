@@ -2,14 +2,54 @@ from src.data_store import data_store
 from src.error import AccessError, InputError
 
 def channels_list_v1(auth_user_id):
+    data = data_store.get()
+    channel_info = data['channels']
+    channel_detail_info = data['channels_details']
+    users_info = data['users']
+    found_channel = []
+    
+    
+    flag = 0
+    count = 0
+    while count < len(users_info):
+        if (users_info[count]['user_id'] == auth_user_id):
+            flag = 1
+        count += 1
+    if (flag == 0):
+        raise AccessError("Invalid ID")
+
+    
+    
+    
+    # looks for the users in channel detail by checking the channel members in each channel
+    users = 0
+    while users < len(channel_detail_info):
+        channel_member_info = channel_detail_info[users]['channels_members']
+        # if an user id matches the given id, save that id and got to channels datastore
+        member = 0
+        flag1 = 0
+        while member < len(channel_member_info):
+            # check each member's user id, if it is the same as given id save the current channel id
+            if (channel_member_info[member]['u_id'] == auth_user_id):
+                channel_id_info = channel_detail_info[users]['channel_id']
+                flag1 = 1
+            member += 1
+            # if id found, go to channels datastore and loop through to find the samw channel id and append 
+            # to the list. otherwise continue
+            if (flag1 == 1):
+                channels = 0
+                while channels < len(channel_info):
+                    if (channel_id_info == channel_info[channels]['channel_id']):
+                        found_channel.append(channel_info[channels])
+                    channels += 1   
+        users += 1
+    
+    data_store.set(data)
+    
     return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+        'channels': found_channel
     }
+
 
 def channels_listall_v1(auth_user_id):
     # Obtain data alreaday existed

@@ -12,7 +12,7 @@ def channels_list_v1(auth_user_id):
     flag = 0
     count = 0
     while count < len(users_info):
-        if (users_info[count]['user_id'] == auth_user_id):
+        if (users_info[count]['u_id'] == auth_user_id):
             flag = 1
         count += 1
     if (flag == 0):
@@ -62,11 +62,11 @@ def channels_listall_v1(auth_user_id):
     users_id = []
     while users_element < len(users_data):
         each_dict = users_data[users_element]
-        users_id.append(each_dict['id'])
+        users_id.append(each_dict['u_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:
-            raise InputError("Invalid ID")
+            raise AccessError("Invalid ID")
     # Finish auth_user_id test
 
     # Localized channels data, make while loop more easy to look
@@ -96,9 +96,9 @@ def channels_create_v1(auth_user_id, name, is_public):
     new_channel_id = len(channels_info) + 1
     # check for invalid id
     flag = 0
-    for user in users_info:
-        # if (user['user_id'] == auth_user_id):
-        if (user['u_id'] == auth_user_id):
+    user = 0
+    while user < len(users_info):
+        if (users_info[user]['u_id'] == auth_user_id):
             flag = 1
 
     if (flag == 0):

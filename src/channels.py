@@ -48,7 +48,6 @@ def channels_list_v1(auth_user_id):
     }
 
 
-
 def channels_listall_v1(auth_user_id):
     # Obtain data alreaday existed
     data = data_store.get()

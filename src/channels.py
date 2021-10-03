@@ -1,13 +1,13 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
+
 def channels_list_v1(auth_user_id):
     data = data_store.get()
     channel_info = data['channels']
     channel_detail_info = data['channels_details']
     users_info = data['users']
     found_channel = []
-    
     
     flag = 0
     count = 0
@@ -17,9 +17,6 @@ def channels_list_v1(auth_user_id):
         count += 1
     if (flag == 0):
         raise AccessError("Invalid ID")
-
-    
-    
     
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
@@ -151,5 +148,4 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return new_channel_id
-
 

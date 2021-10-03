@@ -5,6 +5,7 @@ def clear_v1():
     store['users'] = []
     store['channels'] = []
     store['channels_details'] = []
+    store['emailpw'] = []
     
     data_store.set(store)
    

@@ -9,7 +9,6 @@ def channels_list_v1(auth_user_id):
     users_info = data['users']
     found_channel = []
     
-    
     flag = 0
     count = 0
     while count < len(users_info):
@@ -61,7 +60,7 @@ def channels_listall_v1(auth_user_id):
     users_id = []
     while users_element < len(users_data):
         each_dict = users_data[users_element]
-        users_id.append(each_dict['id'])
+        users_id.append(each_dict['u_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:

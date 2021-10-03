@@ -11,18 +11,16 @@ def auth_login_v1(email, password):
 
     # search if email is in datastore 
     for user in store['users']:
-        # if email is not registered, raise an error, this is not allowed  
+        # if not registered, raise an error, this is not allowed  
         if user['email'] != email:
             raise InputError('Email is not registered')
 
         # if registered, see if password matches the email password & then return auth_user_id 
         if user['email'] == email:
             if user['password'] == password:
-                return user['user_id']
+                return user['u_id']
             elif user['password'] != password:
                 raise InputError('Incorrect password')
-
-        
 
 def auth_register_v1(email, password, name_first, name_last):
     store = data_store.get()
@@ -31,7 +29,6 @@ def auth_register_v1(email, password, name_first, name_last):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if not (re.fullmatch(regex, email)):
         raise InputError("Invalid email")
-    
     # check first name length 
     if len(name_first) < 1 or len(name_first) > 50:
         raise InputError("Invalid first name")
@@ -48,16 +45,35 @@ def auth_register_v1(email, password, name_first, name_last):
     
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
-    # first create dictionary 
-    user_dict = {
-        'user_id' : new_id, 
+
+    # create new user handle - remove characters that are not letter or numbers 
+    # https://thispointer.com/python-remove-all-non-alphanumeric-characters-from-string/
+    pattern = r'[^A-Za-z0-9]+'
+    lowercase_name = ('name_first' + 'name_last').lower()
+    user_handle = re.sub(pattern, '', lowercase_name)
+   
+    # only take 20 characters 
+    user_handle = user_handle[:20]
+
+    # search if user handle has already been taken 
+    for user in store['users']:
+        # if handle has been taken  
+        if (user['handle_str'])[:20] == user_handle:
+            # create new handle using next 
+            number = int(user['handle_str'][20]) + 1
+            user_handle = 'user_handle' + 'number'
+            
+    # first create user dictionary 
+    user = {
+        'u_id' : new_id, 
         'email' : email, 
         'password' : password, 
+        'handle_str' : user_handle,
         'first_name' : name_first, 
         'last_name' : name_last
     }
     # add dictionary into the list 'users'
-    store['users'].append(user_dict)
+    store['users'].append(user)
      
     data_store.set(store)
-    return user_dict['user_id']
+    return user['u_id']

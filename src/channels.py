@@ -63,7 +63,7 @@ def channels_listall_v1(auth_user_id):
     users_id = []
     while users_element < len(users_data):
         each_dict = users_data[users_element]
-        users_id.append(each_dict['user_id'])
+        users_id.append(each_dict['u_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:
@@ -75,7 +75,6 @@ def channels_listall_v1(auth_user_id):
 
     # Store channels data into a list for return
     out_channels = []
-
     i = 0
     while i < len(chan_data):
         out_channels.append(chan_data[i])

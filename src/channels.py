@@ -58,7 +58,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     flag = 0
     user = 0
     while user < len(users_info):
-        if (users_info[user]['user_id'] == auth_user_id):
+        if (users_info[user]['u_id'] == auth_user_id):
             flag = 1
 
     if (flag == 0):

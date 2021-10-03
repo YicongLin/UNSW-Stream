@@ -66,7 +66,8 @@ def channels_listall_v1(auth_user_id):
         users_element += 1     
         
     if auth_user_id not in users_id:
-            raise AccessError("Invalid ID")
+        raise AccessError("Invalid ID")
+    
     # Finish auth_user_id test
 
     # Localized channels data, make while loop more easy to look
@@ -94,15 +95,31 @@ def channels_create_v1(auth_user_id, name, is_public):
     users_info = data['users']
     channels_info = data['channels']
     new_channel_id = len(channels_info) + 1
+    
     # check for invalid id
-    flag = 0
-    user = 0
-    while user < len(users_info):
-        if (users_info[user]['u_id'] == auth_user_id):
-            flag = 1
+    # flag = 0
+    # user = 0
+    # while user < len(users_info):
+    #     if (users_info[user]['u_id'] == auth_user_id):
+    #         flag = 1
 
-    if (flag == 0):
+    # for user in users_info:
+    #     if user['u_id'] == auth_user_id:
+    #         flag == 1
+
+    # if flag == 0:
+    #     raise AccessError("Invalid ID")
+
+    count = 0
+    users_id = []
+    while count < len(users_info):
+        each_dict = users_info[count]
+        users_id.append(each_dict['u_id'])
+        count += 1
+
+    if auth_user_id not in users_id:
         raise AccessError("Invalid ID")
+
     # find owner name
     owner_first_name = users_info[auth_user_id - 1]['name_first']
     

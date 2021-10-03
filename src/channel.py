@@ -60,7 +60,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     messages_total = 0
     
     # Creating a messages dictionary
-    messages_dict = {message_id, u_id, message, time_created}:
+    messages_dict = {"message_id", "u_id", "message", "time_created"}
     messages_list = []
     dict_copy = messages_dict.copy()
     messages_list.append(dict_copy)
@@ -75,7 +75,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         # Indicating there are no more messages to load 
         end = -1
         
-return { messages, start, end }
+    return {'messages': messages, 'start': start, 'end': end}
 
 '''
     return {

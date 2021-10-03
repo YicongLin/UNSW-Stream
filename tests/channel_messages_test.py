@@ -6,6 +6,7 @@ from src.auth import auth_register_v1
 from src.other import clear_v1
 
 # Creating a valid channel and user IDS
+@pytest.fixture
 def valid():
     clear_v1()
     id_1 = auth_register_v1("qwe@rty.com", "password", "uio", "qwe")
@@ -16,7 +17,7 @@ def valid():
     return id_1, id_2, id_3, channel_id_1, channel_id_2
 
 # Testing for an invalid channel
-def test_invalid_channel_message
+def test_invalid_channel_message(valid)
 id_1, *_ = valid()
     with pytest.raises(InputError):
     channel_messages_v1(id_1, "00000")

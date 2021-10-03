@@ -114,7 +114,7 @@ def channel_details_v1(auth_user_id, channel_id):
     users_id = []
     while users_element < len(users_data):
         each_dict_users = users_data[users_element]
-        users_id.append(each_dict_users['id'])
+        users_id.append(each_dict_users['u_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:

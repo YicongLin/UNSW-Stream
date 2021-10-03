@@ -1,6 +1,7 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
+
 def channels_list_v1(auth_user_id):
     """Provide a list of all channels that the authorised user is part of.
     
@@ -29,7 +30,11 @@ def channels_list_v1(auth_user_id):
         count += 1
     if (flag == 0):
         raise AccessError("Invalid ID")
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> origin/zami/auth_register
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
     while users < len(channel_detail_info):
@@ -177,5 +182,4 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return new_channel_id
-
 

@@ -11,16 +11,18 @@ def auth_login_v1(email, password):
 
     # search if email is in datastore 
     for user in store['users']:
-        # if not registered, raise an error, this is not allowed  
+        # if email is not registered, raise an error, this is not allowed  
         if user['email'] != email:
             raise InputError('Email is not registered')
 
         # if registered, see if password matches the email password & then return auth_user_id 
         if user['email'] == email:
             if user['password'] == password:
-                return user['u_id']
+                return user['user_id']
             elif user['password'] != password:
                 raise InputError('Incorrect password')
+
+        
 
 def auth_register_v1(email, password, name_first, name_last):
     store = data_store.get()
@@ -29,6 +31,7 @@ def auth_register_v1(email, password, name_first, name_last):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if not (re.fullmatch(regex, email)):
         raise InputError("Invalid email")
+    
     # check first name length 
     if len(name_first) < 1 or len(name_first) > 50:
         raise InputError("Invalid first name")
@@ -69,12 +72,11 @@ def auth_register_v1(email, password, name_first, name_last):
         'u_id' : new_id, 
         'email' : email, 
         'password' : password, 
-        'handle_str' : user_handle,
         'first_name' : name_first, 
         'last_name' : name_last
     }
     # add dictionary into the list 'users'
-    store['users'].append(user)
+    store['users'].append(user_dict)
      
     data_store.set(store)
-    return user['u_id']
+    return user_dict['user_id']

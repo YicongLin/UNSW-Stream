@@ -72,12 +72,12 @@ def test_return_content(create_user):
     assert channels_listall_v1(valid_id[0]) == channels_listall_v1(valid_id[1]) == channels_listall_v1(valid_id[2])
     clear_v1()
 
-def test_return_content_1(create_user):
-    valid_id = create_user
-    channel_id_1 = channels_create_v1(valid_id[0], "abc", True)
-    channel_id_2 = channels_create_v1(id_2, "zyx", False)
-    assert channels_listall_v1(valid_id[0]) == channels_listall_v1(valid_id[1]) == channels_listall_v1(valid_id[2])
-    clear_v1()
+# def test_return_content_1(create_user):
+#     valid_id = create_user
+#     channel_id_1 = channels_create_v1(valid_id[0], "abc", True)
+#     channel_id_2 = channels_create_v1(id_2, "zyx", False)
+#     assert channels_listall_v1(valid_id[0]) == channels_listall_v1(valid_id[1]) == channels_listall_v1(valid_id[2])
+#     clear_v1()
 
 
 

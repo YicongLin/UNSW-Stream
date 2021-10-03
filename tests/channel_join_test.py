@@ -7,7 +7,8 @@ from src.other import clear_v1
 
 # Creating valid channel and user IDs, 
 # with one public channel and one private channel
-def valid():
+@pytest.fixture
+def valid_2_users():
     clear_v1()
     id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")
     id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")
@@ -16,21 +17,21 @@ def valid():
     return id_1, id_2, channel_id_1, channel_id_2
     
 # Testing for invalid channel ID
-def test_invalid_channel():
-    id_1, *_ = valid()
+def test_invalid_channel(valid_2_users):
+    id_1, *_ = valid_2_users
     with pytest.raises(InputError):
         channel_join_v1(id_1, "invalid_channel")
 
 # Testing for a case where the user is already a member
-def test_already_a_member():
-    id_1, _, channel_id_1, _ = valid()
+def test_already_a_member(valid_2_users):
+    id_1, _, channel_id_1, _ = valid_2_users
     with pytest.raises(InputError):
         channel_join_v1(id_1, channel_id_1)
 
 
 # Testing for users attempting to join private channels
-def test_private_channel():
-    id_1, _, _, channel_id_2 = valid()
+def test_private_channel(valid_2_users):
+    id_1, _, _, channel_id_2 = valid_2_users
     with pytest.raises(AccessError):
         channel_join_v1(id_1, channel_id_2)
 

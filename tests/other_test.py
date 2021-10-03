@@ -31,6 +31,6 @@ def test_clear_data():
     assert data['users'] == []
     assert data['channels'] == []
     assert data['channels_details'] == []
-    #assert data['emailpw'] == []
+    assert data['emailpw'] == []
 
 

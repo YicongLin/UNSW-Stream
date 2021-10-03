@@ -18,34 +18,36 @@ def channels_list_v1(auth_user_id):
     if (flag == 0):
         raise AccessError("Invalid ID")
 
+    
+    
+    
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
-    channels = 0
-    member = 0
-    flag1 = 0
     while users < len(channel_detail_info):
         channel_member_info = channel_detail_info[users]['channels_members']
         # if an user id matches the given id, save that id and got to channels datastore
+        member = 0
+        flag1 = 0
         while member < len(channel_member_info):
+            # check each member's user id, if it is the same as given id save the current channel id
             if (channel_member_info[member]['u_id'] == auth_user_id):
                 channel_id_info = channel_detail_info[users]['channel_id']
                 flag1 = 1
             member += 1
+            # if id found, go to channels datastore and loop through to find the samw channel id and append 
+            # to the list. otherwise continue
             if (flag1 == 1):
+                channels = 0
                 while channels < len(channel_info):
                     if (channel_id_info == channel_info[channels]['channel_id']):
                         found_channel.append(channel_info[channels])
-                    channels += 1
-        flag1 = 0
-        member = 0
-        channels = 0    
+                    channels += 1   
         users += 1
     
     data_store.set(data)
     
     return {
         'channels': found_channel
-        
     }
 
 

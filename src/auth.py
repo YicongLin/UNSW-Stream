@@ -10,7 +10,7 @@ def auth_login_v1(email, password):
         raise InputError("Invalid email")
 
     # search if email is in datastore 
-    for user in store['users']:
+    for user in store['emailpw']:
         # if email is not registered, raise an error, this is not allowed  
         if user['email'] != email:
             raise InputError('Email is not registered')
@@ -72,13 +72,22 @@ def auth_register_v1(email, password, name_first, name_last):
     user = {
         'u_id' : new_id, 
         'email' : email, 
-        'password' : password, 
-        'handle_str' : user_handle,
-        'first_name' : name_first, 
-        'last_name' : name_last
+        'name_first' : name_first, 
+        'name_last' : name_last,
+        'handle_str' : user_handle
     }
-    # add dictionary into the list 'users'
+    # add user dictionary into the list 'users'
     store['users'].append(user)
+
+    # create dictionary of emails and passwords 
+    email_password = {
+        'email' : email,
+        'password' : password,
+        'u_id' : new_id
+    }
+    
+    # add email+password dictionary into the list 'users'
+    store['emailpw'].append(email_password)
      
     data_store.set(store)
     return user['u_id']

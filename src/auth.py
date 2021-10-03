@@ -46,6 +46,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
 
+
     # create new user handle - remove characters that are not letter or numbers 
     # https://thispointer.com/python-remove-all-non-alphanumeric-characters-from-string/
     pattern = r'[^A-Za-z0-9]+'

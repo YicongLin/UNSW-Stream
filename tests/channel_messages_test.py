@@ -18,9 +18,9 @@ def valid():
 
 # Testing for an invalid channel
 def test_invalid_channel_message(valid):
-id_1, *_ = valid()
+    id_1, *_ = valid()
     with pytest.raises(InputError):
-    channel_messages_v1(id_1, "00000")
+        channel_messages_v1(id_1, "00000")
 
 # Testing for when the authorised member is not a member of the channel
 def test_not_channel_member(valid):
@@ -35,7 +35,7 @@ def test_channel_member(valid):
 
 # Testing if the start is greater than the total 
 # number of messages in the channel
-def test_invalid_start:
+def test_invalid_start():
     assert channel_messages_v1['start'] == 0
     assert channel_messages_v1['end'] == -1
     with pytest.raises(InputError):
@@ -43,7 +43,7 @@ def test_invalid_start:
 # Test that there are currently 0 messages in the channel
 def test_channel_messages():
     clear()
-    assert channel_messages_v1(channel_id,0) == {'start': 0, 'end': -1, 'messages': []}
+    assert channel_messages_v1(channel_id, 0) == {'start': 0, 'end': -1, 'messages': []}
   
 
 

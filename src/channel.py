@@ -3,6 +3,24 @@ from src.error import InputError
 from src.error import AccessError
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+    """An authorised user who is a member of a channel invites
+       another user to join the channel.
+   
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the valid user to be invited to the channel
+       
+    Exceptions:
+        InputError - Occurs when channel_id does not refer to a valid channel
+        InputError - Occurs when u_id does not refer to a valid user
+        InputError - Occurs when u_id refers to a user already in the channel
+        AccessError - Occurs when the authorised user is not a member of the valid channel
+    
+    Return Value:
+        No return value
+    """
+
     # Accessing contents of the data store
     data = data_store.get()
     
@@ -61,11 +79,36 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     channels[channel_count]["channel_members"].append(users[user_count])
 
 def channel_details_v1(auth_user_id, channel_id):
+    """An authorised user to check a channel’s detailed information which user is a member of it
+    
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
 
-     # Obtain data alreaday existed
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+        AccessError - Occurs when user type in an valid id and valid channel id 
+            but user is not a member of that channel
+        InputError - Occurs when user type in an invalid channel id
+
+    Return Value:
+    {name, is_public, owner_members, all_members }
+        name (string) - owner’s first name
+        is_public (boolean) - public or private channel
+        owner_members(member)
+        all_mambers(member)
+    {u_id, email, name_first, name_last, handle_str}
+        u_id(integer) - the ID of an authorised user
+        email (string) - the email of an authorised user
+        first name(string) - first name of an authorised user
+        last name(string) - last name of an authorised user
+        handle_str(string) - special string created for authorised user
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
-     # Test auth_user_id valid or not
+    # Test auth_user_id valid or not
     users_data = data['users']
     users_element = 0
     users_id = []
@@ -128,22 +171,28 @@ def channel_details_v1(auth_user_id, channel_id):
         'all_members': all_members
     }
 
-
-# def channel_messages_v1(auth_user_id, channel_id, start):
-#     return {
-#         'messages': [
-#             {
-#                 'message_id': 1,
-#                 'u_id': 1,
-#                 'message': 'Hello world',
-#                 'time_created': 1582426789,
-#             }
-#         ],
-#         'start': 0,
-#         'end': 50,
-#     }
-
 def channel_messages_v1(auth_user_id, channel_id, start):
+    """The function channel_messages_v1 returns up to 50 messages between the two indexes “start”
+    and “start + 50 in a channel of which the authorised user is a member of.”
+    
+    Arguments:
+        auth_user_id (integer) - ID of an authorised user.
+        channel_id (integer) - ID of a valid channel.
+        start (integer) – the starting index of a list of messages.
+
+    Exceptions:
+        InputError – Occurs when 'channel_ID' does not refer to a valid channel
+        and the 'start' is greater than the total amount of messages in the channel.
+        AccessError – Occurs when the authorised user is not a member of the channel
+        and the channel_id is valid.
+    
+    Return value:
+        Returns 'messages' on the condition that the total messages is less than 50.
+        Returns 'start' on all conditions.
+        Returns 'start + 50' on the condition that total messages is greater than 50.
+        Returns 'end' on all conditions.
+    """
+
     # Accessing the data store
     data = data_store.get()
 
@@ -218,6 +267,21 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     
 
 def channel_join_v1(auth_user_id, channel_id):
+    """Adding an authorised user to the given valid channel with channel_id
+   
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
+       
+    Exceptions:
+        InputError - Occurs when channel_id does not refer to a valid channel
+        InputError - Occurs when the authorised user is not a member of the valid channel
+        AccessError - Occurs when channel_id is a private channel and the authorised user 
+            is not a global owner
+    
+    Return Value:
+        No return value
+    """
 
     # Accessing contents of the data store
     data = data_store.get()

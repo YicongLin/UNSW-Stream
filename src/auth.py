@@ -3,6 +3,21 @@ from src.error import InputError
 import re 
 
 def auth_login_v1(email, password): 
+    """The auth_login_v1 function allows users who have registered with emails to login to their 
+    account, if they give the correct password.
+
+    Arguments: 
+        email (string) - correctly registered user email 
+        password (string) - password which corresponds to user email 
+
+    Exceptions:
+        InputError - Occurs when the email is not registered, or the incorrect password is entered.
+        AccessError - None 
+
+    Return Value: 
+        Returns auth_user_id if the correct password is returned for the email
+    """
+
     store = data_store.get()
     # check if email is valid 
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -21,9 +36,27 @@ def auth_login_v1(email, password):
                 return user['u_id']
             elif user['password'] != password:
                 raise InputError('Incorrect password')
-
         
 def auth_register_v1(email, password, name_first, name_last):
+    """The auth_register_v1 function takes in a valid email, password, user's first name, and 
+    user's last name and registers an account, as well as user handle for the user.
+
+    Arguments: 
+        email (string) - correctly registered user email 
+        password (string) - password which corresponds to user email 
+        name_first (string) - user's first name
+        name_last (string) - user's last name
+
+    Exceptions:
+        InputError - Occurs when there is invalid first or last name (less than 1-50 characters inclusive), 
+        email address is already registered with another user, length of password is less than 6 characters,
+        email address is invalid.
+        AccessError - None
+
+    Return Value: 
+        Returns a new auth_user_id for each user email
+    """
+
     store = data_store.get()
     
     # check whether it is valid email 

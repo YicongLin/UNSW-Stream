@@ -32,26 +32,30 @@ initial_object = {
             'email' : '34@email.com',
             'password' : 'password', 
             'first_name' : 'name_first', 
-            'last_name' : 'name_last'
-            
+            'last_name' : 'name_last'    
         },
 
         {
             'user_id': 2
         },
 
-        
         {
             'user_id': 3
         },
 
-        
         {
             'user_id': 4
         } """
     ],
     
-    'emailpw' : [],
+    'emailpw' : [
+        """ {
+            'email' : email,
+            'password' : password,
+            'u_id' : new_id
+        }
+        """
+    ],
 
     'channels': [
         """ {
@@ -92,6 +96,16 @@ initial_object = {
                     'handle_str': '2str'
                 },
             ]
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789,
+                }
+            ],
+            'start': 0,
+            'end': 50,                
         },
 
         {
@@ -115,32 +129,8 @@ initial_object = {
                 },
             ]
         },
-
-        {
-            'channel_id': 3, 
-            'channel_statu': True,
-            'channels_members': [ 
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first':'1first', 
-                    'name_last':'1last', 
-                    'handle_str': '1str'
-                },
-                
-                {
-                    'u_id': 2,
-                    'email':'2@email.com', 
-                    'name_first':'2first', 
-                    'name_last':'2last', 
-                    'handle_str': '2str'
-                },
-            ]
-        }, """
-        
-                    
-    ],
-    
+        """                
+    ],  
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

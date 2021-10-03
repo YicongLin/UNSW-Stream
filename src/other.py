@@ -7,6 +7,7 @@ def clear_v1():
     store['channels_details'] = []
 
     data_store.set(store)
-   
+    
+    return {}
 
     

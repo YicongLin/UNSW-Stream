@@ -15,6 +15,7 @@ def valid():
     id_3 = auth_register_v1("asd@fgh.com", "password", "jkl", "asd")
     channel_id_1 = channels_create_v1(id_1, "qwe", True)
     channel_id_2 = channels_create_v1(id_2, "asd", False)
+    start = [0, 50]
     return id_1, id_2, id_3, channel_id_1, channel_id_2
 
 # Testing for an invalid channel
@@ -37,9 +38,9 @@ def test_channel_member(valid):
 # Testing if the start is greater than the total 
 # number of messages in the channel
 def test_invalid_start():
-    assert channel_messages_v1['start'] == 0
-    assert channel_messages_v1['end'] == -1
-    with pytest.raises(InputError):
+   assert channel_messages_v1('start') == 0
+   assert channel_messages_v1('end') == -1
+   with pytest.raises(InputError):
 
 # Test that there are currently 0 messages in the channel
 def test_channel_messages():

@@ -42,7 +42,7 @@ def test_invalid_start():
 
 # Test that there are currently 0 messages in the channel
 def test_channel_messages():
-    clear()
+    clear_v1()
     assert channel_messages_v1(channel_id, 0) == {'start': 0, 'end': -1, 'messages': []}
   
 

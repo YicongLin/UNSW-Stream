@@ -1,5 +1,5 @@
 from src.data_store import data_store
-from src.error import InputError
+from src.error import AccessError, InputError
 
 def channels_list_v1(auth_user_id):
     return {
@@ -43,22 +43,56 @@ def channels_listall_v1(auth_user_id):
     return {'channels': out_channels}
 
 def channels_create_v1(auth_user_id, name, is_public):
+    # check for invalid name
     if len(name) > 20:
         raise InputError("Invalid name: Too long")
     elif len(name) == 0:
         raise InputError("Invalid name: Too short")
 
+    # get data from datastore
     data = data_store.get()
     users_info = data['users']
-    count = 0
-    while count < len(users_info):
-        channel_id = users_info[count]
-        if (channel_id['id'] == auth_user_id):
-            data['channels'].append(auth_user_id, name, is_public)
-        count += 1
-    data_store.set(data)
-    return {
-        'channel_id': auth_user_id
+    channels_info = data['channels']
+    new_channel_id = len(channels_info) + 1
+    # check for invalid id
+    flag = 0
+    user = 0
+    while user < len(users_info):
+        if (users_info[user]['user_id'] == auth_user_id):
+            flag = 1
+
+    if (flag == 0):
+        raise AccessError("Invalid ID")
+    # find owner name
+    owner_first_name = users_info[auth_user_id - 1]['first_name']
+    
+    """ for owner in users_info:
+        # since user id = counter - 1, for example 1st user's id is 1 and it is equal to users[0]['id']
+        if (users_info[owner]['first_name'] == users_info[auth_user_id - 1]['first_name']):
+            owner_first_name = users_info[owner]['first_name']
+        if (users_info[owner]['last_name'] == users_info[auth_user_id - 1]['last_name']):
+            owner_last_name = users_info[owner]['last_name']
+        if (users_info[owner]['email'] == users_info[auth_user_id - 1]['last_name']):
+ """
+    # a dictionary for the channel
+    channels_dict = {
+        'channel_id': new_channel_id,
+        'channel_name': name
     }
+
+    channels_detail_dict = {
+        'channel_id': new_channel_id,
+        'u_name': owner_first_name,
+        'channel_statu': is_public,
+        'channel_members': [
+            users_info[auth_user_id - 1]
+        ]
+        
+    }
+    # append all data and return
+    data['channels'].append(channels_dict)
+    data['channels_details'].append(channels_detail_dict)
+    data_store.set(data)
+    return new_channel_id
 
 

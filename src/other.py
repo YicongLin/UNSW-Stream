@@ -8,5 +8,3 @@ def clear_v1():
     store['emailpw'] = []
     
     data_store.set(store)
-    
-    

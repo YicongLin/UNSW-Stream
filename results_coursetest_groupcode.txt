@@ -1,0 +1,1280 @@
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-6.2.5, py-1.10.0, pluggy-1.0.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('/tmp_amd/kamen/export/kamen/3/cs1531/project-automarking/tempstore/.hypothesis/examples')
+rootdir: /tmp_amd/kamen/export/kamen/3/cs1531/project-automarking/tempstore, configfile: pytest.ini
+plugins: forked-1.3.0, xdist-2.2.1, hypothesis-6.1.1, timeout-1.4.2
+collecting ... collected 71 items
+
+tests/auth_tests/auth_login_test.py::test_successful_login ERROR         [  1%]
+tests/auth_tests/auth_login_test.py::test_unregistered_user FAILED       [  2%]
+tests/auth_tests/auth_login_test.py::test_registered_but_incorrect_password ERROR [  4%]
+tests/auth_tests/auth_register_test.py::test_invalid_email[@gmail.com] PASSED [  5%]
+tests/auth_tests/auth_register_test.py::test_invalid_email[bob] PASSED   [  7%]
+tests/auth_tests/auth_register_test.py::test_invalid_email[bob@bob@bob.com] PASSED [  8%]
+tests/auth_tests/auth_register_test.py::test_invalid_password[12345] PASSED [  9%]
+tests/auth_tests/auth_register_test.py::test_invalid_password[] PASSED   [ 11%]
+tests/auth_tests/auth_register_test.py::test_invalid_name_first[] PASSED [ 12%]
+tests/auth_tests/auth_register_test.py::test_invalid_name_first[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED [ 14%]
+tests/auth_tests/auth_register_test.py::test_invalid_name_last[] PASSED  [ 15%]
+tests/auth_tests/auth_register_test.py::test_invalid_name_last[bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb] PASSED [ 16%]
+tests/auth_tests/auth_register_test.py::test_duplicate_email PASSED      [ 18%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_normal FAILED [ 19%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_password_short FAILED [ 21%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_password_long FAILED [ 22%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_names_short FAILED [ 23%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_names_long FAILED [ 25%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_double_same_password FAILED [ 26%]
+tests/auth_tests/auth_register_test.py::test_auth_register_pass_double_same_name FAILED [ 28%]
+tests/channel_tests/channel_details_test.py::test_channel_owner_can_get_details ERROR [ 29%]
+tests/channel_tests/channel_details_test.py::test_channel_member_can_get_details ERROR [ 30%]
+tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abcdefghij-klmnopqrs-abcdefghijklmnopqrs-abcdefghij-klmnopqrs-abcdefghijklmnopqrs0] ERROR [ 32%]
+tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abcdefghij-klmnopqrst-abcdefghijklmnopqrst-abcdefghij-klmnopqrst-abcdefghijklmnopqrst0] ERROR [ 33%]
+tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[@bcdefgh!j-klmn opqrst-bcdefghjklmnopqrst-bcdefghj-klmnopqrst-bcdefghjklmnopqrst0] ERROR [ 35%]
+tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abc-def0-abcdef0-abc-def-abcdef1] ERROR [ 36%]
+tests/channel_tests/channel_details_test.py::test_non_channel_member_cant_get_details ERROR [ 38%]
+tests/channel_tests/channel_details_test.py::test_invalid_channel_id ERROR [ 39%]
+tests/channel_tests/channel_details_test.py::test_invalid_token ERROR    [ 40%]
+tests/channel_tests/channel_invite_test.py::test_error_when_already_member ERROR [ 42%]
+tests/channel_tests/channel_invite_test.py::test_inviting_global_owner ERROR [ 43%]
+tests/channel_tests/channel_invite_test.py::test_inviting_global_member ERROR [ 45%]
+tests/channel_tests/channel_invite_test.py::test_invitation_from_non_channel_member ERROR [ 46%]
+tests/channel_tests/channel_invite_test.py::test_channel_id_invalid ERROR [ 47%]
+tests/channel_tests/channel_invite_test.py::test_u_id_invalid ERROR      [ 49%]
+tests/channel_tests/channel_invite_test.py::test_invalid_token ERROR     [ 50%]
+tests/channel_tests/channel_join_test.py::test_global_owner_can_join_private_channel ERROR [ 52%]
+tests/channel_tests/channel_join_test.py::test_global_owner_can_join_public_channel ERROR [ 53%]
+tests/channel_tests/channel_join_test.py::test_global_member_can_join_public_channel ERROR [ 54%]
+tests/channel_tests/channel_join_test.py::test_global_member_cant_join_private_channel ERROR [ 56%]
+tests/channel_tests/channel_join_test.py::test_already_joined_channel ERROR [ 57%]
+tests/channel_tests/channel_join_test.py::test_join_invalid_channel_id ERROR [ 59%]
+tests/channel_tests/channel_join_test.py::test_invalid_token ERROR       [ 60%]
+tests/channel_tests/channel_messages_test.py::test_successful_no_messages ERROR [ 61%]
+tests/channel_tests/channel_messages_test.py::test_input_error_when_start_greater_than_message_num ERROR [ 63%]
+tests/channel_tests/channel_messages_test.py::test_access_error_when_user_is_non_member ERROR [ 64%]
+tests/channel_tests/channel_messages_test.py::test_input_error_when_channel_id_invalid ERROR [ 66%]
+tests/channel_tests/channel_messages_test.py::test_access_error_when_invalid_token_given ERROR [ 67%]
+tests/channels_tests/channels_create_test.py::test_create_channel_successful[True-andys room] ERROR [ 69%]
+tests/channels_tests/channels_create_test.py::test_create_channel_successful[False-andys room] ERROR [ 70%]
+tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[True-] ERROR [ 71%]
+tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[True-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] ERROR [ 73%]
+tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[False-] ERROR [ 74%]
+tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[False-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] ERROR [ 76%]
+tests/channels_tests/channels_create_test.py::test_invalid_token ERROR   [ 77%]
+tests/channels_tests/channels_list_test.py::test_when_member_is_in_no_channels ERROR [ 78%]
+tests/channels_tests/channels_list_test.py::test_channel_owner_in_channel[True-andy] ERROR [ 80%]
+tests/channels_tests/channels_list_test.py::test_channel_owner_in_channel[False-andy] ERROR [ 81%]
+tests/channels_tests/channels_list_test.py::test_channel_member_in_channel[True-andy] ERROR [ 83%]
+tests/channels_tests/channels_list_test.py::test_channel_member_in_channel[False-andy] ERROR [ 84%]
+tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[False-True-ZERG-andy] ERROR [ 85%]
+tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[False-False-ZERG-andy] ERROR [ 87%]
+tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[True-True-ZERG-andy] ERROR [ 88%]
+tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[True-False-ZERG-andy] ERROR [ 90%]
+tests/channels_tests/channels_list_test.py::test_invalid_token ERROR     [ 91%]
+tests/channels_tests/channels_listall_test.py::test_when_no_channels ERROR [ 92%]
+tests/channels_tests/channels_listall_test.py::test_when_one_channel_exists_private ERROR [ 94%]
+tests/channels_tests/channels_listall_test.py::test_when_one_channel_exists_public ERROR [ 95%]
+tests/channels_tests/channels_listall_test.py::test_when_multiple_channels_exist ERROR [ 97%]
+tests/channels_tests/channels_listall_test.py::test_invalid_token ERROR  [ 98%]
+tests/other_tests/clear_test.py::test_cant_login_after_clear ERROR       [100%]
+
+====== Marks recorded: 3.53 ======
+
+
+==================================== ERRORS ====================================
+___________________ ERROR at setup of test_successful_login ____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c119ec80>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+___________ ERROR at setup of test_registered_but_incorrect_password ___________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0feef28>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________ ERROR at setup of test_channel_owner_can_get_details _____________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c1010a60>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____________ ERROR at setup of test_channel_member_can_get_details _____________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c1010c80>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_handles_generated_correctly[abcdefghij-klmnopqrs-abcdefghijklmnopqrs-abcdefghij-klmnopqrs-abcdefghijklmnopqrs0] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5268>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_handles_generated_correctly[abcdefghij-klmnopqrst-abcdefghijklmnopqrst-abcdefghij-klmnopqrst-abcdefghijklmnopqrst0] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5620>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_handles_generated_correctly[@bcdefgh!j-klmn opqrst-bcdefghjklmnopqrst-bcdefghj-klmnopqrst-bcdefghjklmnopqrst0] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5ae8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_handles_generated_correctly[abc-def0-abcdef0-abc-def-abcdef1] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5e18>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_non_channel_member_cant_get_details __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2488>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________________ ERROR at setup of test_invalid_channel_id ___________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2a60>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2f28>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_______________ ERROR at setup of test_error_when_already_member _______________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0e400>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________________ ERROR at setup of test_inviting_global_owner _________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0e9d8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________________ ERROR at setup of test_inviting_global_member _________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0eea0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_invitation_from_non_channel_member ___________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f152f0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________________ ERROR at setup of test_channel_id_invalid ___________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f15268>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_u_id_invalid ______________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f15c80>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb20d0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_global_owner_can_join_private_channel _________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2620>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_global_owner_can_join_public_channel __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2c80>
+
+    @pytest.fixture
+    def user_buzz(user_factory):
+>       return user_factory('buzz.lightyear@starcommand.com', 'qazwsx@@', 'buzz', 'lightyear')
+
+../tests/fixtures.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'buzz.lightyear@starcommand.com', password = 'qazwsx@@'
+name_first = 'buzz', name_last = 'lightyear'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_global_member_can_join_public_channel _________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2bf8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________ ERROR at setup of test_global_member_cant_join_private_channel ________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec86a8>
+
+    @pytest.fixture
+    def user_zerg(user_factory):
+>       return user_factory('zerg.thedestroyer@zergworld.com', '!!qazwsx', 'lord', 'zerg')
+
+../tests/fixtures.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'zerg.thedestroyer@zergworld.com', password = '!!qazwsx'
+name_first = 'lord', name_last = 'zerg'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________________ ERROR at setup of test_already_joined_channel _________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec8ae8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________________ ERROR at setup of test_join_invalid_channel_id ________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec8ea0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0488>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________________ ERROR at setup of test_successful_no_messages _________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0950>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____ ERROR at setup of test_input_error_when_start_greater_than_message_num ____
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0e18>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_access_error_when_user_is_non_member __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e762f0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_input_error_when_channel_id_invalid __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e76840>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_access_error_when_invalid_token_given _________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e76d90>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+______ ERROR at setup of test_create_channel_successful[True-andys room] _______
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e87378>
+
+    @pytest.fixture
+    def user_zerg(user_factory):
+>       return user_factory('zerg.thedestroyer@zergworld.com', '!!qazwsx', 'lord', 'zerg')
+
+../tests/fixtures.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'zerg.thedestroyer@zergworld.com', password = '!!qazwsx'
+name_first = 'lord', name_last = 'zerg'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+______ ERROR at setup of test_create_channel_successful[False-andys room] ______
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e877b8>
+
+    @pytest.fixture
+    def user_zerg(user_factory):
+>       return user_factory('zerg.thedestroyer@zergworld.com', '!!qazwsx', 'lord', 'zerg')
+
+../tests/fixtures.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'zerg.thedestroyer@zergworld.com', password = '!!qazwsx'
+name_first = 'lord', name_last = 'zerg'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_channel_invalid_name_length[True-] ___________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e87b70>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_channel_invalid_name_length[True-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f158>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_channel_invalid_name_length[False-] __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f598>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_ ERROR at setup of test_channel_invalid_name_length[False-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] _
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f6a8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9fe18>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________ ERROR at setup of test_when_member_is_in_no_channels _____________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1510>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+__________ ERROR at setup of test_channel_owner_in_channel[True-andy] __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1950>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_channel_owner_in_channel[False-andy] __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1d90>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_channel_member_in_channel[True-andy] __________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0a510>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_________ ERROR at setup of test_channel_member_in_channel[False-andy] _________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0a9d8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____ ERROR at setup of test_user_in_multiple_channels[False-True-ZERG-andy] ____
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0aea0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+___ ERROR at setup of test_user_in_multiple_channels[False-False-ZERG-andy] ____
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22268>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____ ERROR at setup of test_user_in_multiple_channels[True-True-ZERG-andy] _____
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22840>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____ ERROR at setup of test_user_in_multiple_channels[True-False-ZERG-andy] ____
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22c80>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db90d0>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+___________________ ERROR at setup of test_when_no_channels ____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db9730>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____________ ERROR at setup of test_when_one_channel_exists_private ____________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db9c80>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+____________ ERROR at setup of test_when_one_channel_exists_public _____________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db96a8>
+
+    @pytest.fixture
+    def user_zerg(user_factory):
+>       return user_factory('zerg.thedestroyer@zergworld.com', '!!qazwsx', 'lord', 'zerg')
+
+../tests/fixtures.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'zerg.thedestroyer@zergworld.com', password = '!!qazwsx'
+name_first = 'lord', name_last = 'zerg'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________ ERROR at setup of test_when_multiple_channels_exist ______________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc56a8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+_____________________ ERROR at setup of test_invalid_token _____________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc5ae8>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+________________ ERROR at setup of test_cant_login_after_clear _________________
+
+user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc5d90>
+
+    @pytest.fixture
+    def user_woody(user_factory):
+>       return user_factory('sheriff.woody@andysroom.com', 'qazwsx!!', 'sheriff', 'woody')
+
+../tests/fixtures.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+email = 'sheriff.woody@andysroom.com', password = 'qazwsx!!'
+name_first = 'sheriff', name_last = 'woody'
+
+    def make_user(email, password, name_first, name_last):
+        User = namedtuple('User', ['email', 'password', 'name_first', 'name_last', 'u_id', 'token'])
+>       tok = auth.auth_register_v1(email, password, name_first, name_last).popitem()[-1]
+E       AttributeError: 'int' object has no attribute 'popitem'
+
+../tests/fixtures.py:12: AttributeError
+=================================== FAILURES ===================================
+____________________________ test_unregistered_user ____________________________
+
+    def test_unregistered_user():
+        #  this test also covers 'invalid' emails, as an invalid email belongs to no user
+        with pytest.raises(err.InputError):
+>           auth_login_v1('bob.jane@example.com', 'qazwsx!!')
+E           Failed: DID NOT RAISE <class 'src.error.InputError'>
+
+tests/auth_tests/auth_login_test.py:29: Failed
+________________________ test_auth_register_pass_normal ________________________
+
+    def test_auth_register_pass_normal():
+>       assert is_valid(auth_register_v1(EMAIL, PASSWORD, FIRST, LAST))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', 'aaaaaaaa', 'FFFFF', 'LLLLL')
+
+tests/auth_tests/auth_register_test.py:59: AssertionError
+____________________ test_auth_register_pass_password_short ____________________
+
+    def test_auth_register_pass_password_short():
+>       assert is_valid(auth_register_v1(EMAIL, "a" * 6, FIRST, LAST))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', ('a' * 6), 'FFFFF', 'LLLLL')
+
+tests/auth_tests/auth_register_test.py:62: AssertionError
+____________________ test_auth_register_pass_password_long _____________________
+
+    def test_auth_register_pass_password_long():
+>       assert is_valid(auth_register_v1(EMAIL, "a" * 64, FIRST, LAST))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', ('a' * 64), 'FFFFF', 'LLLLL')
+
+tests/auth_tests/auth_register_test.py:65: AssertionError
+_____________________ test_auth_register_pass_names_short ______________________
+
+    def test_auth_register_pass_names_short():
+>       assert is_valid(auth_register_v1(EMAIL, PASSWORD, "F", "L"))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', 'aaaaaaaa', 'F', 'L')
+
+tests/auth_tests/auth_register_test.py:68: AssertionError
+______________________ test_auth_register_pass_names_long ______________________
+
+    def test_auth_register_pass_names_long():
+>       assert is_valid(auth_register_v1(EMAIL, PASSWORD, "F" * 50, "L" * 50))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', 'aaaaaaaa', ('F' * 50), ('L' * 50))
+
+tests/auth_tests/auth_register_test.py:71: AssertionError
+_________________ test_auth_register_pass_double_same_password _________________
+
+    def test_auth_register_pass_double_same_password():
+>       assert is_valid(auth_register_v1(EMAIL, PASSWORD, FIRST, LAST))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', 'aaaaaaaa', 'FFFFF', 'LLLLL')
+
+tests/auth_tests/auth_register_test.py:74: AssertionError
+___________________ test_auth_register_pass_double_same_name ___________________
+
+    def test_auth_register_pass_double_same_name():
+>       assert is_valid(auth_register_v1(EMAIL, PASSWORD, FIRST, LAST))
+E       AssertionError: assert False
+E        +  where False = is_valid(1)
+E        +    where 1 = auth_register_v1('valid.email@domain.com', 'aaaaaaaa', 'FFFFF', 'LLLLL')
+
+tests/auth_tests/auth_register_test.py:78: AssertionError
+=========================== short test summary info ============================
+FAILED tests/auth_tests/auth_login_test.py::test_unregistered_user - Failed: ...
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_normal
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_password_short
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_password_long
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_names_short
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_names_long
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_double_same_password
+FAILED tests/auth_tests/auth_register_test.py::test_auth_register_pass_double_same_name
+ERROR tests/auth_tests/auth_login_test.py::test_successful_login - AttributeE...
+ERROR tests/auth_tests/auth_login_test.py::test_registered_but_incorrect_password
+ERROR tests/channel_tests/channel_details_test.py::test_channel_owner_can_get_details
+ERROR tests/channel_tests/channel_details_test.py::test_channel_member_can_get_details
+ERROR tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abcdefghij-klmnopqrs-abcdefghijklmnopqrs-abcdefghij-klmnopqrs-abcdefghijklmnopqrs0]
+ERROR tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abcdefghij-klmnopqrst-abcdefghijklmnopqrst-abcdefghij-klmnopqrst-abcdefghijklmnopqrst0]
+ERROR tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[@bcdefgh!j-klmn opqrst-bcdefghjklmnopqrst-bcdefghj-klmnopqrst-bcdefghjklmnopqrst0]
+ERROR tests/channel_tests/channel_details_test.py::test_handles_generated_correctly[abc-def0-abcdef0-abc-def-abcdef1]
+ERROR tests/channel_tests/channel_details_test.py::test_non_channel_member_cant_get_details
+ERROR tests/channel_tests/channel_details_test.py::test_invalid_channel_id - ...
+ERROR tests/channel_tests/channel_details_test.py::test_invalid_token - Attri...
+ERROR tests/channel_tests/channel_invite_test.py::test_error_when_already_member
+ERROR tests/channel_tests/channel_invite_test.py::test_inviting_global_owner
+ERROR tests/channel_tests/channel_invite_test.py::test_inviting_global_member
+ERROR tests/channel_tests/channel_invite_test.py::test_invitation_from_non_channel_member
+ERROR tests/channel_tests/channel_invite_test.py::test_channel_id_invalid - A...
+ERROR tests/channel_tests/channel_invite_test.py::test_u_id_invalid - Attribu...
+ERROR tests/channel_tests/channel_invite_test.py::test_invalid_token - Attrib...
+ERROR tests/channel_tests/channel_join_test.py::test_global_owner_can_join_private_channel
+ERROR tests/channel_tests/channel_join_test.py::test_global_owner_can_join_public_channel
+ERROR tests/channel_tests/channel_join_test.py::test_global_member_can_join_public_channel
+ERROR tests/channel_tests/channel_join_test.py::test_global_member_cant_join_private_channel
+ERROR tests/channel_tests/channel_join_test.py::test_already_joined_channel
+ERROR tests/channel_tests/channel_join_test.py::test_join_invalid_channel_id
+ERROR tests/channel_tests/channel_join_test.py::test_invalid_token - Attribut...
+ERROR tests/channel_tests/channel_messages_test.py::test_successful_no_messages
+ERROR tests/channel_tests/channel_messages_test.py::test_input_error_when_start_greater_than_message_num
+ERROR tests/channel_tests/channel_messages_test.py::test_access_error_when_user_is_non_member
+ERROR tests/channel_tests/channel_messages_test.py::test_input_error_when_channel_id_invalid
+ERROR tests/channel_tests/channel_messages_test.py::test_access_error_when_invalid_token_given
+ERROR tests/channels_tests/channels_create_test.py::test_create_channel_successful[True-andys room]
+ERROR tests/channels_tests/channels_create_test.py::test_create_channel_successful[False-andys room]
+ERROR tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[True-]
+ERROR tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[True-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG]
+ERROR tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[False-]
+ERROR tests/channels_tests/channels_create_test.py::test_channel_invalid_name_length[False-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG]
+ERROR tests/channels_tests/channels_create_test.py::test_invalid_token - Attr...
+ERROR tests/channels_tests/channels_list_test.py::test_when_member_is_in_no_channels
+ERROR tests/channels_tests/channels_list_test.py::test_channel_owner_in_channel[True-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_channel_owner_in_channel[False-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_channel_member_in_channel[True-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_channel_member_in_channel[False-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[False-True-ZERG-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[False-False-ZERG-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[True-True-ZERG-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_user_in_multiple_channels[True-False-ZERG-andy]
+ERROR tests/channels_tests/channels_list_test.py::test_invalid_token - Attrib...
+ERROR tests/channels_tests/channels_listall_test.py::test_when_no_channels - ...
+ERROR tests/channels_tests/channels_listall_test.py::test_when_one_channel_exists_private
+ERROR tests/channels_tests/channels_listall_test.py::test_when_one_channel_exists_public
+ERROR tests/channels_tests/channels_listall_test.py::test_when_multiple_channels_exist
+ERROR tests/channels_tests/channels_listall_test.py::test_invalid_token - Att...
+ERROR tests/other_tests/clear_test.py::test_cant_login_after_clear - Attribut...
+=================== 8 failed, 10 passed, 53 errors in 2.58s ====================

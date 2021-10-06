@@ -84,7 +84,7 @@ tests/other_tests/clear_test.py::test_cant_login_after_clear ERROR       [100%]
 ==================================== ERRORS ====================================
 ___________________ ERROR at setup of test_successful_login ____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c119ec80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72554ebbf8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -104,7 +104,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ___________ ERROR at setup of test_registered_but_incorrect_password ___________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0feef28>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255367ea0>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -124,7 +124,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________ ERROR at setup of test_channel_owner_can_get_details _____________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c1010a60>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72553889d8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -144,7 +144,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____________ ERROR at setup of test_channel_member_can_get_details _____________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c1010c80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255388bf8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -164,7 +164,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_handles_generated_correctly[abcdefghij-klmnopqrs-abcdefghijklmnopqrs-abcdefghij-klmnopqrs-abcdefghijklmnopqrs0] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5268>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72553888c8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -184,7 +184,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_handles_generated_correctly[abcdefghij-klmnopqrst-abcdefghijklmnopqrst-abcdefghij-klmnopqrst-abcdefghijklmnopqrst0] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5620>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526f598>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -204,7 +204,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_handles_generated_correctly[@bcdefgh!j-klmn opqrst-bcdefghjklmnopqrst-bcdefghj-klmnopqrst-bcdefghjklmnopqrst0] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5ae8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526fa60>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -224,7 +224,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_handles_generated_correctly[abc-def0-abcdef0-abc-def-abcdef1] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef5e18>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526ff28>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -244,7 +244,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_non_channel_member_cant_get_details __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2488>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526c400>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -264,7 +264,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________________ ERROR at setup of test_invalid_channel_id ___________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2a60>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526c9d8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -284,7 +284,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ef2f28>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725526cea0>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -304,7 +304,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _______________ ERROR at setup of test_error_when_already_member _______________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0e400>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255287378>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -324,7 +324,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________________ ERROR at setup of test_inviting_global_owner _________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0e9d8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255287950>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -344,7 +344,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________________ ERROR at setup of test_inviting_global_member _________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f0eea0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255287e18>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -364,7 +364,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_invitation_from_non_channel_member ___________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f152f0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725528d268>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -384,7 +384,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________________ ERROR at setup of test_channel_id_invalid ___________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f15268>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725528d1e0>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -404,7 +404,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_u_id_invalid ______________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0f15c80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725528dbf8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -424,7 +424,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb20d0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255225048>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -444,7 +444,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_global_owner_can_join_private_channel _________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2620>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255225598>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -464,7 +464,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_global_owner_can_join_public_channel __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2c80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255225bf8>
 
     @pytest.fixture
     def user_buzz(user_factory):
@@ -484,7 +484,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_global_member_can_join_public_channel _________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0eb2bf8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255225b70>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -504,7 +504,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________ ERROR at setup of test_global_member_cant_join_private_channel ________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec86a8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255244620>
 
     @pytest.fixture
     def user_zerg(user_factory):
@@ -524,7 +524,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________________ ERROR at setup of test_already_joined_channel _________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec8ae8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255244a60>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -544,7 +544,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________________ ERROR at setup of test_join_invalid_channel_id ________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ec8ea0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255244d90>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -564,7 +564,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0488>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725525a400>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -584,7 +584,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________________ ERROR at setup of test_successful_no_messages _________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0950>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725525a8c8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -604,7 +604,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____ ERROR at setup of test_input_error_when_start_greater_than_message_num ____
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0ee0e18>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725525ad90>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -624,7 +624,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_access_error_when_user_is_non_member __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e762f0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551ee268>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -644,7 +644,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_input_error_when_channel_id_invalid __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e76840>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551ee7b8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -664,7 +664,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_access_error_when_invalid_token_given _________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e76d90>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551eed08>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -684,7 +684,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ______ ERROR at setup of test_create_channel_successful[True-andys room] _______
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e87378>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551ff2f0>
 
     @pytest.fixture
     def user_zerg(user_factory):
@@ -704,7 +704,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ______ ERROR at setup of test_create_channel_successful[False-andys room] ______
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e877b8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551ff730>
 
     @pytest.fixture
     def user_zerg(user_factory):
@@ -724,7 +724,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_channel_invalid_name_length[True-] ___________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e87b70>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551ffae8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -744,7 +744,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_channel_invalid_name_length[True-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f158>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551fff28>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -764,7 +764,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_channel_invalid_name_length[False-] __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f598>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725515d510>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -784,7 +784,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _ ERROR at setup of test_channel_invalid_name_length[False-I AM NOT A TOY AND ALSO THIS NAME IS TOO LONG] _
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9f6a8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725515d620>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -804,7 +804,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e9fe18>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725515df28>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -824,7 +824,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________ ERROR at setup of test_when_member_is_in_no_channels _____________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1510>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725516a488>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -844,7 +844,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 __________ ERROR at setup of test_channel_owner_in_channel[True-andy] __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1950>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725516a8c8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -864,7 +864,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_channel_owner_in_channel[False-andy] __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0df1d90>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725516af28>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -884,7 +884,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_channel_member_in_channel[True-andy] __________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0a510>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255185488>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -904,7 +904,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _________ ERROR at setup of test_channel_member_in_channel[False-andy] _________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0a9d8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255185950>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -924,7 +924,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____ ERROR at setup of test_user_in_multiple_channels[False-True-ZERG-andy] ____
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e0aea0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255185e18>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -944,7 +944,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ___ ERROR at setup of test_user_in_multiple_channels[False-False-ZERG-andy] ____
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22268>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725519b1e0>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -964,7 +964,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____ ERROR at setup of test_user_in_multiple_channels[True-True-ZERG-andy] _____
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22840>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725519b7b8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -984,7 +984,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____ ERROR at setup of test_user_in_multiple_channels[True-False-ZERG-andy] ____
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0e22c80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f725519bbf8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1004,7 +1004,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db90d0>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255133048>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1024,7 +1024,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ___________________ ERROR at setup of test_when_no_channels ____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db9730>
+user_factory = <function user_factory.<locals>.make_user at 0x7f72551336a8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1044,7 +1044,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____________ ERROR at setup of test_when_one_channel_exists_private ____________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db9c80>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255133bf8>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1064,7 +1064,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ____________ ERROR at setup of test_when_one_channel_exists_public _____________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0db96a8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255133620>
 
     @pytest.fixture
     def user_zerg(user_factory):
@@ -1084,7 +1084,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________ ERROR at setup of test_when_multiple_channels_exist ______________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc56a8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255144620>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1104,7 +1104,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 _____________________ ERROR at setup of test_invalid_token _____________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc5ae8>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255144a60>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1124,7 +1124,7 @@ E       AttributeError: 'int' object has no attribute 'popitem'
 ../tests/fixtures.py:12: AttributeError
 ________________ ERROR at setup of test_cant_login_after_clear _________________
 
-user_factory = <function user_factory.<locals>.make_user at 0x7fe8c0dc5d90>
+user_factory = <function user_factory.<locals>.make_user at 0x7f7255144f28>
 
     @pytest.fixture
     def user_woody(user_factory):
@@ -1277,4 +1277,4 @@ ERROR tests/channels_tests/channels_listall_test.py::test_when_one_channel_exist
 ERROR tests/channels_tests/channels_listall_test.py::test_when_multiple_channels_exist
 ERROR tests/channels_tests/channels_listall_test.py::test_invalid_token - Att...
 ERROR tests/other_tests/clear_test.py::test_cant_login_after_clear - Attribut...
-=================== 8 failed, 10 passed, 53 errors in 2.58s ====================
+=================== 8 failed, 10 passed, 53 errors in 2.41s ====================

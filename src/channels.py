@@ -3,12 +3,24 @@ from src.error import AccessError, InputError
 
 
 def channels_list_v1(auth_user_id):
+    """Provide a list of all channels that the authorised user is part of.
+    
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+
+    Return Value:
+        a list of dictionaries, where  { channel_id, name }. channel_id(integer) is channels id
+        name(string) of the channel.
+    """
+    
     data = data_store.get()
     channel_info = data['channels']
     channel_detail_info = data['channels_details']
     users_info = data['users']
     found_channel = []
-    
     
     flag = 0
     count = 0
@@ -19,9 +31,6 @@ def channels_list_v1(auth_user_id):
     if (flag == 0):
         raise AccessError("Invalid ID")
 
-    
-    
-    
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
     while users < len(channel_detail_info):
@@ -51,9 +60,22 @@ def channels_list_v1(auth_user_id):
         'channels': found_channel
     }
 
-
 def channels_listall_v1(auth_user_id):
-    # Obtain data alreaday existed
+    """An authorised user to check all existed channels
+    
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+
+    Return Value:
+        a list of dictionaries, where  { channel_id, name }.
+        channel_id(integer) is channels id
+        name(string) of the channel.
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
     # Test auth_user_id valid or not
@@ -67,7 +89,8 @@ def channels_listall_v1(auth_user_id):
         users_element += 1     
         
     if auth_user_id not in users_id:
-            raise AccessError("Invalid ID")
+        raise AccessError("Invalid ID")
+    
     # Finish auth_user_id test
 
     # Localized channels data, make while loop more easy to look
@@ -83,6 +106,21 @@ def channels_listall_v1(auth_user_id):
     return {'channels': out_channels}
 
 def channels_create_v1(auth_user_id, name, is_public):
+    """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
+
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        name(string)- channel’s name authorised user deign
+        is_public(boolean) - channel’s status (public or private)
+
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+        InputError - Length of channel name is more than 20 or less than 1
+
+    Return Value:
+        channel_id(integer) is channels id
+    """
+
     # check for invalid name
     if len(name) > 20:
         raise InputError("Invalid name: Too long")
@@ -105,26 +143,31 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     channels_info = data['channels']
     new_channel_id = len(channels_info) + 1
+    
     # check for invalid id
-    flag = 0
-    user = 0
-    while user < len(users_info):
-        if (users_info[user]['u_id'] == auth_user_id):
-            flag = 1
+    count = 0
+    users_id = []
+    while count < len(users_info):
+        each_dict = users_info[count]
+        users_id.append(each_dict['u_id'])
+        count += 1
 
-    if (flag == 0):
+    if auth_user_id not in users_id:
         raise AccessError("Invalid ID")
+
     # find owner name
     owner_first_name = users_info[auth_user_id - 1]['name_first']
     
-    """ for owner in users_info:
+    """ 
+    for owner in users_info:
         # since user id = counter - 1, for example 1st user's id is 1 and it is equal to users[0]['id']
         if (users_info[owner]['first_name'] == users_info[auth_user_id - 1]['first_name']):
             owner_first_name = users_info[owner]['first_name']
         if (users_info[owner]['last_name'] == users_info[auth_user_id - 1]['last_name']):
             owner_last_name = users_info[owner]['last_name']
         if (users_info[owner]['email'] == users_info[auth_user_id - 1]['last_name']):
- """
+    """
+    
     # a dictionary for the channel
     channels_dict = {
         'channel_id': new_channel_id,
@@ -138,12 +181,11 @@ def channels_create_v1(auth_user_id, name, is_public):
         'channel_members': [
             users_info[auth_user_id - 1]
         ]
-        
     }
+    
     # append all data and return
     data['channels'].append(channels_dict)
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return new_channel_id
-
 

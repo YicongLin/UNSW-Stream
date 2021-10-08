@@ -145,7 +145,7 @@ def channel_details_v1(auth_user_id, channel_id):
         channel_id_element += 1
  
     # All members' details in this channel
-    members_in_channel = channels_details_data[channel_id_element]['members']
+    members_in_channel = channels_details_data[channel_id_element]['channel_members']
     # ==================================
     # Pick out u_id
     # Test user is a member of channel or not
@@ -164,7 +164,7 @@ def channel_details_v1(auth_user_id, channel_id):
     name = members_in_channel[0]['name_first']
     owner_members = [members_in_channel[0]]
     all_members = members_in_channel
-    is_public = channels_details_data[channel_id_element]['channels_status']
+    is_public = channels_details_data[channel_id_element]['channel_status']
 
     return {
         'name': name,

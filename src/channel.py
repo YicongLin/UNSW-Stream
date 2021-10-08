@@ -44,7 +44,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Raising an error if u_id is not a valid user 
     # in the created list
     if u_id not in valid_user_ids:
-        raise InputError("Invalid user")
+        raise AccessError("Invalid user")
     
     # Raising an error if u_id is already a member of the channel
     channel_count = 0
@@ -77,6 +77,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     # Appending the user information to the channel
     channels[channel_count]["channel_members"].append(users[user_count])
+    
+    return {}
 
 def channel_details_v1(auth_user_id, channel_id):
     """An authorised user to check a channel’s detailed information which user is a member of it
@@ -261,9 +263,17 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         message_list.append(message["message"])
    
     if len(messages) < 50:
-        return { tuple(message_list)[start:end], start, "-1" }
+        return { 
+            'messages': tuple(message_list)[start:end], 
+            'start': start,
+            'end': -1 
+        }
     else:
-        return { tuple(message_list)[start:end], start, end }
+        return { 
+            'messages': tuple(message_list)[start:end], 
+            'start': start,
+            'end': end 
+        }
     
 
 def channel_join_v1(auth_user_id, channel_id):
@@ -325,4 +335,6 @@ def channel_join_v1(auth_user_id, channel_id):
 
     # Appending the user information to the channel
     channels[channel_count]["channel_members"].append(users[user_count])
+    
+    return {}
 

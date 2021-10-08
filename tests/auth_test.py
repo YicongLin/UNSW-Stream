@@ -43,11 +43,38 @@ def test_register_invalid_lastname():
     clear_v1()
     with pytest.raises(InputError):
         auth_register_v1("testperson@email.com", "password", "Test", "")
+        
+# invalid first and last name 
+def test_register_invalid_fullname():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("testperson@email.com", "password", "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm", 
+            "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm")
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("testperson@email.com", "password", "", "")
+
+# valid name
+def test_valid():
+    clear_v1()
+    auth_register_v1("testperson@email.com", "password", "  ", "   ")
+    clear_v1()
+    auth_register_v1("testperson@email.com", "password", "Hello", "Hi")
+    clear_v1()
+    auth_register_v1("testperson@email.com", "password", "@#$%", "%^&*")
+    clear_v1()
+    auth_register_v1("testperson@email.com", "password", "@ a$%", "% a16&*")
+    clear_v1()
+    auth_register_v1("testperson@email.com", "password", "1234", "5678")
+
+
+   
 
 # LOGIN TESTS 
 
 # correct password 
 def test_login_correct_pw():
+    clear_v1()
     assert auth_register_v1("testperson@email.com", "password", "Test", "Person") == auth_login_v1("testperson@email.com", "password")
    
 # incorrect password
@@ -63,6 +90,14 @@ def test_unregistered_email():
     auth_register_v1("testperson@email.com", "password", "Test", "Person")
     with pytest.raises(InputError):
         auth_login_v1("testperson1@email.com", "password")
+
+# invalid email
+def test_invalid_email():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("abc", "password", "Test", "Person")
+
+
     
 
     

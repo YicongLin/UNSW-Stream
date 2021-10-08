@@ -8,9 +8,9 @@ from src.other import clear_v1
 @pytest.fixture
 def create_user():
  clear_v1()
- valid_id_1 = auth_register_v1("testperson@email.com", "password", "Test", "Person")
- valid_id_2 = auth_register_v1("testpersontwo@email.com", "passwordtwo", "Testtwo", "Persontwo")
- valid_id_3 = auth_register_v1("testpersonthr@email.com", "passwordthr", "Testthr", "Personthr")
+ valid_id_1 = auth_register_v1("testperson@email.com", "password", "Test", "Person")['auth_user_id']
+ valid_id_2 = auth_register_v1("testpersontwo@email.com", "passwordtwo", "Testtwo", "Persontwo")['auth_user_id']
+ valid_id_3 = auth_register_v1("testpersonthr@email.com", "passwordthr", "Testthr", "Personthr")['auth_user_id']
  valid_id = [valid_id_1, valid_id_2, valid_id_3] # store valid user id for return multiple valid id
  return valid_id
  

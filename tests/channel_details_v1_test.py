@@ -12,10 +12,10 @@ from src.other import clear_v1
 @pytest.fixture
 def create_users():
     clear_v1()
-    valid_id_1 = auth_register_v1("testperson@email.com", "password", "Test", "Person")
-    valid_id_2 = auth_register_v1("testpersontwo@email.com", "passwordtwo", "Testtwo", "Persontwo")
-    valid_id_3 = auth_register_v1("testpersonthr@email.com", "passwordthr", "Testthr", "Personthr")
-    valid_id_4 = auth_register_v1("testpersonfour@email.com", "passwordfour", "Testfour", "Personfour")
+    valid_id_1 = auth_register_v1("testperson@email.com", "password", "Test", "Person")['auth_user_id']
+    valid_id_2 = auth_register_v1("testpersontwo@email.com", "passwordtwo", "Testtwo", "Persontwo")['auth_user_id']
+    valid_id_3 = auth_register_v1("testpersonthr@email.com", "passwordthr", "Testthr", "Personthr")['auth_user_id']
+    valid_id_4 = auth_register_v1("testpersonfour@email.com", "passwordfour", "Testfour", "Personfour")['auth_user_id']
     valid_id = [valid_id_1, valid_id_2, valid_id_3, valid_id_4] # store valid user id for return multiple valid id
     return valid_id
     clear_v1()
@@ -25,7 +25,7 @@ def create_channels(create_users):
     valid_id_1 = create_users[0]
     valid_id_2 = create_users[1]
     valid_id_3 = create_users[2]
-    valid_channel_id = channels_create_v1(valid_id_1, 'cse', True) # create a channel
+    valid_channel_id = channels_create_v1(valid_id_1, 'cse', True)["channel_id"] # create a channel
     channel_join_v1(valid_id_2, valid_channel_id)
     channel_invite_v1(valid_id_2, valid_channel_id, valid_id_3)
     return valid_channel_id

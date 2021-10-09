@@ -161,7 +161,7 @@ def channel_details_v1(auth_user_id, channel_id):
     # Finish member users test
     # ==================================
     # For return
-    name = members_in_channel[0]['name_first']
+    name = channels_details_data[channel_id_element]['channel_name']
     owner_members = [members_in_channel[0]]
     all_members = members_in_channel
     is_public = channels_details_data[channel_id_element]['channel_status']

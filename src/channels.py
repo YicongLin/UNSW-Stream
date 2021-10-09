@@ -154,9 +154,6 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     if auth_user_id not in users_id:
         raise AccessError("Invalid ID")
-
-    # find owner name
-    owner_first_name = users_info[auth_user_id - 1]['name_first']
     
     """ 
     for owner in users_info:
@@ -176,7 +173,7 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     channels_detail_dict = {
         'channel_id': new_channel_id,
-        'u_name': owner_first_name,
+        'channel_name': name,
         'channel_status': is_public,
         'channel_members': [
             users_info[auth_user_id - 1]

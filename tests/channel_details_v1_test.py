@@ -30,7 +30,6 @@ def test_raise_AccessErrors_invlide_auth_user_id(create_users):
         channel_details_v1(10000000000,valid_channel_id)
     clear_v1()
     
-
 # auth_user_id not exists
 # auth_user_id exists but not a member of channel
 def test_raise_AccessErrors_not_member(create_users):

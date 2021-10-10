@@ -10,10 +10,10 @@ from src.other import clear_v1
 @pytest.fixture
 def valid_2_users():
     clear_v1()
-    id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")
-    id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")
-    channel_id_1 = channels_create_v1(id_1, "abc", True)
-    channel_id_2 = channels_create_v1(id_2, "zyx", False)
+    id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")['auth_user_id']
+    id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")['auth_user_id']
+    channel_id_1 = channels_create_v1(id_1, "abc", True)['channel_id']
+    channel_id_2 = channels_create_v1(id_2, "zyx", False)['channel_id']
     return id_1, id_2, channel_id_1, channel_id_2
     
 # Testing for invalid channel ID

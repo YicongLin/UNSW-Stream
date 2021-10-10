@@ -10,11 +10,11 @@ from src.other import clear_v1
 @pytest.fixture
 def valid_3_users():
     clear_v1()
-    id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")
-    id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")
-    id_3 = auth_register_v1("mno@jkl.com", "password", "mno", "jkl")
-    channel_id_1 = channels_create_v1(id_1, "abc", True)
-    channel_id_2 = channels_create_v1(id_2, "zyx", True)
+    id_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")['auth_user_id']
+    id_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")['auth_user_id']
+    id_3 = auth_register_v1("mno@jkl.com", "password", "mno", "jkl")['auth_user_id']
+    channel_id_1 = channels_create_v1(id_1, "abc", True)['channel_id']
+    channel_id_2 = channels_create_v1(id_2, "zyx", True)['channel_id']
     return id_1, id_2, id_3, channel_id_1, channel_id_2
     
 # Testing for invalid channel ID
@@ -26,7 +26,7 @@ def test_invalid_channel(valid_3_users):
 # Testing for invalid u_id
 def test_invalid_user(valid_3_users):
     id_1, _, _, channel_id_1, _ = valid_3_users
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         channel_invite_v1(id_1, channel_id_1, "invalid_id")
         
 # Testing for valid channel ID and u_id

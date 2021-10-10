@@ -78,8 +78,8 @@ initial_object = {
             #Input channel_id to track
         """ {
             'channel_id': 1, 
-            'channel_statu': True,
-            'channels_members': [ 
+            'channel_status': True,
+            'channel_members': [ 
                 {
                     'u_id': 1,
                     'email':'1@email.com', 

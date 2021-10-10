@@ -10,10 +10,10 @@ from src.other import clear_v1
 @pytest.fixture
 def valid():
     clear_v1()
-    id_1 = auth_register_v1("qwe@rty.com", "password", "uio", "qwe")
-    id_2 = auth_register_v1("asd@fgh.com", "password", "jkl", "asd")
-    channel_id_1 = channels_create_v1(id_1, "qwe", True)
-    channel_id_2 = channels_create_v1(id_2, "asd", False)
+    id_1 = auth_register_v1("qwe@rty.com", "password", "uio", "qwe")['auth_user_id']
+    id_2 = auth_register_v1("asd@fgh.com", "password", "jkl", "asd")['auth_user_id']
+    channel_id_1 = channels_create_v1(id_1, "qwe", True)['channel_id']
+    channel_id_2 = channels_create_v1(id_2, "asd", False)['channel_id']
     start_0 = 0
     return id_1, id_2, channel_id_1, channel_id_2, start_0
 

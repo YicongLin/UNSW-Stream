@@ -1,7 +1,16 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 
+def check_duplicate(list, channel):
 
+    # check for the element passed in is in the list or not
+    i = 0
+    while i < len(list):
+        if (channel == list[i]):
+            return 1
+        i += 1
+    return 0
+    
 def channels_list_v1(auth_user_id):
     """Provide a list of all channels that the authorised user is part of.
     
@@ -34,7 +43,7 @@ def channels_list_v1(auth_user_id):
     # looks for the users in channel detail by checking the channel members in each channel
     users = 0
     while users < len(channel_detail_info):
-        channel_member_info = channel_detail_info[users]['channels_members']
+        channel_member_info = channel_detail_info[users]['channel_members']
         # if an user id matches the given id, save that id and got to channels datastore
         member = 0
         flag1 = 0
@@ -50,7 +59,8 @@ def channels_list_v1(auth_user_id):
                 channels = 0
                 while channels < len(channel_info):
                     if (channel_id_info == channel_info[channels]['channel_id']):
-                        found_channel.append(channel_info[channels])
+                        if (check_duplicate(found_channel, channel_info[channels]) != 1):
+                            found_channel.append(channel_info[channels])
                     channels += 1   
         users += 1
     
@@ -144,9 +154,6 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     if auth_user_id not in users_id:
         raise AccessError("Invalid ID")
-
-    # find owner name
-    owner_first_name = users_info[auth_user_id - 1]['name_first']
     
     """ 
     for owner in users_info:
@@ -161,12 +168,12 @@ def channels_create_v1(auth_user_id, name, is_public):
     # a dictionary for the channel
     channels_dict = {
         'channel_id': new_channel_id,
-        'channel_name': name
+        'name': name
     }
 
     channels_detail_dict = {
         'channel_id': new_channel_id,
-        'u_name': owner_first_name,
+        'channel_name': name,
         'channel_status': is_public,
         'channel_members': [
             users_info[auth_user_id - 1]
@@ -177,5 +184,5 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels'].append(channels_dict)
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
-    return new_channel_id
+    return { "channel_id": new_channel_id }
 

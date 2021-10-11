@@ -153,8 +153,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Creating a list of all valid channel IDs
     channels = data["channels_details"]
     valid_channel_ids = []
-    for channel in channels:
-        valid_channel_ids.append(channel["channel_id"])
+    for i in range(len(channels)):
+        valid_channel_ids.append(channels[i]["channel_id"])
         
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
@@ -164,8 +164,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Creating a list of all valid user IDs
     users = data["users"]
     valid_user_ids = []
-    for user in users:
-        valid_user_ids.append(user["u_id"])
+    for i in range(len(channels)):
+        valid_user_ids.append(users[i]["u_id"])
   
     # Raising an error if u_id is not a valid user 
     # in the created list
@@ -174,8 +174,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     # Raising an error if u_id is already a member of the channel
     channel_count = 0
-    for channel in channels:
-        if channel_id == channel["channel_id"]:
+    for i in range(len(channels)): 
+        if channel_id == channels[i]["channel_id"]:
             break
         channel_count += 1
     members = channels[channel_count]["channel_members"]
@@ -196,8 +196,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     # Extracting the given user's information
     user_count = 0
-    for user in users:
-        if user["u_id"] == u_id:
+    for i in range(len(users)):
+        if users[i]["u_id"] == u_id:
             break
         user_count += 1
 
@@ -292,6 +292,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     # Accessing the data store
     data = data_store.get()
+    channels = data["channels_details"]
 
     # create the dictionary messages 
     messages = [ {
@@ -302,20 +303,19 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     } ]
     
     # for each channel in channels details 
-    for channel in data['channels_details']:
+    for i in range(len(channels)):
         # add messages dictionary into it 
-        channel['messages'] = messages
-        channel['start'] = 0
-        channel['end'] = 50
+        channels[i]['messages'] = messages
+        channels[i]['start'] = 0
+        channels[i]['end'] = 50
         
     # Defining the end index
         end = start + 50
     
     # Creating a list of valid channel IDS
-    channels = data["channels_details"]
     valid_channel_ids = []
-    for channel in channels:
-        valid_channel_ids.append(channel["channel_id"])
+    for i in range(len(channels)):
+        valid_channel_ids.append(channels[i]["channel_id"])
     
     # Error raised if the given channel ID is not found in the list
     if channel_id not in valid_channel_ids:
@@ -324,13 +324,13 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # List of valid user IDS
     users = data["users"]
     valid_user_ids = []
-    for user in users:
-        valid_user_ids.append(user["u_id"])
+    for i in range(len(users)):
+        valid_user_ids.append(users[i]["u_id"])
        
     # Finding the specific channel
     count = 0
-    for channel in channels:
-        if channel_id == channel["channel_id"]:
+    for i in range(len(channels)):
+        if channel_id == channels[i]["channel_id"]:
             break
         count += 1
        
@@ -394,8 +394,8 @@ def channel_join_v1(auth_user_id, channel_id):
     # Creating a list of all valid channel IDs.
     channels = data["channels_details"]
     valid_channel_ids = []
-    for channel in channels:
-        valid_channel_ids.append(channel["channel_id"])
+    for i in range(len(channels)):
+        valid_channel_ids.append(channels[i]["channel_id"])
         
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
@@ -405,8 +405,8 @@ def channel_join_v1(auth_user_id, channel_id):
     # Raising an error if the authorised user 
     # is already a member of the channel
     channel_count = 0
-    for channel in channels:
-        if channel_id == channel["channel_id"]:
+    for i in range(len(channels)):
+        if channel_id == channels[i]["channel_id"]:
             break
         channel_count += 1
     members = channels[channel_count]["channel_members"]
@@ -423,8 +423,8 @@ def channel_join_v1(auth_user_id, channel_id):
     # Extracting the given user's information
     users = data["users"]
     user_count = 0
-    for user in users:
-        if user["u_id"] == auth_user_id:
+    for i in range(len(users)):
+        if users[i]["u_id"] == auth_user_id:
             break
         user_count += 1
 

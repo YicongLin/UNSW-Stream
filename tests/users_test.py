@@ -121,8 +121,9 @@ def test_nonalphanumeric_handle():
 
 # input error if duplicate handle 
 def test_duplicate_handle(valid):
+    id_1, id_2, id_3 = valid
     with pytest.raises(InputError):
-        user_profile_sethandle_v1("token", "")
+        user_profile_sethandle_v1("token", "1first1last")
 
 # valid handle 
 def test_valid_handle(valid):

@@ -77,8 +77,18 @@ initial_object = {
     'channels_details': [     
             #Input channel_id to track
         """ {
+            'channel_name': 'channel1'
             'channel_id': 1, 
             'channel_status': True,
+            'owner_members': [
+                {
+                    'u_id': 1,
+                    'email':'1@email.com', 
+                    'name_first':'1first', 
+                    'name_last':'1last', 
+                    'handle_str': '1str'
+                },
+            ]
             'channel_members': [ 
                 {
                     'u_id': 1,
@@ -150,4 +160,3 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
-

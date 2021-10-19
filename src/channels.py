@@ -175,6 +175,9 @@ def channels_create_v1(auth_user_id, name, is_public):
         'channel_id': new_channel_id,
         'channel_name': name,
         'channel_status': is_public,
+        'owner_members': [
+            users_info[auth_user_id - 1]
+        ],
         'channel_members': [
             users_info[auth_user_id - 1]
         ]
@@ -185,4 +188,3 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-

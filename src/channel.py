@@ -3,6 +3,24 @@ from src.error import InputError
 from src.error import AccessError
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+    """An authorised user who is a member of a channel invites
+       another user to join the channel.
+   
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the valid user to be invited to the channel
+       
+    Exceptions:
+        InputError - Occurs when channel_id does not refer to a valid channel
+        InputError - Occurs when u_id does not refer to a valid user
+        InputError - Occurs when u_id refers to a user already in the channel
+        AccessError - Occurs when the authorised user is not a member of the valid channel
+    
+    Return Value:
+        No return value
+    """
+
     # Accessing contents of the data store
     data = data_store.get()
     
@@ -21,12 +39,12 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     users = data["users"]
     valid_user_ids = []
     for user in users:
-        valid_user_ids.append(user["user_id"])
+        valid_user_ids.append(user["u_id"])
   
     # Raising an error if u_id is not a valid user 
     # in the created list
     if u_id not in valid_user_ids:
-        raise InputError("Invalid user")
+        raise AccessError("Invalid user")
     
     # Raising an error if u_id is already a member of the channel
     channel_count = 0
@@ -36,14 +54,14 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         channel_count += 1
     members = channels[channel_count]["channel_members"]
     for member in members:
-        if u_id == member["user_id"]:
+        if u_id == member["u_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the authorised user 
     # is not a member of the valid channel
     member_of_channel = False
     for member in members:
-        if auth_user_id == member["user_id"]:
+        if auth_user_id == member["u_id"]:
             member_of_channel = True
     if member_of_channel == False:
         raise AccessError("You are not a member of the channel")
@@ -53,25 +71,52 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Extracting the given user's information
     user_count = 0
     for user in users:
-        if user["user_id"] == u_id:
+        if user["u_id"] == u_id:
             break
         user_count += 1
 
     # Appending the user information to the channel
     channels[channel_count]["channel_members"].append(users[user_count])
+    
+    return {}
 
 def channel_details_v1(auth_user_id, channel_id):
+    """An authorised user to check a channel’s detailed information which user is a member of it
+    
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
 
-     # Obtain data alreaday existed
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+        AccessError - Occurs when user type in an valid id and valid channel id 
+            but user is not a member of that channel
+        InputError - Occurs when user type in an invalid channel id
+
+    Return Value:
+    {name, is_public, owner_members, all_members }
+        name (string) - owner’s first name
+        is_public (boolean) - public or private channel
+        owner_members(member)
+        all_mambers(member)
+    {u_id, email, name_first, name_last, handle_str}
+        u_id(integer) - the ID of an authorised user
+        email (string) - the email of an authorised user
+        first name(string) - first name of an authorised user
+        last name(string) - last name of an authorised user
+        handle_str(string) - special string created for authorised user
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
-     # Test auth_user_id valid or not
+    # Test auth_user_id valid or not
     users_data = data['users']
     users_element = 0
     users_id = []
     while users_element < len(users_data):
         each_dict_users = users_data[users_element]
-        users_id.append(each_dict_users['id'])
+        users_id.append(each_dict_users['u_id'])
         users_element += 1     
         
     if auth_user_id not in users_id:
@@ -100,7 +145,7 @@ def channel_details_v1(auth_user_id, channel_id):
         channel_id_element += 1
  
     # All members' details in this channel
-    members_in_channel = channels_details_data[channel_id_element]['members']
+    members_in_channel = channels_details_data[channel_id_element]['channel_members']
     # ==================================
     # Pick out u_id
     # Test user is a member of channel or not
@@ -116,10 +161,10 @@ def channel_details_v1(auth_user_id, channel_id):
     # Finish member users test
     # ==================================
     # For return
-    name = members_in_channel[0]['name_first']
+    name = channels_details_data[channel_id_element]['channel_name']
     owner_members = [members_in_channel[0]]
     all_members = members_in_channel
-    is_public = channels_details_data[channel_id_element]['channels_status']
+    is_public = channels_details_data[channel_id_element]['channel_status']
 
     return {
         'name': name,
@@ -128,23 +173,125 @@ def channel_details_v1(auth_user_id, channel_id):
         'all_members': all_members
     }
 
-
 def channel_messages_v1(auth_user_id, channel_id, start):
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
-    }
+    """The function channel_messages_v1 returns up to 50 messages between the two indexes “start”
+    and “start + 50 in a channel of which the authorised user is a member of.”
+    
+    Arguments:
+        auth_user_id (integer) - ID of an authorised user.
+        channel_id (integer) - ID of a valid channel.
+        start (integer) – the starting index of a list of messages.
+
+    Exceptions:
+        InputError – Occurs when 'channel_ID' does not refer to a valid channel
+        and the 'start' is greater than the total amount of messages in the channel.
+        AccessError – Occurs when the authorised user is not a member of the channel
+        and the channel_id is valid.
+    
+    Return value:
+        Returns 'messages' on the condition that the total messages is less than 50.
+        Returns 'start' on all conditions.
+        Returns 'start + 50' on the condition that total messages is greater than 50.
+        Returns 'end' on all conditions.
+    """
+
+    # Accessing the data store
+    data = data_store.get()
+
+    # create the dictionary messages 
+    messages = [ {
+        'message_id': '',
+        'u_id': '',
+        'message': '',
+        'time_created': '',
+    } ]
+    
+    # for each channel in channels details 
+    for channel in data['channels_details']:
+        # add messages dictionary into it 
+        channel['messages'] = messages
+        channel['start'] = 0
+        channel['end'] = 50
+        
+    # Defining the end index
+        end = start + 50
+    
+    # Creating a list of valid channel IDS
+    channels = data["channels_details"]
+    valid_channel_ids = []
+    for channel in channels:
+        valid_channel_ids.append(channel["channel_id"])
+    
+    # Error raised if the given channel ID is not found in the list
+    if channel_id not in valid_channel_ids:
+        raise InputError("Invalid channel_id")
+   
+    # List of valid user IDS
+    users = data["users"]
+    valid_user_ids = []
+    for user in users:
+        valid_user_ids.append(user["u_id"])
+       
+    # Finding the specific channel
+    count = 0
+    for channel in channels:
+        if channel_id == channel["channel_id"]:
+            break
+        count += 1
+       
+    # Raising an error if start is greater than
+    # the total number of messages in the given channel
+    x = channels[count]
+    messages = x["messages"]
+    print(start)
+    print(len(messages))
+    if start > len(messages):
+        raise InputError("Exceeded total number of messages in this channel")   
+       
+    # Error if the auth_user is not a member of the valid channel
+    members = channels[count]["channel_members"]
+    member_of_channel = False
+    for member in members:
+        if auth_user_id == member["u_id"]:
+            member_of_channel = True
+    if member_of_channel == False:
+        raise AccessError("You are not a member of the channel")
+
+    # Append all messages in a list
+    message_list = []
+    for message in messages:
+        message_list.append(message["message"])
+   
+    if len(messages) < 50:
+        return { 
+            'messages': tuple(message_list)[start:end], 
+            'start': start,
+            'end': -1 
+        }
+    else:
+        return { 
+            'messages': tuple(message_list)[start:end], 
+            'start': start,
+            'end': end 
+        }
     
 
 def channel_join_v1(auth_user_id, channel_id):
+    """Adding an authorised user to the given valid channel with channel_id
+   
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        channel_id (integer) - the ID of an existing channel
+       
+    Exceptions:
+        InputError - Occurs when channel_id does not refer to a valid channel
+        InputError - Occurs when the authorised user is not a member of the valid channel
+        AccessError - Occurs when channel_id is a private channel and the authorised user 
+            is not a global owner
+    
+    Return Value:
+        No return value
+    """
 
     # Accessing contents of the data store
     data = data_store.get()
@@ -169,7 +316,7 @@ def channel_join_v1(auth_user_id, channel_id):
         channel_count += 1
     members = channels[channel_count]["channel_members"]
     for member in members:
-        if auth_user_id == member["user_id"]:
+        if auth_user_id == member["u_id"]:
             raise InputError("Already in channel")
     
     # Raising an error if the channel is private
@@ -182,10 +329,12 @@ def channel_join_v1(auth_user_id, channel_id):
     users = data["users"]
     user_count = 0
     for user in users:
-        if user["user_id"] == auth_user_id:
+        if user["u_id"] == auth_user_id:
             break
         user_count += 1
 
     # Appending the user information to the channel
     channels[channel_count]["channel_members"].append(users[user_count])
+    
+    return {}
 

@@ -27,28 +27,38 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [
-        """ {
-            'user_id':1,
+        {
+            'u_id':1,
             'email' : '34@email.com',
             'password' : 'password', 
             'first_name' : 'name_first', 
-            'last_name' : 'name_last'
-            
+            'last_name' : 'name_last', 
+            'handle_str': 'kevinlin'   
         },
 
         {
-            'user_id': 2
+            'u_id': 2,
+            'handle_str': 'kangliu' 
         },
 
-        
         {
-            'user_id': 3
+            'u_id': 3,
+            'handle_str': 'haydensmith' 
         },
 
-        
         {
-            'user_id': 4
-        } """
+            'u_id': 4,
+            'handle_str': 'harry' 
+        }
+    ],
+    
+    'emailpw' : [
+        """ {
+            'email' : email,
+            'password' : password,
+            'u_id' : new_id
+        }
+        """
     ],
 
     'channels': [
@@ -72,8 +82,8 @@ initial_object = {
             #Input channel_id to track
         """ {
             'channel_id': 1, 
-            'channel_statu': True,
-            'channels_members': [ 
+            'channel_status': True,
+            'channel_members': [ 
                 {
                     'u_id': 1,
                     'email':'1@email.com', 
@@ -90,6 +100,16 @@ initial_object = {
                     'handle_str': '2str'
                 },
             ]
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789,
+                }
+            ],
+            'start': 0,
+            'end': 50,                
         },
 
         {
@@ -113,32 +133,17 @@ initial_object = {
                 },
             ]
         },
+        """                
+    ],  
 
-        {
-            'channel_id': 3, 
-            'channel_statu': True,
-            'channels_members': [ 
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first':'1first', 
-                    'name_last':'1last', 
-                    'handle_str': '1str'
-                },
-                
-                {
-                    'u_id': 2,
-                    'email':'2@email.com', 
-                    'name_first':'2first', 
-                    'name_last':'2last', 
-                    'handle_str': '2str'
-                },
-            ]
-        }, """
-        
-                    
-    ],
     
+
+    'dms': [
+        # 'dm_id': 1,
+        # 'name':
+    ]
+
+
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

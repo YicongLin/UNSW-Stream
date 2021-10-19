@@ -19,7 +19,7 @@ from src import config
 # def test_invalid_channelid_uid():
 #     clear_v1()
 #     resp = requests.post('http://127.0.0.1:8080/channel/addowner/v1', json={'token': 'hello', 'channel_id': 123, 'u_id': 1})
-#     assert (resp.status_code == 400)
+#       
 
 # #  Invalid channel_id
 # def test_invalid_channelid(create_users):

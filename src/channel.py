@@ -105,6 +105,44 @@ def check_permissions(token, each_owner_id):
     pass
 # Finish permissions check
 # ==================================
+# ==================================
+# Raise Errors check for channel_removewner_v1
+# ==================================
+# ==================================
+# Check user is a owner of channel
+def check_not_owner(channel_id_element, u_id):
+    data = data_store.get()
+    owner_members_in_channel = data['channels_details'][channel_id_element]['owner_members']
+    each_owner_element = 0
+    each_owner_id = []
+    while each_owner_element < len(owner_members_in_channel):
+        each_owner = owner_members_in_channel[each_owner_element]
+        each_owner_id.append(each_owner['u_id'])
+        each_owner_element += 1 
+
+    if u_id not in each_owner_id:
+        return False
+
+    return each_owner_id   
+# Finish owner check
+# ==================================
+# Check if user is the only owner of channel
+def check_only_owner(channel_id_element, u_id):
+    data = data_store.get()
+    owner_members_in_channel = data['channels_details'][channel_id_element]['owner_members']
+    each_owner_element = 0
+    each_owner_id = []
+    while each_owner_element < len(owner_members_in_channel):
+        each_owner = owner_members_in_channel[each_owner_element]
+        each_owner_id.append(each_owner['u_id'])
+        each_owner_element += 1 
+
+    if len(each_owner_id) == 1 and u_id in each_owner_id:
+        return False
+
+    pass
+# Finish only owner check
+# ==================================
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
@@ -443,7 +481,6 @@ def channel_join_v1(auth_user_id, channel_id):
     
     return {}
 
-
 def channel_addowner_v1(token, channel_id, u_id):
     data = data_store.get()
 
@@ -451,7 +488,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     if channel_id_element == False:
         raise InputError("Invalid channel_id")
 
-    if check_valid_uid(data, u_id) == False:
+    if check_valid_uid(u_id) == False:
         raise InputError("Invalid user ID")
 
     new_owner_element = check_member(channel_id_element, u_id)
@@ -465,8 +502,39 @@ def channel_addowner_v1(token, channel_id, u_id):
     if check_permissions(token, each_owner_id) == False:
         raise AccessError("No permissions to add user")
     
-    new_owner = data['channels_details'][channel_id_element]['channel_members']['new_owner_element']
+    new_owner = data['channels_details'][channel_id_element]['channel_members'][new_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].append(new_owner)
 
     return {}
     
+def channel_removeowner_v1(token, channel_id, u_id):
+    data = data_store.get()
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
+
+    if check_valid_uid(u_id) == False:
+        raise InputError("Invalid user ID")
+
+    each_owner_id = check_not_owner(channel_id_element, u_id)
+    if each_owner_id == False:
+        raise InputError("User is not an owner of channel")
+
+    if check_only_owner(channel_id_element, u_id) == False:
+        raise InputError("User is the only owner of channel")
+
+    if check_permissions(token, each_owner_id) == False:
+        raise AccessError("No permissions to remove user")
+
+    remove_owner_element = 0
+    while remove_owner_element < len(each_owner_id):
+        if each_owner_id[remove_owner_element] == u_id:
+            break
+        remove_owner_element += 1
+
+    # Pick out dict and then delete it
+    remove_owner = data['channels_details'][channel_id_element]['onwer_members'][remove_owner_element]
+    data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
+
+    return {}

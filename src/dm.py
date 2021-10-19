@@ -29,6 +29,7 @@ def check_valid_dmid(dm_id):
 # Finish valid dm_id check
 # ==================================
 # Check token user is an member of dm
+# If authorised user is a 
 def check_valid_dm_token(token, dm_id_element):
     data = data_store.get()
 
@@ -43,7 +44,7 @@ def check_valid_dm_token(token, dm_id_element):
     while member_id_element < len(dm_members):
         all_members_id.append(dm_members[member_id_element]['u_id'])
         if user_id == dm_members[member_id_element]['u_id']:
-            return True
+            return member_id_element
         member_id_element += 1
 
     if user_id not in all_members_id:
@@ -51,13 +52,10 @@ def check_valid_dm_token(token, dm_id_element):
 
     pass
 # ==================================
+
+
 # ==================================
-
-
-
-
-
-
+# ==================================
 def dm_details_v1(token, dm_id):
     data = data_store.get()
 
@@ -75,3 +73,22 @@ def dm_details_v1(token, dm_id):
         'name': name,
         'members': members
     }
+
+
+def dm_leave_v1(token, dm_id):
+    data = data_store.get()
+
+    dm_id_element = check_valid_dmid(dm_id)
+    if dm_id_element == False:
+        raise InputError("Invalid dm_id")
+
+    member_id_element = check_valid_dm_token(token, dm_id_element)
+    if member_id_element == False:
+        raise AccessError("Login user has not right to access this dm")
+
+    leave_dm_member['u_id'] = data['dms_details'][dm_id_element]['dm_members'][member_id_element]
+    data['dms_details'][dm_id_element]['dm_members'].remove(leave_dm_member)
+
+    return {}
+
+

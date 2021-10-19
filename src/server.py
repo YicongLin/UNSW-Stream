@@ -7,6 +7,7 @@ from src.error import InputError, AccessError
 from src import config
 from src.channel import channel_addowner_v1
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, check_exist_owner, check_permissions
+from src.channel import check_not_owner, check_only_owner, channel_removeowner_v1
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -69,6 +70,34 @@ def add_owner():
 
     return dumps({})
 
+@APP.route('/channel/removeowner/v1', methods=['POST'])
+def remove_owner():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    u_id = request_data['u_id']
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError(description="Invalid channel_id")
+
+    if check_valid_uid(u_id) == False:
+        raise InputError(description="Invalid user ID")
+
+    each_owner_id = check_not_owner(channel_id_element, u_id)
+    if each_owner_id == False:
+        raise InputError(description="User is not an owner of channel")
+
+    if check_only_owner(channel_id_element, u_id) == False:
+        raise InputError(description="User is the only owner of channel")
+
+    if check_permissions(token, each_owner_id) == False:
+        raise AccessError(description="No permissions to remove user")
+
+    channel_removeowner_v1(token, channel_id, u_id)
+
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

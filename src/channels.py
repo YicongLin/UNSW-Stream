@@ -108,6 +108,7 @@ def channels_listall_v1(auth_user_id):
 
     # Store channels data into a list for return
     out_channels = []
+
     i = 0
     while i < len(chan_data):
         out_channels.append(chan_data[i])
@@ -140,17 +141,6 @@ def channels_create_v1(auth_user_id, name, is_public):
     # get data from datastore
     data = data_store.get()
     users_info = data['users']
-
-    count = 0
-    while count < len(users_info):
-        channel_id = users_info[count]
-        if (channel_id['u_id'] == auth_user_id):
-            data['channels'].append(auth_user_id, name, is_public)
-        count += 1
-    data_store.set(data)
-    return {
-        'channel_id': auth_user_id
-
     channels_info = data['channels']
     new_channel_id = len(channels_info) + 1
     
@@ -185,6 +175,9 @@ def channels_create_v1(auth_user_id, name, is_public):
         'channel_id': new_channel_id,
         'channel_name': name,
         'channel_status': is_public,
+        'owner_members': [
+            users_info[auth_user_id - 1]
+        ],
         'channel_members': [
             users_info[auth_user_id - 1]
         ]
@@ -195,4 +188,3 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-

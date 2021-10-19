@@ -534,7 +534,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
         remove_owner_element += 1
 
     # Pick out dict and then delete it
-    remove_owner = data['channels_details'][channel_id_element]['onwer_members'][remove_owner_element]
+    remove_owner = data['channels_details'][channel_id_element]['owner_members'][remove_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
 
     return {}

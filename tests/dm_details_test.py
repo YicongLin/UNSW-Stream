@@ -9,7 +9,7 @@ BASE_URL = 'http://127.0.0.1:8080'
 # Test dm_details
 # ==================================
 
- # (1) register users
+# (1) register users
 # (2) login user_one to create dm
 # (3) Implement dm_details with invalid dm_id (InputError 400)
 # (4) Show details of dm -----> successful implement

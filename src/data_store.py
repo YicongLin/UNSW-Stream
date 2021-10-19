@@ -27,25 +27,29 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [
-        """ {
-            'user_id':1,
+        {
+            'u_id':1,
             'email' : '34@email.com',
             'password' : 'password', 
             'first_name' : 'name_first', 
-            'last_name' : 'name_last'    
+            'last_name' : 'name_last', 
+            'handle_str': 'kevinlin'   
         },
 
         {
-            'user_id': 2
+            'u_id': 2,
+            'handle_str': 'kangliu' 
         },
 
         {
-            'user_id': 3
+            'u_id': 3,
+            'handle_str': 'haydensmith' 
         },
 
         {
-            'user_id': 4
-        } """
+            'u_id': 4,
+            'handle_str': 'harry' 
+        }
     ],
     
     'emailpw' : [
@@ -172,6 +176,15 @@ initial_object = {
         },
         """                
     ],  
+
+    
+
+    'dms': [
+        # 'dm_id': 1,
+        # 'name':
+    ]
+
+
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

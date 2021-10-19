@@ -188,3 +188,4 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
+

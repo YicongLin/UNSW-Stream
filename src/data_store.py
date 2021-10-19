@@ -57,6 +57,37 @@ initial_object = {
         """
     ],
 
+    'dms_details': [
+     """{
+            'dm_id': 1
+            'name': ["ahandle1", "bhandle2", "chandle3"]
+            'dm_members': [
+                {
+                    'u_id': 1,
+                    'email':'1@email.com', 
+                    'name_first': 'a', 
+                    'name_last':'1last', 
+                    'handle_str': 'ahandle1'
+                },
+                 {
+                    'u_id': 2,
+                    'email':'2@email.com', 
+                    'name_first': 'b', 
+                    'name_last':'2last', 
+                    'handle_str': 'bhandle2'
+                },
+                {
+                    'u_id': 3,
+                    'email':'3@email.com', 
+                    'name_first': 'c', 
+                    'name_last':'3last', 
+                    'handle_str': 'chandle3'
+                },
+            ]
+        },
+        """    
+    ],
+
     'channels': [
         """ {
             'channel_id': 1,

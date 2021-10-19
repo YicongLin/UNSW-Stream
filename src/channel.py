@@ -143,7 +143,7 @@ def check_only_owner(channel_id_element, u_id):
     pass
 # Finish only owner check
 # ==================================
-
+# ==================================
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     """An authorised user who is a member of a channel invites

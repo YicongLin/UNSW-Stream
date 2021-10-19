@@ -175,6 +175,9 @@ def channels_create_v1(auth_user_id, name, is_public):
         'channel_id': new_channel_id,
         'channel_name': name,
         'channel_status': is_public,
+        'owner_members': [
+            users_info[auth_user_id - 1]
+        ],
         'channel_members': [
             users_info[auth_user_id - 1]
         ]
@@ -185,120 +188,3 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-
-def dm_create_v1(token, u_ids):
-    data = data_store.get()
-    users = data['users']
-    dm = data['dms']
-
-    if (check_user(users, u_ids) == 0):
-        raise InputError("There is 1 or more invalid ids, please check again")
-    
-    new_dm_id = len(dm) + 1
-
-    handle_str = get_name(users, u_ids)
-    member_detail = get_member_detail(users, u_ids)
-
-    dm_detail_dict = {
-        'dm_id': new_dm_id,
-        'name': handle_str,
-        'members': member_detail
-    }
-
-    dms_dict = {
-        'dm_id': new_dm_id,
-        'name': handle_str
-    }
-
-    data['dms'].append(dms_dict)
-    data['dms_details'].append(dm_detail_dict)
-    return {
-        'dm_id': new_dm_id
-    }
-
-
-def dm_remove_v1(token, dm_id):
-    data = data_store.get()
-    dm_info = data['dms']
-    dm_detail_info = data['dms_details']
-    if (is_valid_dm(dm_info, dm_id) == False):
-        raise InputError("Invalid DM ID")
-    
-    i = 0
-    while i < len(dm_info):
-        if (dm_info[i]['dm_id'] == dm_id):
-            data['dms'].remove(dm_info[i])
-        i += 1
-
-    j = 0
-    while j < len(dm_detail_info):
-        if (dm_detail_info[j]['dm_id'] == dm_id):
-            data['dms_details'].remove(dm_detail_info[j])
-        j += 1
-    
-    return {
-
-    }
-# check if the dm id is valid
-def is_valid_dm(dm, id):
-    i = 0
-    while i < len(dm):
-        if (dm[i]['dm_id'] == id):
-            return True
-        i += 1
-    return False
-
-# a function to check if the user in u_ids is a valid user
-def check_user(auth_users, u_ids):
-    """ i = 0
-    
-    while i < len(u_ids):
-        j = 0
-        flag = 0
-        while j < len(auth_users):
-            if (u_ids[i] == auth_users[j]['u_id']):
-                flag == 1
-            j += 1
-        if (flag == 0):
-            return 0
-        i += 1
-    
-    return 1 """
-    user_id_list = []
-    a = 0
-    while a < len(auth_users):
-        user_id_list.append(auth_users[a]['u_id'])
-        a += 1
-    b = 0
-    while b < len(u_ids):
-        if (u_ids[b] not in user_id_list):
-            return 0
-        b += 1
-    return 1 
-# get the members details that on the list passed in
-def get_member_detail(users_dict, id_list):
-    user_detail_list = []
-    
-    i = 0
-    while i < len(id_list):
-        j = 0
-        while j < len(users_dict):
-            if (id_list[i] == users_dict[j]['u_id']):
-                user_detail_list.append(users_dict[j])
-            j += 1
-        i += 1
-    return user_detail_list
-
-# get every users'handle_str and append them in a list
-def get_name(users_dict, id_list):
-    names_list = []
-    i = 0
-    while i < len(id_list):
-        j = 0
-        while j < len(users_dict):
-            if (id_list[i] == users_dict[j]['u_id']):
-                names_list.append(users_dict[j]['handle_str'])
-            j += 1
-        i += 1
-    names_list = sorted(names_list)
-    return names_list

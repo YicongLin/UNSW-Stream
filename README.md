@@ -15,6 +15,12 @@
   9.  Automarking
   10. Plagiarism
 
+## 0. Change log:
+* 07/10: Fixed automarking formula
+* 08/10: Added instructions to run coverage locally
+* 15/10: Updated coverage and pylint configurations
+* 16/10: Reiterating from lectures that hashing passwords is expected in iteration 2
+
 ## 1. Aims:
 
 * To provide students with hands on experience testing, developing, and maintaining a backend server in Python.
@@ -69,7 +75,7 @@ In this iteration, you are expected to:
 
     * Part of this section may be automarked.
 
-    * Your implementation should build upon your work in iteration 1, and ideally your HTTP layer is just a wrapper for underlying functions you've written that handle the logic. Your implementation will rely on topics taught in week 4 (HTTP servers and testing) as well as week 5 (authentication and authorisation).
+    * Your implementation should build upon your work in iteration 1, and ideally your HTTP layer is just a wrapper for underlying functions you've written that handle the logic. Your implementation will rely on topics taught in week 4 (HTTP servers and testing) as well as week 5 (authentication and authorisation). There is an expectation that you implement your solution with password hashing, and JWTs for tokens.
 
     * Your implementation will need to implement persistence of data (see section 4.6).
 
@@ -169,6 +175,23 @@ def test_echo():
     resp = requests.get(config.url + 'echo', params={'data': 'hello'})
     assert json.loads(resp.text) == {'data': 'hello'}
 ```
+
+#### 4.4.1 Test coverage
+
+To get the coverage of your tests locally, you will need to have two terminals open. Run these commands from the root directory of your project.
+
+In the first terminal, run
+```bash
+coverage run -m src.server
+```
+
+In the second terminal, run pytest as usual
+```bash
+pytest
+```
+
+Back in the first terminal, stop the server with Ctrl+C or Command-C, and run `coverage report` or `coverage html` to generate a coverage report or HTML report respectively.
+
 ### 4.5. Recommended approach
 
 Our recommendation with this iteration is that you start out trying to implement the new functions similarly to how you did in iteration 1.
@@ -251,9 +274,9 @@ For this and for all future milestones, you should consider the other expectatio
 
 The formula used for automarking in this iteration is:
 
-`Automark = 95*(t * i * min(c + 1, 100)^3) + 5*p`
+`Automark = 95*(t * i * min(c + 0.01, 1)^3) + 5*p`
 
-(Mark equals `t` multiplied by `i` multiplied by the maximum of `c + 1` and 100 to the power of three). This formula produces a value between 0 and 1.
+(Non-pylint mark component equals `t` multiplied by `i` multiplied by the minimum of `c + 0.01` and 1 to the power of three). This formula produces a value between 0 and 1.
 
 Where:
  * `t` is the mark between 0-1 you receive for your tests running against your code (100% = your implementation passes all of your tests)

@@ -6,6 +6,7 @@ from flask_cors import CORS
 from src.error import InputError, AccessError
 from src import config
 from src.channel import channel_addowner_v1
+from src.channels import channels_listall_v2
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, check_exist_owner, check_permissions
 from src.channel import check_not_owner, check_only_owner, channel_removeowner_v1
 from src.dm import dm_details_v1, dm_leave_v1
@@ -100,6 +101,17 @@ def remove_owner():
     channel_removeowner_v1(token, channel_id, u_id)
 
     return dumps({})
+
+
+@APP.route('/channels/listall/v2', methods=['GET'])
+def channels_listall():
+    request_data = request.get_json()
+    token = request_data['token']
+
+    all_channels = channels_listall_v2(token)
+
+    return dumps(all_channels)
+
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():

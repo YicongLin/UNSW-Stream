@@ -3,10 +3,15 @@ from src.error import InputError, AccessError
 import hashlib
 import jwt
 
-# Raise Errors check for dm_details_v1
+# ============================================================
+# ===========(Raise errors and associate functions)===========
+# ============================================================
+
 # ==================================
-# Check Invalid dm_id
-# If dm_id is valid then return its index
+# Check dm_id valid or not
+# Serach information at data['dms_details']
+# If dm_id is invalid then return False
+# If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
 def check_valid_dmid(dm_id):
     data = data_store.get()
     dms_details_data = data['dms_details']
@@ -16,26 +21,30 @@ def check_valid_dmid(dm_id):
         all_dm_id.append(dms_details_data[dms_element]['dm_id'])
         dms_element  += 1
 
+    if dm_id not in all_dm_id :
+        return False
+
     dm_id_element = 0
     while dm_id_element < len(all_dm_id):
         if dm_id == all_dm_id[dm_id_element]:
             return dm_id_element
         dm_id_element += 1
-
-    if dm_id not in all_dm_id :
-        return False
             
     pass
 # Finish valid dm_id check
 # ==================================
-# Check token user is an member of dm
-# If authorised user is a 
+
+# ==================================
+# Check authorised user is an member of dm or not
+# Serach information at data['dms_details'][dm_id_element]['dm_members']
+# If authorised user is a not member of dm then return False
+# If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
 def check_valid_dm_token(token, dm_id_element):
     data = data_store.get()
 
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    user_id = decode_token['u_id']
+    u_id = decode_token['u_id']
 
     dm_members = data['dms_details'][dm_id_element]['dm_members']
     all_members_id = []
@@ -43,29 +52,37 @@ def check_valid_dm_token(token, dm_id_element):
     member_id_element = 0
     while member_id_element < len(dm_members):
         all_members_id.append(dm_members[member_id_element]['u_id'])
-        if user_id == dm_members[member_id_element]['u_id']:
+        if u_id == dm_members[member_id_element]['u_id']:
             return member_id_element
         member_id_element += 1
 
-    if user_id not in all_members_id:
+    if u_id not in all_members_id:
         return False
 
     pass
+# Finish  authorised user member check
 # ==================================
 
 
-# ==================================
-# ==================================
+# ============================================================
+# =====================(Actual functions)=====================
+# ============================================================
+
 def dm_details_v1(token, dm_id):
     data = data_store.get()
 
+    # Raise a InputError if authorised user type in invalid dm_id
+    # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
     dm_id_element = check_valid_dmid(dm_id)
     if dm_id_element == False:
         raise InputError("Invalid dm_id")
 
+    # Raise an AccessError if authorised user type in a valid dm_id
+    # but the authorised user is not a member of dm
     if check_valid_dm_token(token, dm_id_element) == False:
         raise AccessError("Login user has not right to access dm_details")
 
+    # Pick out dm name and its members from data['dms_details'][dm_id_element]
     name = data['dms_details'][dm_id_element]['name']
     members = data['dms_details'][dm_id_element]['dm_members']
 
@@ -78,15 +95,22 @@ def dm_details_v1(token, dm_id):
 def dm_leave_v1(token, dm_id):
     data = data_store.get()
 
+     # Raise a InputError if authorised user type in invalid dm_id
+     # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
     dm_id_element = check_valid_dmid(dm_id)
     if dm_id_element == False:
         raise InputError("Invalid dm_id")
 
+    # Raise an AccessError if authorised user type in a valid dm_id
+    # but the authorised user is not a member of dm
+    # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
     member_id_element = check_valid_dm_token(token, dm_id_element)
     if member_id_element == False:
         raise AccessError("Login user has not right to access this dm")
 
-    leave_dm_member['u_id'] = data['dms_details'][dm_id_element]['dm_members'][member_id_element]
+
+    # Pick out dict from dm's members and then delete it 
+    leave_dm_member = data['dms_details'][dm_id_element]['dm_members'][member_id_element]
     data['dms_details'][dm_id_element]['dm_members'].remove(leave_dm_member)
 
     return {}

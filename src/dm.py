@@ -176,36 +176,3 @@ def get_name(users_dict, id_list):
         i += 1
     names_list = sorted(names_list)
     return names_list
-
-def dm_remove_v1(token, dm_id):
-    data = data_store.get()
-    dm_info = data['dms']
-    dm_detail_info = data['dms_details']
-    if (is_valid_dm(dm_info, dm_id) == False):
-        raise InputError("Invalid DM ID")
-    
-    i = 0
-    while i < len(dm_info):
-        if (dm_info[i]['dm_id'] == dm_id):
-            data['dms'].remove(dm_info[i])
-        i += 1
-
-    j = 0
-    while j < len(dm_detail_info):
-        if (dm_detail_info[j]['dm_id'] == dm_id):
-            data['dms_details'].remove(dm_detail_info[j])
-        j += 1
-    
-
-
-    return {
-
-    }
-# check if the dm id is valid
-def is_valid_dm(dm, id):
-    i = 0
-    while i < len(dm):
-        if (dm[i]['dm_id'] == id):
-            return True
-        i += 1
-    return False

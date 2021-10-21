@@ -15,7 +15,6 @@ def valid():
 # USERS_ALL_V1
 # correct list of all users + details 
 def test_correct_list_all(valid):
-    id_1, id_2, id_3 = valid
     users_all_v1(valid)
 
 def test_correct_some(valid):
@@ -81,13 +80,11 @@ def test_invalid_email():
 
 # input error if duplicate email 
 def test_duplicate_email(valid):
-    id_1, id_2, id_3 = valid
     with pytest.raises(InputError):
         user_profile_setemail_v1("token", "u1@test.com")
 
 # valid emails
 def test_valid_emails(valid):
-    id_1, id_2, id_3 = valid
     user_profile_setemail_v1("token", "u1updated@test.com")
     user_profile_setemail_v1("token", "u3updated@test.com")
 
@@ -121,7 +118,6 @@ def test_nonalphanumeric_handle():
 
 # input error if duplicate handle 
 def test_duplicate_handle(valid):
-    id_1, id_2, id_3 = valid
     with pytest.raises(InputError):
         user_profile_sethandle_v1("token", "1first1last")
 

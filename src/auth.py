@@ -78,10 +78,31 @@ def auth_login_v2(email, password):
                 email_password[i]['session_id'].append(new_session_id)
                 # generate token
                 token = generate_JWT(u_id, permissions_id, new_session_id)
-
-        # else there is no matching email 
         else:
             raise InputError("Invalid email")
+
+    # element = 0
+    # while element < len(email_password):
+    #     if email_password[element]['email'] == email:
+    #         # if password is not correct, raise error 
+    #         if email_password[element]['password'] != password:
+    #             raise InputError('Incorrect password')
+    #         # if password is correct... 
+    #         else:    
+    #             u_id = email_password[element]['u_id']
+    #             permissions_id = email_password[element]['permissions_id']
+        
+    #             # create session id + store into session id list 
+    #             new_session_id = generate_new_session_id()
+    #             email_password[element]['session_id'].append(new_session_id)
+    #             # generate token
+    #             token = generate_JWT(u_id, permissions_id, new_session_id)
+
+    #     # else there is no matching email 
+    #     else:
+    #         raise InputError("Invalid email")
+            
+    #     element += 1
     
     data_store.set(store)
 
@@ -134,94 +155,6 @@ def auth_login_v2(email, password):
     #         }
         
         
-# def auth_register_v1(email, password, name_first, name_last):
-#     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
-#     user's last name and registers an account, as well as user handle for the user.
-
-#     Arguments: 
-#         email (string) - correctly registered user email 
-#         password (string) - password which corresponds to user email 
-#         name_first (string) - user's first name
-#         name_last (string) - user's last name
-
-#     Exceptions:
-#         InputError - Occurs when there is invalid first or last name (less than 1-50 characters inclusive), 
-#         email address is already registered with another user, length of password is less than 6 characters,
-#         email address is invalid.
-#         AccessError - None
-
-#     Return Value: 
-#         Returns a new auth_user_id for each user email
-#     """
-
-#     store = data_store.get()
-    
-#     # check whether it is valid email 
-#     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-#     if not (re.fullmatch(regex, email)):
-#         raise InputError("Invalid email")
-    
-#     # check first name length 
-#     if len(name_first) < 1 or len(name_first) > 50:
-#         raise InputError("Invalid first name")
-#     # check last name length 
-#     if len(name_last) < 1 or len(name_last) > 50:
-#         raise InputError("Invalid last name")
-#     # check password length 
-#     if len(password) < 6:
-#         raise InputError("Password too short")
-#     # check duplicate email 
-#     for user in store['users']:
-#         if user['email'] == email: 
-#             raise InputError("Duplicate email")
-    
-#     # auth user id is the number of users + 1 
-#     new_id = len(store['users']) + 1
-
-#     # create new user handle - remove characters that are not letter or numbers 
-#     # https://thispointer.com/python-remove-all-non-alphanumeric-characters-from-string/
-#     pattern = r'[^A-Za-z0-9]+'
-#     lowercase_name = ('name_first' + 'name_last').lower()
-#     user_handle = re.sub(pattern, '', lowercase_name)
-   
-#     # only take 20 characters 
-#     user_handle = user_handle[:20]
-
-#     # search if user handle has already been taken 
-#     for user in store['users']:
-#         # if handle has been taken  
-#         if (user['handle_str'])[:20] == user_handle:
-#             # create new handle using next 
-#             if len(user['handle_str']) == 20:
-#                 number = 0
-#             elif len(user['handle_str']) == 21:
-#                 number = int(user['handle_str'][20]) + 1
-#             user_handle = 'user_handle' + str(number)
-            
-#     # first create user dictionary 
-#     user = {
-#         'u_id' : new_id, 
-#         'email' : email, 
-#         'name_first' : name_first, 
-#         'name_last' : name_last,
-#         'handle_str' : user_handle
-#     }
-#     # add user dictionary into the list 'users'
-#     store['users'].append(user)
-
-#     # create dictionary of emails and passwords 
-#     email_password = {
-#         'email' : email,
-#         'password' : password,
-#         'u_id' : new_id
-#     }
-    
-#     # add email+password dictionary into the list 'users'
-#     store['emailpw'].append(email_password)
-     
-#     data_store.set(store)
-#     return { 'auth_user_id': new_id }
-
 # HELPER FUNCTIONS 
 def check_valid_email(email):
     # check whether it is valid email 
@@ -243,13 +176,13 @@ def check_password_length(password):
     
     pass
 
-def check_duplicate_email(email):
-    store = data_store.get()
-    for i in range(len(store['users'])):
-        if store[i]['email'] == email:
-            return False 
+# def check_duplicate_email(email):
+#     store = data_store.get()
+#     for i in range(len(store['users'])):
+#         if store[i]['email'] == email:
+#             return False 
     
-    pass 
+#     pass 
 
 def auth_register_v2(email, password, name_first, name_last):
     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
@@ -273,30 +206,13 @@ def auth_register_v2(email, password, name_first, name_last):
 
     store = data_store.get()
     
-    # # check whether it is valid email 
-    # regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    # if not (re.fullmatch(regex, email)):
-    #     raise InputError("Invalid email")
-    
-    # # check first name length 
-    # if len(name_first) < 1 or len(name_first) > 50:
-    #     raise InputError("Invalid first name")
-    # # check last name length 
-    # if len(name_last) < 1 or len(name_last) > 50:
-    #     raise InputError("Invalid last name")
-    # # check password length 
-    # if len(password) < 6:
-    #     raise InputError("Password too short")
-    # # check duplicate email 
-    # for i in range(len(store['users'])):
-    #     if store[i]['email'] == email:
-    #         raise InputError("Duplicate email")
-
     check_valid_email(email)
     check_name_length(name_first)
     check_name_length(name_last)
     check_password_length(password)
-    check_duplicate_email(email)
+    
+    # if len(store['users']) > 0:
+    #     check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
@@ -310,17 +226,19 @@ def auth_register_v2(email, password, name_first, name_last):
     # only take 20 characters 
     user_handle = user_handle[:20]
 
-    # search if user handle has already been taken 
-    for user in store['users']:
-        # if handle has been taken  
-        if (user['handle_str'])[:20] == user_handle:
-            # create new handle using next 
-            if len(user['handle_str']) == 20:
-                number = 0
-            elif len(user['handle_str']) >= 21:
-                number = int(user['handle_str'][20:]) + 1
-            user_handle = 'user_handle' + str(number)
+    # if len(store['users']) > 0:
+    #     # search if user handle has already been taken 
+    #     for user in store['users']:
+    #         # if handle has been taken  
+    #         if (user['handle_str'])[:20] == user_handle:
+    #             # create new handle using next 
+    #             if len(user['handle_str']) == 20:
+    #                 number = 0
+    #             elif len(user['handle_str']) >= 21:
+    #                 number = int(user['handle_str'][20:]) + 1
+    #             user_handle = 'user_handle' + str(number)
             
+
     # first create user dictionary 
     user = {
         'u_id' : new_id, 
@@ -331,6 +249,7 @@ def auth_register_v2(email, password, name_first, name_last):
     }
     # add user dictionary into the list 'users'
     store['users'].append(user)
+
 
     # new session id 
     session_id = generate_new_session_id()

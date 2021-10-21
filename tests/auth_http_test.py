@@ -3,7 +3,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:8080'
+BASE_URL = 'http://127.0.0.1:3000'
 
 def test_valid_one_user():
     resp = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})

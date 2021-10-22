@@ -84,10 +84,9 @@ def channels_listall_v2(token):
         channel_id(integer) is channels id
         name(string) of the channel.
     """
-
-    # Obtain data already existed
     data = data_store.get()
 
+    # Obatin all channels' information
     chan_data = data['channels']
     
     return {'channels': chan_data}

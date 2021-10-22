@@ -1,6 +1,149 @@
 from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
+import hashlib
+import jwt
+
+# Raise Errors check for channel_addowner_v1
+# ==================================
+# Test Invalid channel_id or not
+# If chaneel_id is valid then return its index
+def check_valid_channel_id(channel_id):
+    data = data_store.get()
+    channels_details_data = data['channels_details']
+    channels_members_element = 0
+    all_channel_id = []
+    while channels_members_element < len(channels_details_data):
+        each_channel_details = channels_details_data[channels_members_element]
+        all_channel_id.append(each_channel_details['channel_id'])
+        channels_members_element += 1
+
+    channel_id_element = 0
+    while channel_id_element < len(all_channel_id):
+        if channel_id == all_channel_id[channel_id_element]:
+            return channel_id_element 
+        channel_id_element += 1
+
+    if channel_id not in all_channel_id:
+        return False
+            
+    pass
+# Finish authorised user test
+# ==================================
+# Test auth_user_id valid or not
+def check_valid_uid(u_id):
+    data = data_store.get()
+    users_data = data['users']
+    users_element = 0
+    users_id = []
+    while users_element < len(users_data):
+        each_dict_users = users_data[users_element]
+        users_id.append(each_dict_users['u_id'])
+        users_element += 1     
+        
+    if u_id not in users_id:
+        return False
+
+    pass
+# Finish valid auth_user_id test
+# ==================================
+# Test user is a member of channel or not
+# All members' details in this channel
+# If user is member of channel then return its index
+def check_member(channel_id_element, auth_user_id):
+    data = data_store.get()
+    members_in_channel = data['channels_details'][channel_id_element]['channel_members']
+    each_member_element = 0
+    each_member_id = []
+    while each_member_element < len(members_in_channel):
+        each_member = members_in_channel[each_member_element]
+        each_member_id.append(each_member['u_id'])
+        each_member_element += 1 
+
+    new_owner_element = 0
+    while new_owner_element < len(each_member_id):
+        if auth_user_id == each_member_id[new_owner_element]:
+            return new_owner_element
+        new_owner_element+= 1
+
+    if auth_user_id not in each_member_id:
+        return False
+
+    pass
+# Finish member users test
+# ==================================
+# Test user is already an owner of channel or not
+# All owner_members' details in this channel
+def check_exist_owner(channel_id_element, u_id):
+    data = data_store.get()
+    owner_members_in_channel = data['channels_details'][channel_id_element]['owner_members']
+    each_owner_element = 0
+    each_owner_id = []
+    while each_owner_element < len(owner_members_in_channel):
+        each_owner = owner_members_in_channel[each_owner_element]
+        each_owner_id.append(each_owner['u_id'])
+        each_owner_element += 1 
+
+    if u_id in each_owner_id:
+        return False
+
+    return each_owner_id
+# Finish owner user test
+# ==================================
+# Check token and its corresponding permissions
+# Decode details will be moved to config.py
+def check_permissions(token, each_owner_id):
+    SECRET = 'COMP1531'
+    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+
+    user_permission = decode_token['permission_id']
+    user_id = decode_token['u_id']
+
+    if user_permission != 1 and user_id not in each_owner_id:
+        return False
+
+    pass
+# Finish permissions check
+# ==================================
+# ==================================
+# Raise Errors check for channel_removewner_v1
+# ==================================
+# ==================================
+# Check user is a owner of channel
+def check_not_owner(channel_id_element, u_id):
+    data = data_store.get()
+    owner_members_in_channel = data['channels_details'][channel_id_element]['owner_members']
+    each_owner_element = 0
+    each_owner_id = []
+    while each_owner_element < len(owner_members_in_channel):
+        each_owner = owner_members_in_channel[each_owner_element]
+        each_owner_id.append(each_owner['u_id'])
+        each_owner_element += 1 
+
+    if u_id not in each_owner_id:
+        return False
+
+    return each_owner_id   
+# Finish owner check
+# ==================================
+# Check if user is the only owner of channel
+def check_only_owner(channel_id_element, u_id):
+    data = data_store.get()
+    owner_members_in_channel = data['channels_details'][channel_id_element]['owner_members']
+    each_owner_element = 0
+    each_owner_id = []
+    while each_owner_element < len(owner_members_in_channel):
+        each_owner = owner_members_in_channel[each_owner_element]
+        each_owner_id.append(each_owner['u_id'])
+        each_owner_element += 1 
+
+    if len(each_owner_id) == 1 and u_id in each_owner_id:
+        return False
+
+    pass
+# Finish only owner check
+# ==================================
+# ==================================
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     """An authorised user who is a member of a channel invites
@@ -80,7 +223,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     return {}
 
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v2(token, channel_id):
     """An authorised user to check a channel’s detailed information which user is a member of it
     
     Arguments:
@@ -110,60 +253,20 @@ def channel_details_v1(auth_user_id, channel_id):
     # Obtain data already existed
     data = data_store.get()
 
-    # Test auth_user_id valid or not
-    users_data = data['users']
-    users_element = 0
-    users_id = []
-    while users_element < len(users_data):
-        each_dict_users = users_data[users_element]
-        users_id.append(each_dict_users['u_id'])
-        users_element += 1     
-        
-    if auth_user_id not in users_id:
-            raise AccessError("Invalid ID")
-    # Finish valid auth_user_id test
-    # ==================================
-    # Test Invalid channel_id or not
-    # Pick out channl_id
-    channels_details_data = data['channels_details']
-    channels_members_element = 0
-    all_channel_id = []
-    while channels_members_element < len(channels_details_data):
-        each_channel_details = channels_details_data[channels_members_element]
-        all_channel_id.append(each_channel_details['channel_id'])
-        channels_members_element += 1
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
 
-    if channel_id not in all_channel_id:
-            raise InputError("Invalid channel_id")
-    # Finish authorised user test
-    # ==================================
-    # Obtain the postition of channel_id for track channel_members within this channel
-    channel_id_element = 0
-    while channel_id_element < len(all_channel_id):
-        if channel_id == all_channel_id[channel_id_element]:
-            break
-        channel_id_element += 1
- 
-    # All members' details in this channel
-    members_in_channel = channels_details_data[channel_id_element]['channel_members']
-    # ==================================
-    # Pick out u_id
-    # Test user is a member of channel or not
-    each_member_element = 0
-    each_member_id = []
-    while each_member_element < len(members_in_channel):
-        each_member = members_in_channel[each_member_element]
-        each_member_id.append(each_member['u_id'])
-        each_member_element += 1 
+    if check_member(channel_id_element, token) == False:
+        raise AccessError("Not an member of channel")
 
-    if auth_user_id not in each_member_id:
-        raise AccessError("No right to access the channel")
-    # Finish member users test
-    # ==================================
+
     # For return
+    channels_details_data = data['channels_details']
+    
     name = channels_details_data[channel_id_element]['channel_name']
-    owner_members = [members_in_channel[0]]
-    all_members = members_in_channel
+    owner_members = channels_details_data[channel_id_element]['owner_members']
+    all_members = channels_details_data[channel_id_element]['channel_members']
     is_public = channels_details_data[channel_id_element]['channel_status']
 
     return {
@@ -338,3 +441,60 @@ def channel_join_v1(auth_user_id, channel_id):
     
     return {}
 
+def channel_addowner_v1(token, channel_id, u_id):
+    data = data_store.get()
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
+
+    if check_valid_uid(u_id) == False:
+        raise InputError("Invalid user ID")
+
+    new_owner_element = check_member(channel_id_element, u_id)
+    if new_owner_element == False:
+        raise InputError("User is not a member of this channel")
+    
+    each_owner_id = check_exist_owner(channel_id_element, u_id)
+    if each_owner_id == False:
+        raise InputError("User already is an owner of channel")
+    
+    if check_permissions(token, each_owner_id) == False:
+        raise AccessError("No permissions to add user")
+    
+    new_owner = data['channels_details'][channel_id_element]['channel_members'][new_owner_element]
+    data['channels_details'][channel_id_element]['owner_members'].append(new_owner)
+
+    return {}
+    
+def channel_removeowner_v1(token, channel_id, u_id):
+    data = data_store.get()
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
+
+    if check_valid_uid(u_id) == False:
+        raise InputError("Invalid user ID")
+
+    each_owner_id = check_not_owner(channel_id_element, u_id)
+    if each_owner_id == False:
+        raise InputError("User is not an owner of channel")
+
+    if check_only_owner(channel_id_element, u_id) == False:
+        raise InputError("User is the only owner of channel")
+
+    if check_permissions(token, each_owner_id) == False:
+        raise AccessError("No permissions to remove user")
+
+    remove_owner_element = 0
+    while remove_owner_element < len(each_owner_id):
+        if each_owner_id[remove_owner_element] == u_id:
+            break
+        remove_owner_element += 1
+
+    # Pick out dict and then delete it
+    remove_owner = data['channels_details'][channel_id_element]['owner_members'][remove_owner_element]
+    data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
+
+    return {}

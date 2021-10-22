@@ -6,7 +6,7 @@ from flask_cors import CORS
 from src.error import InputError, AccessError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions
+from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total
 from src.channels import channels_listall_v2
 from src.dm import dm_details_v1, dm_leave_v1
 from src.dm import check_valid_dmid, check_valid_dm_token
@@ -63,7 +63,11 @@ def invite():
         raise InputError("User is already a member of this channel")
 
     if check_member(channel_id_element, token) == False:
-        raise AccessError("Not an member of channel")
+        raise AccessError("Not an member of channel") 
+        
+    channel_invite_v2(token, channel_id, u_id)
+    
+    return dumps({})
         
 @APP.route("/channel/join/v2", methods=['GET'])
 def join():
@@ -81,6 +85,10 @@ def join():
         raise InputError("Already a member of this channel")
     elif check_channel_owner_permissions(token, each_owner_id) == False:
         raise AccessError("Channel is private, not a global owner")
+        
+    channel_join_v2(token, channel_id)
+    
+    return dumps({})
 
 @APP.route("/channel/messages/v2", methods=['GET'])
 def messages():
@@ -92,7 +100,19 @@ def messages():
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
         raise InputError("Invalid channel_id")
+        
+    is_greater = start_greater_than_total(channel_id, start)
+    if is_greater != False:
+        raise InputError("Exceeded total number of messages in this channel")
+        
+    each_member_id = check_member(channel_id, u_id)
+    if each_member_id  == False:
+        raise InputError("User is not a member of this channel")
     
+    messages = channel_messages_v2(token, channel_id, start)
+    
+    return dumps(messages)
+
 @APP.route('/channel/addowner/v1', methods=['POST'])
 def add_owner():
     request_data = request.get_json()

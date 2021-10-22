@@ -3,6 +3,7 @@ from src.error import InputError, AccessError
 import hashlib
 import jwt
 
+secret = 'COMP1531'
 # Raise Errors check for dm_details_v1
 # ==================================
 # Check Invalid dm_id
@@ -80,9 +81,15 @@ def dm_create_v1(token, u_ids):
     data = data_store.get()
     users = data['users']
     dm = data['dms']
-
     if (check_user(users, u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")
+    
+    user_id = decode_token(token)
+    i = 0
+    while i < len(u_ids):
+        if (user_id == u_ids[i]):
+            u_ids.remove(user_id)
+        i += 1
     
     new_dm_id = len(dm) + 1
 
@@ -102,6 +109,7 @@ def dm_create_v1(token, u_ids):
 
     data['dms'].append(dms_dict)
     data['dms_details'].append(dm_detail_dict)
+    data_store.set(data)
     return {
         'dm_id': new_dm_id
     }
@@ -160,3 +168,9 @@ def get_name(users_dict, id_list):
         i += 1
     names_list = sorted(names_list)
     return names_list
+
+def decode_token(token):
+    global secret
+    result = jwt.decode(token, secret, algorithms=['HS256'])
+    u_id = result['u_id']
+    return u_id

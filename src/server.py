@@ -8,8 +8,8 @@ from src import config
 from src.channel import channel_addowner_v1
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, check_exist_owner, check_permissions
 from src.channel import check_not_owner, check_only_owner, channel_removeowner_v1
-from src.dm import dm_details_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+from src.dm import dm_details_v1, dm_create_v1
+from src.dm import check_valid_dmid, check_valid_dm_token, check_user
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -116,6 +116,16 @@ def dm_details():
 
     dm = dm_details_v1(token, dm_id)
     return dumps(dm)
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create(u_ids):
+    data = request.get_json()
+    token = data['token']
+    user = data['users']
+    if (check_user(user, u_ids) == 0):
+        raise InputError("There is 1 or more invalid ids, please check again")
+    result = dm_create_v1(token, u_ids)
+    return dumps(result)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

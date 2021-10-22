@@ -3,6 +3,7 @@ import requests
 import json
 from src import config
 
+
 BASE_URL = 'http://127.0.0.1:3000'
 
 def test_valid_one_user():

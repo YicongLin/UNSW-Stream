@@ -52,8 +52,11 @@ initial_object = {
         """ {
             'email' : email,
             'password' : password,
-            'u_id' : new_id
-        }
+            'u_id' : new_id,
+            'permissions_id' : permissions_id,
+            'session_id' : session_id 
+        }, 
+        
         """
     ],
 

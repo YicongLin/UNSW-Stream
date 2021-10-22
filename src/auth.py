@@ -3,42 +3,6 @@ from src.error import InputError
 import re 
 from src.token_helpers import generate_new_session_id, generate_JWT, decode_JWT
 
-# def auth_login_v1(email, password): 
-#     """The auth_login_v1 function allows users who have registered with emails to login to their 
-#     account, if they give the correct password.
-
-#     Arguments: 
-#         email (string) - correctly registered user email 
-#         password (string) - password which corresponds to user email 
-
-#     Exceptions:
-#         InputError - Occurs when the email is not registered, or the incorrect password is entered.
-#         AccessError - None 
-
-#     Return Value: 
-#         Returns auth_user_id if the correct password is returned for the email
-#     """
-
-#     store = data_store.get()
-#     # check if email is valid 
-#     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-#     if not (re.fullmatch(regex, email)):
-#         raise InputError("Invalid email")
-
-#     # search if email is in datastore 
-#     for user in store['emailpw']:
-#         # if email is not registered, raise an error, this is not allowed  
-#         for i in range(len(store['users'])):
-#             if store[i]['email'] != email:
-#                 raise InputError('Email is not registered')
-
-#         # if registered, see if password matches the email password & then return auth_user_id    
-#         for i in range(len(store['users'])):
-#             if store[i]['password'] == password:
-#                 return { 'auth_user_id': user['u_id'] }
-#             elif store[i]['password'] != password:
-#                 raise InputError('Incorrect password')
-
 def auth_login_v2(email, password): 
     """The auth_login_v1 function allows users who have registered with emails to login to their 
     account, if they give the correct password.
@@ -55,105 +19,40 @@ def auth_login_v2(email, password):
         Returns auth_user_id if the correct password is returned for the email
     """
 
-    store = data_store.get()
     # check if email is valid 
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if not (re.fullmatch(regex, email)):
         raise InputError("Invalid email")
 
+    store = data_store.get()
+
     # search if email is in datastore 
-    email_password = store['emailpw']
-    for i in range(len(email_password)):
-        if email_password[i]['email'] == email:
+    i = 1
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        if user['email'] == email:
             # if password is not correct, raise error 
-            if email_password[i]['password'] != password:
+            if user['password'] != password:
                 raise InputError('Incorrect password')
-            # if password is correct... 
+            # if password is correct 
             else:    
-                u_id = email_password[i]['u_id']
-                permissions_id = email_password[i]['permissions_id']
+                u_id = user['u_id']
+                permissions_id = store['emailpw'][i]['permissions_id']
         
                 # create session id + store into session id list 
                 new_session_id = generate_new_session_id()
-                email_password[i]['session_id'].append(new_session_id)
+                store['emailpw'][i]['session_id'] = new_session_id
                 # generate token
                 token = generate_JWT(u_id, permissions_id, new_session_id)
-        else:
-            raise InputError("Invalid email")
+                data_store.set(store)
 
-    # element = 0
-    # while element < len(email_password):
-    #     if email_password[element]['email'] == email:
-    #         # if password is not correct, raise error 
-    #         if email_password[element]['password'] != password:
-    #             raise InputError('Incorrect password')
-    #         # if password is correct... 
-    #         else:    
-    #             u_id = email_password[element]['u_id']
-    #             permissions_id = email_password[element]['permissions_id']
-        
-    #             # create session id + store into session id list 
-    #             new_session_id = generate_new_session_id()
-    #             email_password[element]['session_id'].append(new_session_id)
-    #             # generate token
-    #             token = generate_JWT(u_id, permissions_id, new_session_id)
-
-    #     # else there is no matching email 
-    #     else:
-    #         raise InputError("Invalid email")
-            
-    #     element += 1
+                return { 
+                        'token' : token,
+                        'auth_user_id': u_id
+                    }     
+        i += 1      
     
-    data_store.set(store)
-
-    return { 
-            'token' : token,
-            'auth_user_id': u_id
-        }
-
-    # for user in store['emailpw']:
-    #     # if email is not registered, raise an error, this is not allowed 
-    #     found = False 
-    #     for i in range(len(store['users'])):
-    #         if store[i]['email'] == email:
-    #             found = True
-        
-    #     if found == False:
-    #         raise InputError("Invalid email")
-
-    #     # # if registered, see if password matches the email password & then return auth_user_id    
-    #     # for i in range(len(store['users'])):
-    #     #     if store[i]['password'] == password:
-    #     #         return { 'auth_user_id': user['u_id'] }
-    #     #     elif store[i]['password'] != password:
-    #     #         raise InputError('Incorrect password')
-        
-    #     # if registered, input error if password doesn't match 
-    #     for i in range(len(store['users'])):
-    #         if store[i]['email'] == email and store[i]['password'] != password:
-    #             raise InputError('Incorrect password')
-
-    #     # if registered and correct password
-    #     for i in range(len(store['emailpw'])):
-    #         if store[i]['email'] == email and store[i]['password'] == password:
-    #             u_id = store[i]['u_id']
-    #             permissions_id = store[i]['permissions_id']
-        
-    #             # create session id + store into session id list 
-    #             new_session_id = generate_new_session_id()
-    #             store['email_password']['session_id'].append(new_session_id)
-
-
-
-    #     # check if password matches email 
-    #         if store[i]['password'] == password:
-    #             token = generate_JWT(u_id, permissions_id, session_id)
-
-    #         return { 
-    #             'token' : token,
-    #             'auth_user_id': 
-    #         }
-        
+    raise InputError("No matching email")
         
 # HELPER FUNCTIONS 
 def check_valid_email(email):
@@ -176,13 +75,17 @@ def check_password_length(password):
     
     pass
 
-# def check_duplicate_email(email):
-#     store = data_store.get()
-#     for i in range(len(store['users'])):
-#         if store[i]['email'] == email:
-#             return False 
+def check_duplicate_email(email):
+    store = data_store.get()
+
+    i = 1
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        if user['email'] == email:
+            return False 
+        i += 1
     
-#     pass 
+    pass 
 
 def auth_register_v2(email, password, name_first, name_last):
     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
@@ -211,8 +114,8 @@ def auth_register_v2(email, password, name_first, name_last):
     check_name_length(name_last)
     check_password_length(password)
     
-    # if len(store['users']) > 0:
-    #     check_duplicate_email(email)
+    if len(store['users']) > 1:
+        check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
@@ -250,16 +153,15 @@ def auth_register_v2(email, password, name_first, name_last):
     # add user dictionary into the list 'users'
     store['users'].append(user)
 
-
     # new session id 
     session_id = generate_new_session_id()
 
     # check length of user dictionary, first user perm is 1, everyone else is 2
     number_users = len(store['users'])
 
-    if number_users == 0:
+    if number_users == 1:
         permissions_id = 1
-    elif number_users >= 1:
+    elif number_users >= 2:
         permissions_id = 2
 
     # generate token 
@@ -271,10 +173,10 @@ def auth_register_v2(email, password, name_first, name_last):
         'password' : password,
         'u_id' : new_id,
         'permissions_id' : permissions_id,
-        'session_id' : [session_id]
+        'session_id' : session_id
     }
     
-    # add email+password dictionary into the list 'users'
+    # add email+password dictionary into the list 'emailpw'
     store['emailpw'].append(email_password)
 
     data_store.set(store)

@@ -1,13 +1,29 @@
 import re 
-from data_store import data_store
-from error import InputError
+import json
+import jwt
+from src.data_store import data_store
+from src.error import InputError, AccessError
+from src.token_helpers import decode_JWT
 
 def users_all_v1(token):
     """
     Returns a list of all users and their associated details.
     """
     store = data_store.get()
-    return { 'users': store['users'] } 
+
+    # decode the token and check session id 
+    decoded_token = decode_JWT(token)
+
+    found = False 
+    for user in store['emailpw']:
+		# check if session id matches any current session id’s 
+	    if decoded_token['session_id'] == user['session_id']:
+		    found = True 
+
+    if found == False:
+        raise AccessError("Invalid token") 
+    elif found == True: 
+	    return { 'users': store['users'] } 
 
 def user_profile_v1(token, u_id):
     """
@@ -15,6 +31,19 @@ def user_profile_v1(token, u_id):
     """
 
     store = data_store.get()
+    
+    # decode the token and check session id 
+    decoded_token = decode_JWT(token)
+
+    found = False 
+    for user in store['emailpw']:
+		# check if session id matches any current session id’s 
+	    if decoded_token['session_id'] == user['session_id']:
+		    found = True 
+
+    if found == False:
+        raise AccessError("Invalid token")
+
     # search through users to find correct user 
     for user in store['users']:
         if u_id == user['u_id']:
@@ -27,8 +56,6 @@ def user_profile_setname_v1(token, name_first, name_last):
     """
     Update the authorised user's first and last name
     """
-
-    store = data_store.get()
     # input error if length of name_first is not between 1 and 50 characters inclusive
     if len(name_first) < 1 or len(name_first) > 50:
         raise InputError("Invalid first name")
@@ -37,16 +64,31 @@ def user_profile_setname_v1(token, name_first, name_last):
     if len(name_last) < 1 or len(name_last) > 50:
         raise InputError("Invalid last name")
 
-    # search through users to find correct user 
-    for user in store['users']:  
-        # if token == 
-            user['name_first'] = name_first
-            user['name_last'] = name_last
-    
-    # check if user exists 
+    store = data_store.get()
 
-    data_store.set(store)
-    return { }
+    # decode the token and check session id 
+    decoded_token = decode_JWT(token)
+
+    found = False 
+    for user in store['emailpw']:
+		# check if session id matches any current session id’s 
+	    if decoded_token['session_id'] == user['session_id']:
+            found = True 
+            current = decoded_token['u_id']
+
+    if found == False:
+        raise AccessError("Invalid token")
+    
+    for user in store['users']:
+        if user['u_id'] == current:
+            user['name_first'] = name_first
+            user['name_last'] = name_last 
+ 
+        data_store.set(store)
+        return { }
+    
+    # if user does not exist 
+    raise InputError("Invalid user") 
 
 def user_profile_setemail_v1(token, email):
     """
@@ -64,13 +106,28 @@ def user_profile_setemail_v1(token, email):
         if user['email'] == email: 
             raise InputError("Duplicate email")
 
-    # search through users to find correct user 
-    for user in store['users']:  
-        # if token == 
-            user['email'] = email
+    # decode the token and check session id 
+    decoded_token = decode_JWT(token)
 
-    data_store.set(store)
-    return { }
+    found = False 
+    for user in store['emailpw']:
+		# check if session id matches any current session id’s 
+	    if decoded_token['session_id'] == user['session_id']:
+            found = True
+            current = decoded_token['u_id']    
+
+    if found == False:
+        raise AccessError("Invalid token")
+    
+    for user in store['users']:
+        if user['u_id'] == current:
+            user['email'] = email
+ 
+        data_store.set(store)
+        return { }
+    
+    # if user does not exist 
+    raise InputError("Invalid email")
 
 def user_profile_sethandle_v1(token, handle_str):
     store = data_store.get()
@@ -87,12 +144,29 @@ def user_profile_sethandle_v1(token, handle_str):
     # input error if length of handle_str is not between 3 and 20 characters inclusive
     if len(handle_str) < 3 or len(handle_str) > 20:
         raise InputError("Handle must be between 3 and 20 characters inclusive")
-
-    # search through users to find correct user 
-    for user in store['users']:  
-        # if token == 
-            user['handle_str'] = handle_str
     
-    data_store.set(store)
-    return { }
+    # decode the token and check session id 
+    decoded_token = decode_JWT(token)
+
+    found = False 
+    for user in store['emailpw']:
+		# check if session id matches any current session id’s 
+	    if decoded_token['session_id'] == user['session_id']:
+            found = True
+            current = decoded_token['u_id']    
+
+    if found == False:
+        raise AccessError("Invalid token")
+    
+    for user in store['users']:
+        if user['u_id'] == current:
+            user['handle_str'] = handle_str
+ 
+        data_store.set(store)
+        return { }
+    
+    # if handle does not exist 
+    raise InputError("Invalid handle_str")
+
+    
 

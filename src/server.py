@@ -5,7 +5,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email
+from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
 
 def quit_gracefully(*args):
@@ -59,8 +59,8 @@ def auth_register_http():
     if check_password_length(password) == False:
         raise InputError(description="Invalid password length")
     
-    # if check_duplicate_email(email) == False:
-    #     raise InputError(description="Duplicate email")
+    if check_duplicate_email(email) == False:
+        raise InputError(description="Duplicate email")
     
     if check_valid_email(email) == False:
         raise InputError(description="Invalid email")
@@ -78,8 +78,11 @@ def auth_login_http():
 
     if check_valid_email(email) == False:
         raise InputError(description="Invalid email")
+    
+    result = auth_login_v2(email, password)
 
-    return dumps(auth_login_v2(email, password))
+    return dumps(result)
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

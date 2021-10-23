@@ -27,34 +27,72 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [
-        """ {
-            'user_id':1,
+        {
+            'u_id':1,
             'email' : '34@email.com',
             'password' : 'password', 
             'first_name' : 'name_first', 
-            'last_name' : 'name_last'    
+            'last_name' : 'name_last', 
+            'handle_str': 'kevinlin'   
         },
 
         {
-            'user_id': 2
+            'u_id': 2,
+            'handle_str': 'kangliu' 
         },
 
         {
-            'user_id': 3
+            'u_id': 3,
+            'handle_str': 'haydensmith' 
         },
 
         {
-            'user_id': 4
-        } """
+            'u_id': 4,
+            'handle_str': 'harry' 
+        }
     ],
     
     'emailpw' : [
         """ {
             'email' : email,
             'password' : password,
-            'u_id' : new_id
-        }
+            'u_id' : new_id,
+            'permissions_id' : permissions_id,
+            'session_id' : session_id 
+        }, 
+        
         """
+    ],
+
+    'dms_details': [
+     """{
+            'dm_id': 1
+            'name': ["ahandle1", "bhandle2", "chandle3"]
+            'dm_members': [
+                {
+                    'u_id': 1,
+                    'email':'1@email.com', 
+                    'name_first': 'a', 
+                    'name_last':'1last', 
+                    'handle_str': 'ahandle1'
+                },
+                 {
+                    'u_id': 2,
+                    'email':'2@email.com', 
+                    'name_first': 'b', 
+                    'name_last':'2last', 
+                    'handle_str': 'bhandle2'
+                },
+                {
+                    'u_id': 3,
+                    'email':'3@email.com', 
+                    'name_first': 'c', 
+                    'name_last':'3last', 
+                    'handle_str': 'chandle3'
+                },
+            ]
+        },
+        """    
     ],
 
     'channels': [
@@ -77,8 +115,18 @@ initial_object = {
     'channels_details': [     
             #Input channel_id to track
         """ {
+            'channel_name': 'channel1'
             'channel_id': 1, 
             'channel_status': True,
+            'owner_members': [
+                {
+                    'u_id': 1,
+                    'email':'1@email.com', 
+                    'name_first':'1first', 
+                    'name_last':'1last', 
+                    'handle_str': '1str'
+                },
+            ]
             'channel_members': [ 
                 {
                     'u_id': 1,
@@ -131,6 +179,15 @@ initial_object = {
         },
         """                
     ],  
+
+    
+
+    'dms': [
+        # 'dm_id': 1,
+        # 'name':
+    ]
+
+
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
@@ -150,4 +207,3 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
-

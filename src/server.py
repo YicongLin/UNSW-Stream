@@ -43,7 +43,7 @@ def echo():
     if data == 'echo':
    	    raise InputError(description='Cannot echo "echo"')
     return dumps({})
-    
+  
 @APP.route("/channel/invite/v2", methods=['POST'])
 def invite():
     request_data = request.get_json()
@@ -129,7 +129,6 @@ def leave():
         raise AccessError("You are not a member of the channel")
     
     return dumps({})
-
 
 @APP.route('/channel/addowner/v1', methods=['POST'])
 def add_owner():

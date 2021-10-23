@@ -9,8 +9,8 @@ from src.channel import channel_addowner_v1, channel_details_v2
 from src.channels import channels_listall_v2
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, check_exist_owner, check_permissions
 from src.channel import check_not_owner, check_only_owner, channel_removeowner_v1
-from src.dm import dm_details_v1, dm_leave_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+from src.dm import dm_details_v1, dm_leave_v1, dm_remove_v1, is_valid_user
+from src.dm import check_valid_dmid, check_valid_dm_token, decode_token, is_valid_user, is_valid_dm
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -164,6 +164,21 @@ def dm_leave():
 
     return dumps({})
 
+@APP.route('/dm/remove/v1', methods=['DELETE'])
+def dm_remove():
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    user_id = decode_token(token)
+    if (is_valid_user(user_id) == False):
+        raise AccessError(description="Not a valid user")
+
+    if (is_valid_dm(dm_id) == False):
+        raise InputError("Invalid DM ID")
+    
+    dm_remove_v1(token, dm_id)
+
+    return dumps({})
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

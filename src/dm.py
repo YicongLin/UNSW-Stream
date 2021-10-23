@@ -179,15 +179,13 @@ def get_name(users_dict, id_list):
 
 def dm_remove_v1(token, dm_id):
     data = data_store.get()
-    dm_info = data['dms']
-    user_info = data['users']
     dm_detail_info = data['dms_details']
     user_id = decode_token(token)
     
-    if (is_valid_user(user_info, user_id) == False):
+    if (is_valid_user(user_id) == False):
         raise AccessError("Not a valid user")
     
-    if (is_valid_dm(dm_info, dm_id) == False):
+    if (is_valid_dm(dm_id) == False):
         raise InputError("Invalid DM ID")
 
     
@@ -208,7 +206,9 @@ def dm_remove_v1(token, dm_id):
 
     }
 # check if the dm id is valid
-def is_valid_dm(dm, id):
+def is_valid_dm(id):
+    data = data_store.get()
+    dm = data['dms_details']
     i = 0
     while i < len(dm):
         if (dm[i]['dm_id'] == id):
@@ -222,21 +222,13 @@ def decode_token(token):
     u_id = result['u_id']
     return u_id
 
-def is_valid_user(user_dict, u_id):
+def is_valid_user(u_id):
+    data = data_store.get()
+    user_dict = data['users']
     i = 0
-    
     while i < len(user_dict):
         if (u_id == user_dict[i]):
             return True
         i += 0
     return False
 
-def is_creator(dm_detail, dm_id, user_id):
-    i = 0
-    while i < len(dm_detail):
-        if (dm_id == dm_detail[i]['dm_id']):
-            creator = dm_detail[i]['creator']
-            if (user_id == creator['u_id']):
-                return True
-        i += 1
-    return False

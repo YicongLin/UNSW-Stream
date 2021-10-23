@@ -93,7 +93,26 @@ def send_message():
     message_id = request_data['message_id']
 
 @APP.route("dm/messages/v1", methods = ['GET'])
-
+    equest_data = request.get_json()
+    token = request_data['token']
+    dm_id = request_data['dm_id']
+    u_id = request_data['u_id']
+    
+    dm_id_element = check_valid_dm_id(dm_id)
+    if dm_id_element == False:
+        raise InputError("Invalid dm_id")
+        
+    is_greater = start_greater_than_total(dm_id, start)
+    if is_greater != False:
+        raise InputError("Exceeded total number of messages in this dm")
+        
+    each_member_id = check_member(dm_id, u_id)
+    if each_member_id  == False:
+        raise InputError("User is not a member of this dm")
+    
+    messages = dm_messages_v1(token, dm_id, start)
+    
+    return dumps(messages)
 
 
 

@@ -3,10 +3,68 @@ from src.error import InputError, AccessError
 import hashlib
 import jwt
 
-# dm messages function
+# helper functions ==============================================================================
+
+# Function to check if dm_id is valid 
+def check_valid_dm_id(dm_id):
+    data = data_store.get()
+
+    dms_details_data = data['dms_details']
+    dms_members_element = 0
+    all_dm_id = []
+    while dms_members_element < len(dms_details_data):
+        all_dms_id.append(dms_details_data[dms_members_element]['dm_id'])
+        dms_members_element += 1
+
+    dms_id_element = 0
+    while dms_id_element < len(all_dms_id):
+        if dm_id == all_dms_id[dms_id_element]:
+            return dm_ids_element 
+        dms_id_element += 1
+
+    if dm_id not in all_dms_id:
+        return False
+            
+    pass
+
+# Function to check if user is a member of the dm 
+def check_member_dm(dm_id_element, u_id):
+    data = data_store.get()
+
+    members_in_dm = data['dms_details'][dm_id_element]['dm_members']
+    each_member_element = 0
+    each_member_id = []
+    while each_member_element < len(members_in_dm):
+        each_member_id.append(members_in_dm[each_member_element]['u_id'])
+        each_member_element += 1 
+
+    if u_id not in each_member_id:
+        return False
+
+    return each_member_id
+
+# Function to check whether the start of messages is greater than 
+# the total number of messages or not
+def start_greater_than_total(dm_id, start):
+    data = data_store.get()
+    dms = data["dms_details"]
+    
+    # Finding the specific dm
+    count = 0
+    for i in range(len(dms)):
+        if dm_id == dms[i]["dm_id"]:
+            break
+        count += 1
+
+    x = dms[count]
+    messages = x["messages"]
+    if start <= len(messages):
+        return False
+
+# dm messages function ==========================================================================
 def dm_messages_v1(token, dm_id, start):
     """The function dm_messages_v1 returns up to 50 messages between the two indexes “start”
-    and “start + 50 in a chandmnel of which the authorised user is a member of.”
+    and “start + 50 in a dm of which the authorised user is a member of.”
     
     Arguments:
         token (string) - ID of an authorised user.
@@ -25,10 +83,9 @@ def dm_messages_v1(token, dm_id, start):
         Returns 'start + 50' on the condition that total messages is greater than 50.
         Returns 'end' on all conditions.
     """
-
-    # Accessing the data store
+ # Accessing the data store
     data = data_store.get()
-    dms = data["dm_details"]
+    dms = data["dms_details"]
 
     # create the dictionary messages 
     messages = [ {
@@ -38,7 +95,7 @@ def dm_messages_v1(token, dm_id, start):
         'time_created': '',
     } ]
     
-    # for each dm in dm details 
+    # for each dm in dms details 
     for i in range(len(dms)):
         # add messages dictionary into it 
         dms[i]['messages'] = messages
@@ -90,9 +147,9 @@ def dm_messages_v1(token, dm_id, start):
     # is not a member of the valid dm
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    token = decode_token['u_id']
+    auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(dm_id, token)
+    already_a_member = check_member_dm(dm_id, auth_user_id)
     if already_a_member == False:
         raise AccessError("You are not a member of the dm")  
 
@@ -113,3 +170,7 @@ def dm_messages_v1(token, dm_id, start):
             'start': start,
             'end': end 
         }
+    
+
+
+

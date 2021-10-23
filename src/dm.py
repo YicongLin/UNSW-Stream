@@ -79,23 +79,22 @@ def dm_details_v1(token, dm_id):
 
 def dm_create_v1(token, u_ids):
     data = data_store.get()
-    users = data['users']
-    dm = data['dms']
+    dm = data['dms_details']
     user_id = decode_token(token)
 
-    if (is_valid_user(users, user_id) == False):
+    if (is_valid_user(user_id) == False):
         raise AccessError("Invalid user")
     
-    if (check_user(users, u_ids) == 0):
+    if (check_user(u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")
     
     
-    creator_detail = get_member_detail(users, [user_id])
+    creator_detail = get_member_detail([user_id])
     
     new_dm_id = len(dm) + 1
     u_ids.append(user_id)
-    handle_str = get_name(users, u_ids)
-    member_detail = get_member_detail(users, u_ids)
+    handle_str = get_name(u_ids)
+    member_detail = get_member_detail(u_ids)
 
     dm_detail_dict = {
         'dm_id': new_dm_id,
@@ -112,25 +111,13 @@ def dm_create_v1(token, u_ids):
     }
 
 # a function to check if the user in u_ids is a valid user
-def check_user(auth_users, u_ids):
-    """ i = 0
-    
-    while i < len(u_ids):
-        j = 0
-        flag = 0
-        while j < len(auth_users):
-            if (u_ids[i] == auth_users[j]['u_id']):
-                flag == 1
-            j += 1
-        if (flag == 0):
-            return 0
-        i += 1
-    
-    return 1 """
+def check_user(u_ids):
+    data = data_store.get()
+    users_dict = data['users']
     user_id_list = []
     a = 0
-    while a < len(auth_users):
-        user_id_list.append(auth_users[a]['u_id'])
+    while a < len(users_dict):
+        user_id_list.append(users_dict[a]['u_id'])
         a += 1
     b = 0
     while b < len(u_ids):
@@ -139,9 +126,10 @@ def check_user(auth_users, u_ids):
         b += 1
     return 1 
 # get the members details that on the list passed in
-def get_member_detail(users_dict, id_list):
+def get_member_detail(id_list):
+    data = data_store.get()
+    users_dict = data['users']
     user_detail_list = []
-    
     i = 0
     while i < len(id_list):
         j = 0
@@ -153,7 +141,9 @@ def get_member_detail(users_dict, id_list):
     return user_detail_list
 
 # get every users'handle_str and append them in a list
-def get_name(users_dict, id_list):
+def get_name(id_list):
+    data = data_store.get()
+    users_dict = data['users']
     names_list = []
     i = 0
     while i < len(id_list):
@@ -172,9 +162,10 @@ def decode_token(token):
     u_id = result['u_id']
     return u_id
 
-def is_valid_user(user_dict, u_id):
+def is_valid_user(u_id):
+    data = data_store.get()
+    user_dict = data['users']
     i = 0
-    
     while i < len(user_dict):
         if (u_id == user_dict[i]):
             return True

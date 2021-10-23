@@ -237,3 +237,4 @@ def auth_login_http():
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
+

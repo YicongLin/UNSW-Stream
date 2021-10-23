@@ -108,7 +108,7 @@ def check_valid_token(token):
 
     decoded_token = decode_JWT(token)
     auth_user_id = decode_JWT(token)["u_id"]
-    user_permission = decode_JWT(token)["u_id"]
+    user_session = decode_JWT(token)["session_id"]
 
     user_element = 0
     while user_element < len(data['emailpw']):
@@ -116,8 +116,8 @@ def check_valid_token(token):
             break
         user_element += 1
     
-    permissions_id = data['emailpw'][user_element]['permissions_id']
-    if user_permission in permissions_id:
+    session_id = data['emailpw'][user_element]['session_id']
+    if user_permission in session_id:
         return True
 
     return False

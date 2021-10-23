@@ -107,8 +107,8 @@ def check_valid_token(token):
     data = data_store.get()
 
     decoded_token = decode_JWT(token)
-    auth_user_id = decode_JWT(token)["u_id"]
-    user_session = decode_JWT(token)["session_id"]
+    auth_user_id = decoded_token["u_id"]
+    user_session = decoded_token["session_id"]
 
     user_element = 0
     while user_element < len(data['emailpw']):
@@ -116,8 +116,9 @@ def check_valid_token(token):
             break
         user_element += 1
     
-    session_id = data['emailpw'][user_element]['session_id']
-    if user_permission in session_id:
+    session_list = data['emailpw'][user_element]['session_id']
+
+    if user_session in session_list:
         return True
 
     return False

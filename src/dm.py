@@ -189,17 +189,17 @@ def dm_remove_v1(token, dm_id):
     
     if (is_valid_dm(dm_info, dm_id) == False):
         raise InputError("Invalid DM ID")
-    
-    i = 0
-    while i < len(dm_info):
-        if (dm_info[i]['dm_id'] == dm_id):
-            data['dms'].remove(dm_info[i])
-        i += 1
 
+    
     j = 0
     while j < len(dm_detail_info):
         if (dm_detail_info[j]['dm_id'] == dm_id):
-            data['dms_details'].remove(dm_detail_info[j])
+            # check if the user is the creator of this dm
+            creator = dm_detail_info[j]['creator']
+            if (user_id == creator['u_id']):
+                data['dms_details'].remove(dm_detail_info[j])
+            else:
+                break
         j += 1
     
 
@@ -229,4 +229,14 @@ def is_valid_user(user_dict, u_id):
         if (u_id == user_dict[i]):
             return True
         i += 0
+    return False
+
+def is_creator(dm_detail, dm_id, user_id):
+    i = 0
+    while i < len(dm_detail):
+        if (dm_id == dm_detail[i]['dm_id']):
+            creator = dm_detail[i]['creator']
+            if (user_id == creator['u_id']):
+                return True
+        i += 1
     return False

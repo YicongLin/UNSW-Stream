@@ -183,11 +183,10 @@ def channel_invite_v2(token, channel_id, u_id):
     # in the created list
     is_valid_uid = check_valid_uid(uid)
     if is_valid_uid == False:
-    if u_id not in valid_user_ids:
         raise AccessError("Invalid user")
 
     # Raising an error if u_id is already a member of the channel
-    already_a_member = check_member(channel_id, u_id):
+    already_a_member = check_member(channel_id, u_id)
     if already_a_member != False:
         raise InputError("Already in channel")
   
@@ -197,8 +196,8 @@ def channel_invite_v2(token, channel_id, u_id):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(channel_id, auth_user_id):
-    if already_a_member == False
+    already_a_member = check_member(channel_id, auth_user_id)
+    if already_a_member == False:
         raise AccessError("You are not a member of the channel")
 
     # Otherwise, add the user to the channel
@@ -340,8 +339,8 @@ def channel_messages_v2(token, channel_id, start):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(channel_id, auth_user_id):
-    if already_a_member == False
+    already_a_member = check_member(channel_id, auth_user_id)
+    if already_a_member == False:
         raise AccessError("You are not a member of the channel")  
 
     # Append all messages in a list
@@ -363,7 +362,7 @@ def channel_messages_v2(token, channel_id, start):
         }
     
 
-def channel_join_v1(token, channel_id):
+def channel_join_v2(token, channel_id):
     """Adding an authorised user to the given valid channel with channel_id
    
     Arguments:
@@ -383,8 +382,7 @@ def channel_join_v1(token, channel_id):
     # Accessing contents of the data store
     data = data_store.get()
    
-    # Raising an error if the given channel ID is not 
-    # a valid channel in the created list
+    # Raising an error if the given channel ID is not a valid channel 
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
         raise InputError("Invalid channel_id")
@@ -395,7 +393,7 @@ def channel_join_v1(token, channel_id):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(channel_id, u_id):
+    already_a_member = check_member(channel_id, u_id)
     if already_a_member != False:
         raise InputError("Already in channel")
     
@@ -505,3 +503,37 @@ def channel_removeowner_v1(token, channel_id, u_id):
     data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
 
     return {}
+
+def channel_leave_v1(token, channel_id):
+    data = data_store.get() 
+    channels = data["channels_details"]
+    
+    SECRET = 'COMP1531'
+    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decode_token['u_id']
+    
+    # Raising an error if the given channel ID is not a valid channel
+    is_valid_channel = check_valid_channel_id(channel_id)
+    if is_valid_channel == False:
+        raise InputError("Invalid channel_id")
+        
+    # Raising an error if the authorised user is not 
+    # a member of the valid channel
+    already_a_member = check_member(channel_id, auth_user_id)
+    if already_a_member == False:
+        raise AccessError("You are not a member of the channel")  
+    
+    # Otherwise, remove the user as a member of the channel
+    for i in range(len(channels)):
+        if channels[i]["channel_id"] == channel_id:
+            channel_members = channels[i]["channel_members"]
+            for j in range(len(channel_members)):
+                if channel_members[j]["u_id"] == auth_user_id: 
+                    channel_members.remove(channel_members[j]["u_id"])
+
+    return {}
+                
+    
+        
+    
+    

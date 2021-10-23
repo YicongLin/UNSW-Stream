@@ -116,7 +116,7 @@ def channels_listall_v1(auth_user_id):
     
     return {'channels': out_channels}
 
-def channels_create_v1(auth_user_id, name, is_public):
+def channels_create_v2(auth_user_id, name, is_public):
     """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
 
     Arguments:

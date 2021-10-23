@@ -37,7 +37,7 @@ def auth_login_v1(email, password):
             elif user['password'] != password:
                 raise InputError('Incorrect password')
         
-def auth_register_v1(email, password, name_first, name_last):
+def auth_register_v2(email, password, name_first, name_last):
     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
     user's last name and registers an account, as well as user handle for the user.
 

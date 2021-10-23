@@ -44,7 +44,7 @@ def echo():
    	    raise InputError(description='Cannot echo "echo"')
     return dumps({})
     
-@APP.route("/channel/invite/v2", methods=['GET'])
+@APP.route("/channel/invite/v2", methods=['POST'])
 def invite():
     request_data = request.get_json()
     token = request_data['token']
@@ -69,7 +69,7 @@ def invite():
     
     return dumps({})
         
-@APP.route("/channel/join/v2", methods=['GET'])
+@APP.route("/channel/join/v2", methods=['POST'])
 def join():
     request_data = request.get_json()
     token = request_data['token']
@@ -112,6 +112,24 @@ def messages():
     messages = channel_messages_v2(token, channel_id, start)
     
     return dumps(messages)
+
+@APP.route("/channel/leave/v1", methods=['POST'])
+def leave():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    u_id = request_data['u_id']
+    
+    is_valid_channel = check_valid_channel_id(channel_id)
+    if is_valid_channel == False:
+        raise InputError("Invalid channel_id")
+    
+    already_a_member = check_member(channel_id, auth_user_id):
+    if already_a_member == False
+        raise AccessError("You are not a member of the channel")
+    
+    return dumps({})
+
 
 @APP.route('/channel/addowner/v1', methods=['POST'])
 def add_owner():

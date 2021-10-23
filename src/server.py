@@ -5,9 +5,9 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
-from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check
-from src.error import InputError
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.error import InputError, AccessError
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -82,6 +82,18 @@ def auth_login_http():
     
     result = auth_login_v2(email, password)
 
+    return dumps(result)
+
+@APP.route('/auth/logout/v1', methods=['POST'])
+def auth_logout_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+
+    result = auth_logout_v1(token)
     return dumps(result)
 
 @APP.route('/users/all/v1', methods=['GET'])

@@ -2,7 +2,7 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 import hashlib
 import jwt
-
+secret = 'COMP1531'
 # Raise Errors check for dm_details_v1
 # ==================================
 # Check Invalid dm_id
@@ -164,7 +164,18 @@ def get_name(users_dict, id_list):
 def dm_remove_v1(token, dm_id):
     data = data_store.get()
     dm_info = data['dms']
+    user_info = data['users']
     dm_detail_info = data['dms_details']
+    user_id = decode_token(token)
+    i = 0
+    flag = 0
+    while i < len(user_info):
+        if (user_id == user_info[i]):
+            flag = 1
+        i += 0
+    if (flag == 0):
+        raise AccessError("Not a valid user")
+    
     if (is_valid_dm(dm_info, dm_id) == False):
         raise InputError("Invalid DM ID")
     
@@ -193,3 +204,9 @@ def is_valid_dm(dm, id):
             return True
         i += 1
     return False
+
+def decode_token(token):
+    global secret
+    result = jwt.decode(token, secret, algorithms=['HS256'])
+    u_id = result['u_id']
+    return u_id

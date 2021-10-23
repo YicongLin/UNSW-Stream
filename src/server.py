@@ -71,29 +71,55 @@ def send_message():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    channel_id_element = check_valid_channel_id(channel_id)
+    channel_id_element = valid_channel_id(channel_id)
     if channel_id_element == False:
         raise InputError("Invalid channel_id")
     
-    each_member_id = check_member(channel_id, u_id)
+    each_member_id = channel_member(token)
     if each_member_id  == False:
         raise InputError("User is not a member of this channel")
 
-
 @APP.route("message/edit/v1", methods = ['PUT'])
+def edit_message():  
     request_data = request.get_json()
     token = request_data['token']
     message_id = request_data['message_id']
-    u_id = request_data['u_id']
+    
+    message_length_element = valid_message_length(message)
+    if message_length_element == False:
+        raise InputError("Invalid message length")
 
+    message_id_element = valid_message_id(message_id)
+    if message_id_element == False:
+        raise InputError("Invalid message_id")
+    
+    edit_condition_element = conditional_edit(token, message_id)
+    if edit_condition_element == False:
+        raise AccessError("Do not have access to edit message")
+    return({dumps})
 
 @APP.route("message/remove/v1", methods = ['DELETE'])
+def remove_message(): 
     request_data = request.get_json()
     token = request_data['token']
     message_id = request_data['message_id']
+    
+    message_length_element = valid_message_length(message)
+    if message_length_element == False:
+        raise InputError("Invalid message length")
+
+    message_id_element = valid_message_id(message_id)
+    if message_id_element == False:
+        raise InputError("Invalid message_id")
+    
+    edit_condition_element = conditional_edit(token, message_id)
+    if edit_condition_element == False:
+        raise AccessError("Do not have access to edit message")
+    return({dumps})
 
 @APP.route("dm/messages/v1", methods = ['GET'])
-    equest_data = request.get_json()
+def dm_message()
+    request_data = request.get_json()
     token = request_data['token']
     dm_id = request_data['dm_id']
     u_id = request_data['u_id']
@@ -106,17 +132,13 @@ def send_message():
     if is_greater != False:
         raise InputError("Exceeded total number of messages in this dm")
         
-    each_member_id = check_member(dm_id, u_id)
+    each_member_id = check_member_dm(dm_id, u_id)
     if each_member_id  == False:
         raise InputError("User is not a member of this dm")
     
     messages = dm_messages_v1(token, dm_id, start)
     
     return dumps(messages)
-
-
-
-
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

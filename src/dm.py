@@ -183,13 +183,8 @@ def dm_remove_v1(token, dm_id):
     user_info = data['users']
     dm_detail_info = data['dms_details']
     user_id = decode_token(token)
-    i = 0
-    flag = 0
-    while i < len(user_info):
-        if (user_id == user_info[i]):
-            flag = 1
-        i += 0
-    if (flag == 0):
+    
+    if (is_valid_user(user_info, user_id) == False):
         raise AccessError("Not a valid user")
     
     if (is_valid_dm(dm_info, dm_id) == False):
@@ -226,3 +221,12 @@ def decode_token(token):
     result = jwt.decode(token, secret, algorithms=['HS256'])
     u_id = result['u_id']
     return u_id
+
+def is_valid_user(user_dict, u_id):
+    i = 0
+    
+    while i < len(user_dict):
+        if (u_id == user_dict[i]):
+            return True
+        i += 0
+    return False

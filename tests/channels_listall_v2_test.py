@@ -9,45 +9,71 @@ BASE_URL = 'http://127.0.0.1:8080'
 # Test listall function
 # ==================================
 
-# (1) register users
-# (2) login user_one to create a public channel
-# (3) logout user_one
-
-# (4) login user_two to create a privite channel
-# (5) logout user_two
-
-# (6) login user_three
-# (7) Implement listall function -----> successful implement
-
-
 def test_listall():
-    #(1)
-    requests.delete(f'{BASE_URL}/clear/v1')
+    # Clear
+    # requests.delete(f'{BASE_URL}/clear/v1')
+
+    # Register three users
     # user_one ----> public channel creator
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "Firstname": "Test", "Lastname": "Person"})
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "Firstname": "Test", "Lastname": "Person"})
+    response_data = response.json()
+    token_1 = response_data['token']
+
     # user_two ----> private channel creator
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "Firstname": "Testtwo", "Lastname": "Persontwo"}) 
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "Firstname": "Testtwo", "Lastname": "Persontwo"})
+    response_data = response.json()
+    token_2 = response_data['token']
+
     # user_three ----> implement listall function
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "Firstname": "Testthr", "Lastname": "Personthr"})
-
-    #(2)
-    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": "token_two", "name": "channel1", "is_public": True})
-
-    #(3)
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": "token_one"})
-
-    #(4)
-    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": "token_two", "name": "channel2", "is_public": False})
-
-    #(5)
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": "token_two"})
-
-    #(6)
-    response = requests.get(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
-    response = requests.get(f'{BASE_URL}/channels/listall/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
     response_data = response.json()
-    assert (response.status_code == 400)
-    assert (response_data == {"channels": [ {'channel_id': 1, 'name': 'channel1'}, {'channel_id': 2, 'name': 'channel2'} ] })
+    token_3 = response_data['token'] 
 
+    # Login user_one to create a public channel
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+    response_data = response.json()
+    token_1 = response_data['token']
+
+    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_1 , "name": "channel1", "is_public": True})
+    response_data = response.json()
+
+    # Logout user_one
+    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_1})
+
+    # ===================================
+    # Switch user
+    # ===================================  
+
+    # Login user_two to create a privite channel
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+    response_data = response.json()
+    token_2 = response_data['token']
+
+    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
+    response_data = response.json()
+
+    # Logout user_two
+    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_2})
+
+    # ===================================
+    # Switch user
+    # ===================================  
+
+    # Login user_three
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
+    response_data = response.json()
+    token_3 = response_data['token']
+
+    # User with invalid token to implement function (AccessError 403)
+    response = requests.get(f'{BASE_URL}/channels/listall/v2', json={"token": 1231213})
+    response_data = response.json()
+    assert (response.status_code == 403)
+
+    # Implement listall function -----> successful implement
+    response = requests.get(f'{BASE_URL}/channels/listall/v2', json={"token": token_3})
+    response_data = response.json()
+    assert (response.status_code == 200)
+    assert (response_data == {})
+
+    # Clear
+    # requests.delete(f'{BASE_URL}/clear/v1')

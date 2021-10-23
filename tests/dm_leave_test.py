@@ -24,63 +24,92 @@ BASE_URL = 'http://127.0.0.1:8080'
 # (11) user_one leave dm -----> successful implement ()
 
 
-# ==================================
-# Specific token, dm_id will be replaced by var for next version
-# Pytest following tests require relevant routes
-# ==================================
+def test_dm_leave():
+    # Clear
+    # requests.delete(f'{BASE_URL}/clear/v1')
 
-# def test_dm_leave():
-#     #(1)
-#     requests.delete(f'{BASE_URL}/clear/v1')
-#     # user_one ----> dm creator
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "Firstname": "Test", "Lastname": "Person"})
-#     # user_two ----> dm member
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "Firstname": "Testtwo", "Lastname": "Persontwo"}) 
-#     # user_three ----> not member
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "Firstname": "Testthr", "Lastname": "Personthr"})
+    # Register three users
+    # user_one ----> dm creator
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "Firstname": "Test", "Lastname": "Person"})
+    response_data = response.json()
+    token_1 = response_data['token']
 
-#     #(2)
-#     requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
-#     requests.post(f'{BASE_URL}/dm/create/v1', json={"token": "token", "u_ids": [1, 2]})
+    # user_two ----> dm member
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "Firstname": "Testtwo", "Lastname": "Persontwo"})
+    response_data = response.json()
+    token_2 = response_data['token']
 
-#     #(3)
-#     response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "token", "dm_id": 123})
-#     assert (response.status_code == 400)
+    # user_three ----> not member
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "Firstname": "Testthr", "Lastname": "Personthr"})
+    response_data = response.json()
+    token_3 = response_data['token'] 
 
-#     #(4)
-#     response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "token", "dm_id": 1})
-#     assert (response.status_code == 200)
+    # Login user_one to create dm
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+    response_data = response.json()
+    token_1 = response_data['token']
 
-#     #(5)
-#     requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": "token_one"})
+    requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [1, 2]})
+    response_data = response.json()
+    dm_id = response_data['dm_id']
 
-#     #(6)
-#     requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
+    # User with invalid token to implement function (AccessError 403)
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "asdfgh", "dm_id": dm_id})
+    assert (response.status_code == 403)
 
-#     #(7)
-#     response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "tokenthree", "dm_id": 1})
-#     assert (response.status_code == 403)
+    # Implement dm_leave with invalid dm_id (InputError 400)
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
+    assert (response.status_code == 400)
 
-#     #(8)
-#     requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": "token_three"})
+    # User with invalid token and invalid dm_id to implement function (AccessError 403)
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "asdfgh", "dm_id": 123123})
+    assert (response.status_code == 403)
 
-#     #(9)
-#     requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+    # Check dm_details(user_one and user_two)
+    response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_1, "dm_id": dm_id})
+    response_data = response.json()
+    assert (response_data == {   })
 
-#     #(10)
-#     response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": "token_two", "dm_id": 123})
-#     response_data = response.json()
-#     assert (response.status_code == 200)
-#     assert (response_data['name'] == ["bhandle"])
-#     assert (response_data['dm_members'] == 
-#                  {
-#                     'u_id': 2,
-#                     'email':'2@email.com', 
-#                     'name_first': 'b', 
-#                     'name_last':'2last', 
-#                     'handle_str': 'bhandle2'
-#                 },)
+    # user_one leave dm -----> successful implement (creator leave)
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
+    assert (response.status_code == 200)
 
-#     #(11)
-#     response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "token_two", "dm_id": 1})
-#     assert (response.status_code == 200)
+    # Logout user_one
+    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_1})
+
+    # ===================================
+    # Switch user
+    # ===================================
+    
+    # Login user_three
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
+    response_data = response.json()
+    token_3 = response_data['token']
+
+    # Implement dm_leave (not member) (AccessError 403)
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_3, "dm_id": dm_id})
+    assert (response.status_code == 403)
+
+    # logout user_three
+    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_3})
+
+    # ===================================
+    # Switch user
+    # ===================================  
+
+    # login user_two
+    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+    response_data = response.json()
+    token_2 = response_data['token']
+ 
+    # Check dm_details(user_two)
+    response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_2, "dm_id": dm_id})
+    response_data = response.json()
+    assert (response_data == {   })
+
+    # user_one leave dm -----> successful implement ()
+    response = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_2, "dm_id": dm_id})
+    assert (response.status_code == 200)
+
+    # Clear
+    # requests.delete(f'{BASE_URL}/clear/v1')

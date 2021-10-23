@@ -3,6 +3,7 @@ from src.error import InputError, AccessError
 import hashlib
 import jwt
 
+secret = 'COMP1531'
 # Raise Errors check for dm_details_v1
 # ==================================
 # Check Invalid dm_id
@@ -193,3 +194,44 @@ def is_valid_dm(dm, id):
             return True
         i += 1
     return False
+
+def decode_token(token):
+    global secret
+    result = jwt.decode(token, secret, algorithms=['HS256'])
+    u_id = result['u_id']
+    return u_id
+
+def is_valid_user(user_dict, u_id):
+    i = 0
+    
+    while i < len(user_dict):
+        if (u_id == user_dict[i]):
+            return True
+        i += 0
+    return False
+
+def dm_list_v1(token):
+    data = data_store.get()
+    dm_detail = data['dms_details']
+    user_info = data['users']
+    user_id = decode_token(token)
+
+    if (is_valid_user(user_info, user_id) == False):
+        raise AccessError("Invalid user")
+
+    dm_list = []
+    i = 0
+    while i < len(dm_detail):
+        dm_member = dm_detail[i]['dm_members']
+        j = 0
+        while j < len(dm_member):
+            if (user_id == dm_member[j]['u_id']):
+                dm_list.append({
+                    'dm_id': dm_detail[i]['dm_id'],
+                    'name': dm_detail[i]['name']
+                })
+            j += 1
+        i += 1
+    return {
+        'dms': dm_list
+    }

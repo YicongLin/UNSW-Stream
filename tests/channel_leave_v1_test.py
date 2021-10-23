@@ -3,13 +3,13 @@ from src.error import InputError, AccessError
 from src.channel import channel_join_v2, channel_leave_v1
 from src.channels import channels_create_v2
 from src.auth import auth_register_v2
-from src.other import clear_v2
+from src.other import clear_v1
 
 # Creating valid channel and user IDs, 
 # with one public channel and one private channel
 @pytest.fixture
 def valid_3_users():
-    clear_v2()
+    clear_v1()
     token_1 = auth_register_v1("abc@abc.com", "password", "abc", "def")["token"]
     token_2 = auth_register_v1("zyx@wvu.com", "password", "zyx", "wvu")["token"]
     token_3 = auth_register_v1("jkl@wvu.com", "password", "jkl", "mno")["token"]

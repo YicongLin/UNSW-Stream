@@ -5,13 +5,14 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError, AccessError
 from src import config
-from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
+from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, check_valid_token
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions
 from src.channels import channels_listall_v2
 from src.dm import dm_details_v1, dm_leave_v1
 from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
+from src.token_helpers import decode_JWT
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -53,24 +54,27 @@ def add_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
+
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError("Invalid channel_id")
+        raise InputError(description="Invalid channel_id")
 
     if check_valid_uid(u_id) == False:
-        raise InputError("Invalid user ID")
+        raise InputError(description="Invalid user ID")
 
     each_member_id = check_member(channel_id_element, u_id)
     if each_member_id  == False:
-        raise InputError("User is not a member of this channel")
+        raise InputError(description="User is not a member of this channel")
     
     each_owner_id = channel_owners_ids(channel_id_element)
 
     if u_id in each_owner_id:
-        raise InputError("User already is an owner of channel")
+        raise InputError(description="User already is an owner of channel")
     
     if check_channel_owner_permissions(token, each_owner_id) == False:
-        raise AccessError("No permissions to add user")
+        raise AccessError(description="No permissions to add user")
 
     channel_addowner_v1(token, channel_id, u_id)
 
@@ -83,6 +87,9 @@ def remove_owner():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
+
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
@@ -108,16 +115,23 @@ def remove_owner():
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
-    request_data = request.get_json()
-    token = request_data['token']
-    channel_id = request_data['channel_id']
+
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError("Invalid channel_id")
+        raise InputError(description="Invalid channel_id")
 
     if check_member(channel_id_element, token) == False:
-        raise AccessError("Not an member of channel")
+        raise AccessError(description="Not an member of channel")
+
+    auth_user_id = decode_JWT(token)['u_id']
+    if check_member(channel_id_element, auth_user_id) == False:
+        raise AccessError("Authorised user is not an member of channel")
 
     channel_details = channel_details_v2(token, channel_id)
 
@@ -125,8 +139,10 @@ def channel_details():
 
 @APP.route('/channels/listall/v2', methods=['GET'])
 def channels_listall():
-    request_data = request.get_json()
-    token = request_data['token']
+    token = request.args.get('token')
+
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     all_channels = channels_listall_v2(token)
 
@@ -135,9 +151,11 @@ def channels_listall():
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
-    request_data = request.get_json()
-    token = request_data['token']
-    dm_id = request_data['dm_id']
+    token = request.args.get('token')
+    dm_id = request.args.get('dm_id')
+
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     dm_id_element = check_valid_dmid(dm_id)
     if dm_id_element == False:
@@ -156,6 +174,9 @@ def dm_leave():
     request_data = request.get_json()
     token = request_data['token']
     dm_id = request_data['dm_id']
+
+    if check_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     dm_id_element = check_valid_dmid(dm_id)
     if dm_id_element == False:

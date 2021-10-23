@@ -268,7 +268,7 @@ def channel_details_v2(token, channel_id):
     # but the authorised user is not a member of channel
     auth_user_id = decode_JWT(token)['u_id']
     if check_member(channel_id_element, auth_user_id) == False:
-        raise AccessError("Not is not authorised user an member of channel")
+        raise AccessError("Authorised user is not an member of channel")
 
     # For return
     channels_details_data = data['channels_details']

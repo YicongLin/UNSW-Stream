@@ -85,11 +85,7 @@ def dm_create_v1(token, u_ids):
         raise InputError("There is 1 or more invalid ids, please check again")
     
     user_id = decode_token(token)
-    i = 0
-    while i < len(u_ids):
-        if (user_id == u_ids[i]):
-            u_ids.remove(user_id)
-        i += 1
+    creator_detail = get_member_detail(users, [user_id])
     
     new_dm_id = len(dm) + 1
 
@@ -99,7 +95,8 @@ def dm_create_v1(token, u_ids):
     dm_detail_dict = {
         'dm_id': new_dm_id,
         'name': handle_str,
-        'members': member_detail
+        'members': member_detail,
+        'creator': creator_detail
     }
 
     dms_dict = {

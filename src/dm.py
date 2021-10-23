@@ -81,10 +81,15 @@ def dm_create_v1(token, u_ids):
     data = data_store.get()
     users = data['users']
     dm = data['dms']
+    user_id = decode_token(token)
+
+    if (is_valid_user(users, user_id) == False):
+        raise AccessError("Invalid user")
+    
     if (check_user(users, u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")
     
-    user_id = decode_token(token)
+    
     creator_detail = get_member_detail(users, [user_id])
     
     new_dm_id = len(dm) + 1
@@ -171,3 +176,12 @@ def decode_token(token):
     result = jwt.decode(token, secret, algorithms=['HS256'])
     u_id = result['u_id']
     return u_id
+
+def is_valid_user(user_dict, u_id):
+    i = 0
+    
+    while i < len(user_dict):
+        if (u_id == user_dict[i]):
+            return True
+        i += 0
+    return False

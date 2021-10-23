@@ -93,7 +93,7 @@ def dm_create_v1(token, u_ids):
     creator_detail = get_member_detail(users, [user_id])
     
     new_dm_id = len(dm) + 1
-
+    u_ids.append(user_id)
     handle_str = get_name(users, u_ids)
     member_detail = get_member_detail(users, u_ids)
 
@@ -104,12 +104,7 @@ def dm_create_v1(token, u_ids):
         'creator': creator_detail
     }
 
-    dms_dict = {
-        'dm_id': new_dm_id,
-        'name': handle_str
-    }
-
-    data['dms'].append(dms_dict)
+    
     data['dms_details'].append(dm_detail_dict)
     data_store.set(data)
     return {

@@ -50,7 +50,7 @@ def check_valid_uid(u_id):
 # Test user is a member of channel or not
 # All members' details in this channel
 # If user is member of channel then return its index
-def check_member(channel_id_element, u_id):
+def check_member(channel_id_element, auth_user_id):
     data = data_store.get()
     members_in_channel = data['channels_details'][channel_id_element]['channel_members']
     each_member_element = 0
@@ -62,11 +62,11 @@ def check_member(channel_id_element, u_id):
 
     new_owner_element = 0
     while new_owner_element < len(each_member_id):
-        if u_id == each_member_id[new_owner_element]:
+        if auth_user_id == each_member_id[new_owner_element]:
             return new_owner_element
         new_owner_element+= 1
 
-    if u_id not in each_member_id:
+    if auth_user_id not in each_member_id:
         return False
 
     pass
@@ -223,7 +223,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     return {}
 
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v2(token, channel_id):
     """An authorised user to check a channel’s detailed information which user is a member of it
     
     Arguments:
@@ -253,60 +253,20 @@ def channel_details_v1(auth_user_id, channel_id):
     # Obtain data already existed
     data = data_store.get()
 
-    # Test auth_user_id valid or not
-    users_data = data['users']
-    users_element = 0
-    users_id = []
-    while users_element < len(users_data):
-        each_dict_users = users_data[users_element]
-        users_id.append(each_dict_users['u_id'])
-        users_element += 1     
-        
-    if auth_user_id not in users_id:
-            raise AccessError("Invalid ID")
-    # Finish valid auth_user_id test
-    # ==================================
-    # Test Invalid channel_id or not
-    # Pick out channl_id
-    channels_details_data = data['channels_details']
-    channels_members_element = 0
-    all_channel_id = []
-    while channels_members_element < len(channels_details_data):
-        each_channel_details = channels_details_data[channels_members_element]
-        all_channel_id.append(each_channel_details['channel_id'])
-        channels_members_element += 1
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
 
-    if channel_id not in all_channel_id:
-            raise InputError("Invalid channel_id")
-    # Finish authorised user test
-    # ==================================
-    # Obtain the postition of channel_id for track channel_members within this channel
-    channel_id_element = 0
-    while channel_id_element < len(all_channel_id):
-        if channel_id == all_channel_id[channel_id_element]:
-            break
-        channel_id_element += 1
- 
-    # All members' details in this channel
-    members_in_channel = channels_details_data[channel_id_element]['channel_members']
-    # ==================================
-    # Pick out u_id
-    # Test user is a member of channel or not
-    each_member_element = 0
-    each_member_id = []
-    while each_member_element < len(members_in_channel):
-        each_member = members_in_channel[each_member_element]
-        each_member_id.append(each_member['u_id'])
-        each_member_element += 1 
+    if check_member(channel_id_element, token) == False:
+        raise AccessError("Not an member of channel")
 
-    if auth_user_id not in each_member_id:
-        raise AccessError("No right to access the channel")
-    # Finish member users test
-    # ==================================
+
     # For return
+    channels_details_data = data['channels_details']
+    
     name = channels_details_data[channel_id_element]['channel_name']
-    owner_members = [members_in_channel[0]]
-    all_members = members_in_channel
+    owner_members = channels_details_data[channel_id_element]['owner_members']
+    all_members = channels_details_data[channel_id_element]['channel_members']
     is_public = channels_details_data[channel_id_element]['channel_status']
 
     return {
@@ -534,7 +494,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
         remove_owner_element += 1
 
     # Pick out dict and then delete it
-    remove_owner = data['channels_details'][channel_id_element]['onwer_members'][remove_owner_element]
+    remove_owner = data['channels_details'][channel_id_element]['owner_members'][remove_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
 
     return {}

@@ -70,7 +70,7 @@ def channels_list_v1(auth_user_id):
         'channels': found_channel
     }
 
-def channels_listall_v1(auth_user_id):
+def channels_listall_v2(token):
     """An authorised user to check all existed channels
     
     Arguments:
@@ -84,37 +84,12 @@ def channels_listall_v1(auth_user_id):
         channel_id(integer) is channels id
         name(string) of the channel.
     """
-
-    # Obtain data already existed
     data = data_store.get()
 
-    # Test auth_user_id valid or not
-    # Collect ids store in the users dict
-    users_data = data['users']
-    users_element = 0
-    users_id = []
-    while users_element < len(users_data):
-        each_dict = users_data[users_element]
-        users_id.append(each_dict['u_id'])
-        users_element += 1     
-        
-    if auth_user_id not in users_id:
-        raise AccessError("Invalid ID")
-    
-    # Finish auth_user_id test
-
-    # Localized channels data, make while loop more easy to look
+    # Obatin all channels' information
     chan_data = data['channels']
-
-    # Store channels data into a list for return
-    out_channels = []
-
-    i = 0
-    while i < len(chan_data):
-        out_channels.append(chan_data[i])
-        i += 1
     
-    return {'channels': out_channels}
+    return {'channels': chan_data}
 
 def channels_create_v1(auth_user_id, name, is_public):
     """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
@@ -175,6 +150,9 @@ def channels_create_v1(auth_user_id, name, is_public):
         'channel_id': new_channel_id,
         'channel_name': name,
         'channel_status': is_public,
+        'owner_members': [
+            users_info[auth_user_id - 1]
+        ],
         'channel_members': [
             users_info[auth_user_id - 1]
         ]

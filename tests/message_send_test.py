@@ -1,10 +1,13 @@
 import pytest
 import requests
 import json
+import jwt
+from src.token_helpers import decode_JWT
 from src import config
 from src.auth import auth_register_v2
 from src.message import message_send_v1
-from src.channel import channel_create_v2
+from src.channel import channels_create_v2
+from src.other import clear_v1
 
 BASE_URL = 'http://127.0.0.1:8080'
 
@@ -25,8 +28,8 @@ def valid():
     id_list_1 = [id_2]
     id_list_2 = [id_1, id_2]
     # channels
-    channel_id_1 = channel_create_v2(token_1, id_list_1)
-    channel_id_2 = channel_create_v2(token_3, id_list_2)
+    channel_id_1 = channels_create_v2(token_1, id_list_1, True)['channel_id']
+    channel_id_2 = channels_create_v2(token_3, id_list_2, True)['channel_id']
     return token_1, token_2, token_3, id_1, channel_id_1, channel_id_2
 
 # Testing for invalid channel_id

@@ -3,7 +3,7 @@ import signal
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
-from src.error import InputError, AccessError
+from src.error import AccessError, InputError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, check_valid_token
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions
@@ -13,6 +13,10 @@ from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
 from src.token_helpers import decode_JWT
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.error import InputError, AccessError
+
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -231,10 +235,102 @@ def auth_login_http():
 
     return dumps(result)
 
+@APP.route('/auth/logout/v1', methods=['POST'])
+def auth_logout_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+
+    result = auth_logout_v1(token)
+    return dumps(result)
+
+@APP.route('/users/all/v1', methods=['GET'])
+def users_all_http():
+    token = request.args.get('token')
+
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+
+    result = users_all_v1(token)
+    return dumps(result)
+
+@APP.route('/user/profile/v1', methods=['GET'])
+def user_profile_http():
+    token = request.args.get('token')
+    u_id = request.args.get('u_id')
+
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+    
+    result = user_profile_v1(token, u_id)
+    return dumps(result)
+
+@APP.route('/user/profile/setname/v1', methods=['PUT'])
+def user_profile_setname_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    name_first = request_data['name_first']
+    name_last = request_data['name_last']
+
+    if check_name_length(name_first) == False:
+        raise InputError(description='Invalid first name')
+    
+    if check_name_length(name_last) == False:
+        raise InputError(description='Invalid last name')
+    
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+    
+    result = user_profile_setname_v1(token, name_first, name_last)
+    return dumps(result)
+
+@APP.route('/user/profile/setemail/v1', methods=['PUT'])
+def user_profile_setemail_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    email = request_data['email']
+
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+    
+    if check_duplicate_email == False:
+        raise InputError(description='Duplicate email')
+    
+    if check_valid_email == False:
+        raise InputError(description="Invalid email")
+
+    result = user_profile_setemail_v1(token, email)
+    return dumps(result)
+
+@APP.route('/user/profile/sethandle/v1', methods=['PUT'])
+def user_profile_sethandle_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    handle_str = request_data['handle_str']
+
+    if check_handle == False: 
+        raise InputError(description='Invalid handle')
+    
+    if check_duplicate_handle == False:
+        raise InputError(description='Duplicate handle')
+    
+    if check_alpha_num(handle_str) == False:
+        raise InputError(description='Invalid handle length')
+    
+    if token_check(token) == False:
+        raise AccessError(description="Invalid token")
+
+    result = user_profile_sethandle_v1(token, handle_str)
+    return dumps(result)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
-

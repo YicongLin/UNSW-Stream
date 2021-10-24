@@ -23,15 +23,13 @@ def valid():
     decoded_token_2 = decode_JWT(token_2)
     id_2 = decode_token['u_id']
     id_list_1 = [id_2]
-    id_list_2 = [id_1, id_2]
     # dms
-    dm_id_1 = dm_create_v1(token_1, id_list_1)
-    dm_id_2 = dm_create_v1(token_3, id_list_2)
-    return token_1, token_2, token_3, id_1, dm_id_1, dm_id_2
+    dm_id_1 = dm_create_v1(token_1, id_list_1)['dm_id']
+    return token_1, token_2, token_3, id_1, dm_id_1
 
 # Testing for invalid dm_id
 def test_invalid_dm_id(valid):
-    token_1, _, _, _, _, _ = valid
+    token_1, _, _, _, _ = valid
     payload = {
         "token": token_1,
         "dm_id": "invalid_id",
@@ -42,7 +40,7 @@ def test_invalid_dm_id(valid):
 
 # Testing for invalid token_id
 def test_invalid_token_id(valid):
-    token_1, _, _, _, _, _ = valid
+    _, _, _, _, dm_id_1 = valid
     payload = {
         "token": "invalid_token_id",
         "dm_id": dm_id_1,
@@ -53,7 +51,7 @@ def test_invalid_token_id(valid):
 
 # Testing for invalid message length
 def test_invalid_message_length(valid):
-    token_1, _, _, _, dm_id_1, _ = valid
+    token_1, _, _, _, dm_id_1= valid
     payload = {
         "token": token_1,
         "dm_id": dm_id_1,
@@ -83,9 +81,20 @@ def test_invalid_message_length(valid):
     r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     assert r.status_code == 400
 
+# Testing for a case where the authorised user isn't a member of the DM
+def test_not_a_member(valid):
+    _, _, token_3, _, dm_id_1 = valid
+    payload = {
+        "token": token_3,
+        "dm_id": dm_id_1,
+        "message": ""
+    }
+    r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    assert r.status_code == 400
+
 # Testing all valid cases
 def test_valid(valid):
-    token_1, _, _, _, dm_id_1, _ = valid
+    token_1, _, _, _, dm_id_1= valid
     payload = {
         "token": token_1,
         "dm_id": dm_id_1,
@@ -96,45 +105,33 @@ def test_valid(valid):
 
 # Testing to ensure the message was sent to the specified DM
 def test_sent_messages(valid):
-    token_1, token_2, _, id_1, _, dm_id_2 = valid
-    # token_1 sends a message to dm_id_2
+    token_1, token_2, _, id_1, dm_id_1 = valid
+    
+    # token_1 sends a message to dm_id_1
     payload = {
         "token": token_1,
-        "dm_id": dm_id_2,
+        "dm_id": dm_id_1,
         "message": "Hello World"
     }
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    assert r.status_code == 200
 
     # Obtaining the time the message is created
     time = datetime.now()
     time_created = time.replace(tzinfo=timezone.utc).timestamp()
 
-    # token_2 returns messages in dm_id_2
+    # token_2 returns messages in dm_id_1
     payload = {
         "token": token_2,
-        "dm_id": dm_id_2,
+        "dm_id": dm_id_1,
         "start": 0
     }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
-    assert r.status_code = 200
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', json = payload)
     message = {
         "message_id": 1,
         "u_id": id_1,
-        "message": 'Hello world',
+        "message": "Hello world",
         "time_created": time_created
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": 50}
-
-
-
-
-
-
-
-
-    
-  
-
-
-

@@ -17,7 +17,7 @@ def valid():
     token_2 = auth_register_v2("asd@fgh.com", "password", "jkl", "asd")['token']
     id_1 = auth_register_v2("qwe@rty.com", "password", "uio", "qwe")['auth_user_id']
     # channels
-    channel_1 = channels_create_v2(token_1, "1", True)
+    channel_1 = channels_create_v2(token_1, "1", True)['channel_id']
     return token_1, token_2, id_1, channel_1
 
 # Testing for invalid channel ID
@@ -63,6 +63,7 @@ def test_valid(valid):
 # Ensuring the user is gone from the list of channels after leaving
 def test_user_left(valid):
     token_1, _, id_1, channel_1 = valid
+    
     # token_2 joins channel_1
     payload1 = {
         "token": token_2,
@@ -79,8 +80,7 @@ def test_user_left(valid):
 
     # token_2 returns channel_1 details
     r = requests.get(f'{BASE_URL}/channel/details/v2', json = payload1)
-    assert r.status_code == 200
-    user = {
+    member = {
         "u_id": id_1,
         "email": "qwe@rty.com",
         "name_first": "uio",
@@ -88,4 +88,4 @@ def test_user_left(valid):
         "handle_str": "uioqwe"
     }
     response = r.json()
-    assert response == {"name": "1", "is_public": True, "owner_members": [], "all_members"
+    assert response == {"name": "1", "is_public": True, "owner_members": [], "all_members": [member]}

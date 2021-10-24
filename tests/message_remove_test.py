@@ -38,5 +38,5 @@ def valid():
     assert r.status_code == 400
 
 # Testing there is no error raised when there are no messages
-    def test_invalid_message_id():
+   # def test_invalid_message_id():
     

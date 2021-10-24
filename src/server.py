@@ -118,7 +118,7 @@ def remove_message():
     return({dumps})
 
 @APP.route("dm/messages/v1", methods = ['GET'])
-def dm_message()
+def dm_message():
     request_data = request.get_json()
     token = request_data['token']
     dm_id = request_data['dm_id']
@@ -139,6 +139,11 @@ def dm_message()
     messages = dm_messages_v1(token, dm_id, start)
     
     return dumps(messages)
+
+@APP.route("clear/v1," methods = ['DELETE'])
+def clear():
+    return dumps({})
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

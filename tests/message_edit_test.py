@@ -61,33 +61,33 @@ def test_invalid_message_length(valid):
 
 # Testing for access error 
     def test_valid_access():
-    token_1, _, _, _, dm_id_1, _ = valid
-    payload = {
-        "token": token_1,
-        "dm_id": dm_id_1,
-        "message": ""
-    }
-    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 403
+        token_1, _, _, _, dm_id_1, _ = valid
+        payload = {
+            "token": token_1,
+            "dm_id": dm_id_1,
+            "message": ""
+        }
+        r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+        assert r.status_code == 403
 
 # Test for editing message
     def test_edit_message():
-    token_1, _, _, _, dm_id_1, _ = valid
-    payload = {
-        "token": token_1,
-        "dm_id": dm_id_1,
-        "message": "Goodbye World"
-    }
-    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 200
+        token_1, _, _, _, dm_id_1, _ = valid
+        payload = {
+            "token": token_1,
+            "dm_id": dm_id_1,
+            "message": "Goodbye World"
+        }
+        r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+        assert r.status_code == 200
 
 #Test for when message remains unedited
     def test_invalid_edit():
-    token_1, _, _, _, dm_id_1, _ = valid
-    payload = {
-        "token": token_1,
-        "dm_id": dm_id_1,
-        "message": "Hello World"
-    }    
-    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 400
+        token_1, _, _, _, dm_id_1, _ = valid
+        payload = {
+            "token": token_1,
+            "dm_id": dm_id_1,
+            "message": "Hello World"
+        }    
+        r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+        assert r.status_code == 400

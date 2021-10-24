@@ -82,8 +82,8 @@ def dm_create_v1(token, u_ids):
     dm = data['dms_details']
     user_id = decode_token(token)
 
-    if (is_valid_user(user_id) == False):
-        raise AccessError("Invalid user")
+    """ if (check_valid_token(token) == False):
+        raise AccessError("Invalid user") """
     
     if (check_user(u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")

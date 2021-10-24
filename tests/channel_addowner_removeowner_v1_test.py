@@ -16,31 +16,23 @@ def test_addowner_removeowner():
     
     # Register three users
     # user_one ----> global owner
-    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "Firstname": "Test", "Lastname": "Person"})
-    response_data = response.json()
-    token_1 = response_data['token']
-    uid_1 = decode_JWT(token_1)
-
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+    uid_1 = decode_JWT(json.loads(response.text)['token'])
+    
     # user_two ----> channel owner
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "Firstname": "Testtwo", "Lastname": "Persontwo"})
-    response_data = response.json()
-    token_2 = response_data['token']
-    uid_2 = decode_JWT(token_2) 
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
+    uid_2 = decode_JWT(json.loads(response.text)['token']) 
 
     # user_three ----> channel member
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "Firstname": "Testthr", "Lastname": "Personthr"})
-    response_data = response.json()
-    token_3 = response_data['token'] 
-    uid_3 = decode_JWT(token_3)
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})
+    uid_3 = decode_JWT(json.loads(response.text)['token'])
 
     # Login in user_two to create channel (test owner permmisons)
-    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
-    response_data = response.json()
-    token_2 = response_data['token']
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+    token_2 = json.loads(response.text)['token']
 
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
-    response_data = response.json()
-    channel_id = response_data['channel_id']
+    response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
+    channel_id = json.loads(response.text)['channel_id']
 
     # Add owner with invalid channel_id (InputError 400)
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": 123, "u_id": uid_1})
@@ -84,8 +76,7 @@ def test_addowner_removeowner():
 
     # Check channel details(owner_members: user_two)
     response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
-    response_data = response.json()  
-    assert (response_data['owner_members'] == 222)
+    assert (json.loads(response.text)['owner_members'] == 222)
 
     # Add user_one as owner-----> successful implement
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": uid_1})
@@ -93,8 +84,7 @@ def test_addowner_removeowner():
 
     # Check channel details(user_two, user_one)
     response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
-    response_data = response.json()
-    assert (response_data['owner_members'] == 111)
+    assert (json.loads(response.text)['owner_members'] == 111)
 
     # Add user_one as owner again(alreadt is an owner) (InputError 400)
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": uid_1})
@@ -106,8 +96,7 @@ def test_addowner_removeowner():
 
     # Check channel details(user_two)
     response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
-    response_data = response.json()
-    assert (response_data['owner_members'] == 222)
+    assert (json.loads(response.text)['owner_members'] == 222)
 
     # Remove user_one (not an owner yet) permissions (InputError 400)
     resp = requests.post(f'{BASE_URL}/channel/removewner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": uid_1})
@@ -121,9 +110,8 @@ def test_addowner_removeowner():
     # ===================================   
 
     # login user_one 
-    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
-    response_data = response.json()
-    token_1 = response_data['token']
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+    token_1 = json.loads(response.text)['token']
 
     # Add user_three as owner -----> successful implement
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_1, "channel_id": channel_id, "u_id": uid_3})
@@ -131,8 +119,7 @@ def test_addowner_removeowner():
 
     # Check channel details(owner_members: user_two, user_three)
     response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_1, "channel_id": channel_id})
-    response_data = response.json()
-    assert (response_data['owner_members'] == 2321)
+    assert (json.loads(response.text)['owner_members'] == 2321)
 
     # Remove user_three owner permissions -----> successful implement
     resp = requests.post(f'{BASE_URL}/channel/removewner/v1', json={"token": token_1, "channel_id": channel_id, "u_id": uid_3})
@@ -140,8 +127,7 @@ def test_addowner_removeowner():
 
     # Check channel details(user_two)
     response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_1, "channel_id": channel_id})
-    response_data = response.json()
-    assert (response_data['owner_members'] == 213)
+    assert (json.loads(response.text)['owner_members'] == 213)
 
     # Remove user_two(only owner) owner permissions ------> (InputError 400)
     resp = requests.post(f'{BASE_URL}/channel/removewner/v1', json={"token": token_1, "channel_id": channel_id, "u_id": uid_2})
@@ -156,8 +142,7 @@ def test_addowner_removeowner():
 
     # Login user_three
     requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
-    response_data = response.json()
-    token_3 = response_data['token']
+    token_3 = json.loads(response.text)['token']
 
     # Add user_one as owner (AccessError 403)
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_3, "channel_id": channel_id, "u_id": uid_1})

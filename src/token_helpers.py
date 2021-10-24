@@ -19,4 +19,4 @@ def generate_JWT(u_id, permissions_id, session_id = None):
     return jwt.encode({'u_id' : u_id, 'permissions_id': permissions_id, 'session_id' : session_id}, SECRET, algorithm = 'HS256')     
 
 def decode_JWT(encoded_jwt):
-    return jwt.decode(encoded_jwt, SECRET, algorithms['HS256'])
+    return jwt.decode(encoded_jwt, SECRET, algorithms = ['HS256'])

@@ -208,7 +208,7 @@ def is_valid_user(u_id):
     return False
 
 def decode_token(token):
-    global secret
+    secret = 'COMP1531'
     result = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     u_id = result
     return u_id
@@ -230,7 +230,7 @@ def check_user(u_ids):
                 return 0
             b += 1
     
-    return 1
+    return 1 
  
 # get the members details that on the list passed in
 def get_member_detail(id_list):

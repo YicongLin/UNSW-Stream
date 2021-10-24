@@ -80,3 +80,14 @@ def test_invalid_message_length(valid):
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
     assert r.status_code == 200
+
+#Test for when message remains unedited
+    def test_invalid_edit():
+    token_1, _, _, _, dm_id_1, _ = valid
+    payload = {
+        "token": token_1,
+        "dm_id": dm_id_1,
+        "message": "Hello World"
+    }    
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+    assert r.status_code == 400

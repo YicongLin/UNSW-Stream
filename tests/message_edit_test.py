@@ -70,3 +70,13 @@ def test_invalid_message_length(valid):
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
     assert r.status_code == 403
 
+# Test for editing message
+    def test_edit_message():
+    token_1, _, _, _, dm_id_1, _ = valid
+    payload = {
+        "token": token_1,
+        "dm_id": dm_id_1,
+        "message": "Goodbye World"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+    assert r.status_code == 200

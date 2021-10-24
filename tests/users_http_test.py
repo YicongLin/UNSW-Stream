@@ -35,8 +35,6 @@ def test_users_all(valid_id):
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "Ijks98ruwio@email.com", "password" : "password"})
     assert (r.status_code == 200)  
 
-    # invalid token 
-
     # valid token 
     resp = r.json()
     valid_token = resp['token']
@@ -49,46 +47,62 @@ def test_user_profile():
     clear_v1() 
     # valid user 1
     payload = {
-        "email" : "873y43uwhiwad@email.com",
+        "email" : "hjqbwsx@email.com",
         "password" : "password",
-        "name_first" : "sjdnksand",
-        "name_last" : "asjbdaknda"
+        "name_first" : "ehwjjskoo",
+        "name_last" : "aishdufibjn"
     }
 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     assert (r.status_code == 200) 
 
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "873y43uwhiwad@email.com", "password" : "password"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "hjqbwsx@email.com", "password" : "password"})
     assert (r.status_code == 200) 
+
+    payload = {
+        "email" : "testio3@email.com",
+        "password" : "password",
+        "name_first" : "ehwjjskoo",
+        "name_last" : "aishdufibjn"
+    }
+
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)
 
     resp = r.json()
 
-    # valid token + valid id 
-    payload = {
-        "token" : resp['token'],
-        "u_id" : resp['auth_user_id']
-    }
+    # # valid token + valid id 
+    # payload = {
+    #     "token" : resp['token'],
+    #     "u_id" : resp['auth_user_id']
+    # } 
 
     r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
     assert (r.status_code == 200) 
     
-    # # invalid token
-    # payload = {
-    #     "token" : "asdiasodja",
-    #     "u_id" : resp['auth_user_id']
-    # }
+    # invalid uid
+    payload = {
+        "token" : resp['token'],
+        "u_id" : 1263789
+    }
     
-    # r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
-    # assert (r.status_code == 400) 
+    r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
+    assert (r.status_code == 400) 
 
-    # # invalid uid
-    # payload = {
-    #     "token" : resp['token'],
-    #     "u_id" : 1263789
-    # }
+    # logout
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
+
+    # invalid token
+    payload = {
+        "token" : resp['token'],
+        "u_id" : resp['auth_user_id']
+    }
     
-    # r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
-    # assert (r.status_code == 400) 
+    r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
+    
+    assert (r.status_code == 403) 
+
 
 # USER PROFILE SETNAME 
 def test_user_profile_setname():
@@ -109,15 +123,27 @@ def test_user_profile_setname():
     
     resp = r.json()
 
-#     # invalid token 
-#     payload = {
-#         "token" : "",
-#         "name_first" : "first",
-#         "name_last" : "last"
-#     } 
-#     r = requests.get(f'{BASE_URL}/user/profile/setname/v1', json = payload)
-#     assert (r.status_code == 403)
+    # valid name token and first and last 
+    payload = {
+        "token" : resp['token'],
+        "name_first" : "fi38$# 29rst",
+        "name_last" : "la1@0 9231st"
+    } 
+    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
+    assert (r.status_code == 200) 
 
+    # logout
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
+
+    # invalid token 
+    payload = {
+        "token" : resp['token'],
+        "name_first" : "first",
+        "name_last" : "last"
+    } 
+    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
+    assert (r.status_code == 403)
 
     # invalid name first - empty 
     payload = {
@@ -155,14 +181,6 @@ def test_user_profile_setname():
     r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
     assert (r.status_code == 400) 
 
-    # valid name token and first and last 
-    payload = {
-        "token" : resp['token'],
-        "name_first" : "fi3 8$#29rst",
-        "name_last" : "la1@09 231st"
-    } 
-    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
-    assert (r.status_code == 200) 
 
 # USER PROFILE SETEMAIL
 def test_user_profile_set_email():
@@ -182,24 +200,6 @@ def test_user_profile_set_email():
 
     resp = r.json()
 
-    # invalid email
-    payload = {
-        "token" : resp['token'],
-        "email" : "asidjoas"
-    } 
-
-    r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
-    assert (r.status_code == 400) 
-    
-    # # invalid token 
-    # payload = {
-    #     "token" : resp['token'],
-    #     "email" : "ayguio92032@email.com"
-    # } 
-
-    # r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
-    # assert (r.status_code == 403) 
-
     # valid email + token 
     payload = {
         "token" : resp['token'],
@@ -208,6 +208,28 @@ def test_user_profile_set_email():
 
     r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
     assert (r.status_code == 200) 
+
+    # invalid email
+    payload = {
+        "token" : resp['token'],
+        "email" : "asidjoas"
+    } 
+
+    r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
+    assert (r.status_code == 400) 
+
+    # logout
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
+    
+    # invalid token 
+    payload = {
+        "token" : resp['token'],
+        "email" : "ayguio92032@email.com"
+    } 
+
+    r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
+    assert (r.status_code == 403) 
 
 
 # USER PROFILE SET HANDLE 
@@ -276,6 +298,15 @@ def test_user_profile_set_handle():
 
     r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
     assert (r.status_code == 400) 
+
+    # valid handle
+    payload = {
+        "token" : resp['token'],
+        "handle_str" : "newhandle"
+    } 
+
+    r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
+    assert (r.status_code == 200) 
 
     # # invalid token 
     # payload = {

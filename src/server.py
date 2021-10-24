@@ -10,7 +10,7 @@ from src.channel import check_valid_channel_id, check_valid_uid, check_member, c
 from src.channels import channels_listall_v2
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, input_error
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
 
@@ -213,7 +213,6 @@ def auth_login_http():
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
     request_data = request.get_json()
-
     token = request_data['token']
     
     if token_check(token) == False:
@@ -239,6 +238,9 @@ def user_profile_http():
 
     if token_check(token) == False:
         raise AccessError(description="Invalid token")
+    
+    if u_id_check(token) == False:
+        raise InputError(description="Invalid u_id")
     
     result = user_profile_v1(token, u_id)
     return dumps(result)

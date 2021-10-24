@@ -26,6 +26,24 @@ def token_check(token):
     
     pass
 
+def u_id_check(u_id):
+    store = data_store.get()
+    
+    found = False 
+    i = 0
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        # check if uid matches any uid
+        if user["u_id"] == u_id:
+            found = True
+
+        i += 1 
+
+    if found == False:
+        return False
+    
+    pass
+
 def check_handle(handle_str):
     if len(handle_str) < 3 or len(handle_str) > 20:
         return False
@@ -97,7 +115,8 @@ def users_all_v1(token):
     """
     store = data_store.get()
 
-    token_check(token)
+    if token_check(token) == False:
+        raise AccessError
      
     return { 'users': store['users'] } 
 
@@ -108,15 +127,21 @@ def user_profile_v1(token, u_id):
 
     store = data_store.get()
     
-    token_check(token)
+    if token_check(token) == False:
+        raise AccessError
+    
+    if u_id_check(u_id) == False:
+        raise InputError
+ 
     decoded_token = decode_JWT(token)
     
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 
-        if user['u_id'] == decoded_token['u_id']:
+        if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == u_id):
             return {'user' : user}
-        i += 1 
+        else:
+            i += 1 
 
     # if no match 
     raise InputError("Invalid u_id")
@@ -148,8 +173,8 @@ def user_profile_setname_v1(token, name_first, name_last):
 
         i += 1 
     
-    # # if user does not exist
-    # raise InputError("Invalid user") 
+    # if user does not exist
+    raise InputError("Invalid user") 
 
 def user_profile_setemail_v1(token, email):
     """
@@ -207,7 +232,6 @@ def user_profile_sethandle_v1(token, handle_str):
             user['handle_str'] = handle_str
             data_store.set(store)
             return { } 
-
         i += 1 
     
     # if user does not exist

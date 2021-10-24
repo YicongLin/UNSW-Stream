@@ -83,6 +83,17 @@ def test_invalid_message_length(valid):
     r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     assert r.status_code == 400
 
+# Testing for a case where the authorised user isn't a member of the channel
+def test_not_a_member(valid):
+    _, _, token_3, _, channel_id_1 = valid
+    payload = {
+        "token": token_3,
+        "channel_id": channel_id_1,
+        "message": ""
+    }
+    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    assert r.status_code == 403
+
 # Testing all valid cases
 def test_valid(valid):
     token_1, _, _, _, channel_id_1, _ = valid

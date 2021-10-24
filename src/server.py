@@ -201,6 +201,7 @@ def auth_register_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
+
     if check_name_length(name_first) == False:
         raise InputError(description="Invalid name length")
 
@@ -217,7 +218,6 @@ def auth_register_http():
         raise InputError(description="Invalid email")
     
     result = auth_register_v2(email, password, name_first, name_last)
-
     return dumps(result)
 
 @APP.route('/auth/login/v2', methods=['POST'])
@@ -231,7 +231,6 @@ def auth_login_http():
         raise InputError(description="Invalid email")
     
     result = auth_login_v2(email, password)
-
     return dumps(result)
 
 @APP.route('/dm/remove/v1', methods=['DELETE'])
@@ -310,6 +309,7 @@ def user_profile_setname_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
+
     if check_name_length(name_first) == False:
         raise InputError(description='Invalid first name')
     
@@ -335,7 +335,7 @@ def user_profile_setemail_http():
     if check_duplicate_email == False:
         raise InputError(description='Duplicate email')
     
-    if check_valid_email == False:
+    if check_valid_email(email) == False:
         raise InputError(description="Invalid email")
 
     result = user_profile_setemail_v1(token, email)
@@ -351,11 +351,11 @@ def user_profile_sethandle_http():
     if check_handle == False: 
         raise InputError(description='Invalid handle')
     
-    if check_duplicate_handle == False:
-        raise InputError(description='Duplicate handle')
-    
     if check_alpha_num(handle_str) == False:
         raise InputError(description='Invalid handle length')
+    
+    if check_duplicate_handle == False:
+        raise InputError(description='Duplicate handle')
     
     if token_check(token) == False:
         raise AccessError(description="Invalid token")

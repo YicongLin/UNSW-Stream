@@ -6,7 +6,36 @@ from src import config
 from src.other import clear_v1
 from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:3005'
+
+# VALID IDS 
+@pytest.fixture
+def valid_id():
+    clear_v1()
+    id_1 = auth_register_v2("testing@email.com", "password1", "first1", "last1")['auth_user_id']
+    id_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['auth_user_id']
+    token_1 = auth_login_v2("testing@email.com", "password1")['token']
+
+    return id_1, id_2, token_1
+
+# def test_login(valid_id):
+#     id_1, id_2, token_1 = valid_id
+    
+#     # valid user 1
+#     payload = {
+#         "email" : "testing@email.com",
+#         "password" : "password1",
+#         "name_first" : "first1",
+#         "name_last" : "last1"
+#     }
+
+#     # valid email + password 
+#     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+#     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "testing@email.com", "password" : "password1"})
+
+#     resp = r.json()
+
+#     assert resp == {"auth_user_id" : id_1, "token" : resp['token']}
 
 # AUTH REGISTER 
 def test_auth_register():
@@ -153,7 +182,7 @@ def test_auth_login():
 
     # valid user 1
     payload = {
-        "email" : "thisisavalidemail@email.com",
+        "email" : "hfbasjkdnas@email.com",
         "password" : "password1",
         "name_first" : "first1",
         "name_last" : "last1"
@@ -161,7 +190,7 @@ def test_auth_login():
 
     # valid email + password 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "thisisavalidemail@email.com", "password" : "password1"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "hfbasjkdnas@email.com", "password" : "password1"})
     assert (r.status_code == 200)
 
     # non-registered email 
@@ -185,40 +214,40 @@ def test_auth_login():
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "test2@email.com", "password" : "wrongpassword"})
     assert (r.status_code == 400)
 
+# VALID TOKENS 
 @pytest.fixture
 def valid_token():
     clear_v1()
-    id_1 = auth_register_v2("testing@email.com", "password1", "first1", "last1")['auth_user_id']
-    id_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['auth_user_id']
+    token_1 = auth_register_v2("testingrandom@email.com", "password1", "first1", "last1")['token']
+    token_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['token']
 
-    return id_1, id_2
+    return token_1, token_2
+ 
+# AUTH LOGOUT  
+def test_auth_logout(valid_token):
+    clear_v1()
+    token_1, token_2 = valid_token
 
-def test_login(valid_token):
-    id_1, id_2 = valid_token
-    
-    # valid user 1
     payload = {
-        "email" : "testing@email.com",
-        "password" : "password1",
-        "name_first" : "first1",
-        "name_last" : "last1"
+        "email" : "randomemail@email.com",
+        "password" : "password",
+        "name_first" : "first2",
+        "name_last" : "last2"
     }
 
-    # valid email + password 
+    # register and login valid user 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "testing@email.com", "password" : "password1"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "randomemail@email.com", "password" : "password"})
+    assert (r.status_code == 200)
 
     resp = r.json()
 
-    assert resp == {"auth_user_id" : id_1, "token" : resp['token']}
+    # logout
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
 
- 
-# AUTH LOGOUT 
+    # login with invalid token 
+    
 
-    # test valid token 
+    # invalid session id 
 
-    # test invalid token 
-
-    # test logout function 
-
-    # test invalid session id

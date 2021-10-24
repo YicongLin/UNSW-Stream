@@ -1,6 +1,7 @@
 import re 
 import json
 import jwt
+from werkzeug.exceptions import RequestedRangeNotSatisfiable
 from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.token_helpers import decode_JWT
@@ -11,11 +12,11 @@ def token_check(token):
     decoded_token = decode_JWT(token)
     
     found = False 
-    i = 1
+    i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 
-        if decoded_token['session_id'] == user['session_id']:
+        if decoded_token['session_id'] in user['session_id']:
             found = True
 
         i += 1 
@@ -34,7 +35,7 @@ def check_handle(handle_str):
 def check_duplicate_handle(handle_str):
     store = data_store.get()
 
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
         if user['handle_str'] == handle_str:
@@ -47,6 +48,12 @@ def check_alpha_num(string):
     if string.isalnum() == False:
         return False
     
+    pass 
+
+def input_error(error):
+    if error == False:    
+        return False
+ 
     pass 
 
 # HELPER FUNCTIONS 
@@ -102,34 +109,38 @@ def user_profile_v1(token, u_id):
     store = data_store.get()
     
     token_check(token)
+    decoded_token = decode_JWT(token)
     
-    i = 1
+    i = 0
     while i < len(store['users']):
-        user = store['users'][i]
-        if u_id == user['u_id']:
+        user = store['users'][i] 
+        if user['u_id'] == decoded_token['u_id']:
             return {'user' : user}
-
         i += 1 
 
     # if no match 
     raise InputError("Invalid u_id")
-        
+
 def user_profile_setname_v1(token, name_first, name_last):
     """
     Update the authorised user's first and last name
     """
     store = data_store.get()
 
-    check_name_length(name_first)
-    check_name_length(name_last)
+    if check_name_length(name_first) == False:
+        raise InputError
+
+    if check_name_length(name_last) == False:
+        raise InputError
 
     token_check(token)
+    decoded_token = decode_JWT(token)
 
     # update users dict 
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
-        if user['u_id'] == token['u_id']:
+        if user['u_id'] == decoded_token['u_id']:
             user['name_first'] = name_first
             user['name_last'] = name_last
             data_store.set(store)
@@ -137,8 +148,8 @@ def user_profile_setname_v1(token, name_first, name_last):
 
         i += 1 
     
-    # if user does not exist
-    raise InputError("Invalid user") 
+    # # if user does not exist
+    # raise InputError("Invalid user") 
 
 def user_profile_setemail_v1(token, email):
     """
@@ -146,15 +157,22 @@ def user_profile_setemail_v1(token, email):
     """
     store = data_store.get()
 
-    check_duplicate_email(email)
-    check_valid_email(email)
-    token_check(token)
+    if check_duplicate_email(email) == False:
+        raise InputError
+
+    if check_valid_email(email) == False:
+        raise InputError
+ 
+    if token_check(token) == False:
+        raise AccessError
+
+    decoded_token = decode_JWT(token)
     
     # update users dict 
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
-        if user['u_id'] == token['u_id']:
+        if user['u_id'] == decoded_token['u_id']:
             user['email'] = email
             data_store.set(store)
             return { } 
@@ -167,16 +185,25 @@ def user_profile_setemail_v1(token, email):
 def user_profile_sethandle_v1(token, handle_str):
 
     store = data_store.get()
-    check_handle(handle_str)
-    check_duplicate_handle(handle_str)
-    check_alpha_num(handle_str)
-    token_check(token)
+    if check_handle(handle_str) == False:
+        raise InputError
+
+    if check_duplicate_handle(handle_str) == False:
+        raise InputError
+
+    if check_alpha_num(handle_str) == False:
+        raise InputError
+
+    if token_check(token) == False:
+        raise AccessError
+
+    decoded_token = decode_JWT(token)
 
     # update users dict 
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
-        if user['u_id'] == token['u_id']:
+        if user['u_id'] == decoded_token['u_id']:
             user['handle_str'] = handle_str
             data_store.set(store)
             return { } 

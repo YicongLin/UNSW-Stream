@@ -1,6 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
-from src.dm import decode_token
+from src.dm import decode_token, is_valid_user
 def check_duplicate(list, channel):
 
     # check for the element passed in is in the list or not
@@ -11,66 +11,34 @@ def check_duplicate(list, channel):
         i += 1
     return 0
     
-def channels_list_v1(auth_user_id):
-    """Provide a list of all channels that the authorised user is part of.
-    
-    Arguments:
-        auth_user_id (integer) - the ID of an authorised user
-
-    Exceptions:
-        AccessError - Occurs when user type in an invalid id
-
-    Return Value:
-        a list of dictionaries, where  { channel_id, name }. channel_id(integer) is channels id
-        name(string) of the channel.
-    """
-    
+def channels_list_v2(token):
     data = data_store.get()
-    channel_info = data['channels']
-    channel_detail_info = data['channels_details']
-    users_info = data['users']
-    found_channel = []
-    
-    flag = 0
-    count = 0
-    while count < len(users_info):
-        if (users_info[count]['u_id'] == auth_user_id):
-            flag = 1
-        count += 1
-    if (flag == 0):
-        raise AccessError("Invalid ID")
+    channel_detail = data['channels_details']
+    user_id = decode_token(token)
 
-    # looks for the users in channel detail by checking the channel members in each channel
-    users = 0
-    while users < len(channel_detail_info):
-        channel_member_info = channel_detail_info[users]['channel_members']
-        # if an user id matches the given id, save that id and got to channels datastore
-        member = 0
-        flag1 = 0
-        while member < len(channel_member_info):
-            # check each member's user id, if it is the same as given id save the current channel id
-            if (channel_member_info[member]['u_id'] == auth_user_id):
-                channel_id_info = channel_detail_info[users]['channel_id']
-                flag1 = 1
-            member += 1
-            # if id found, go to channels datastore and loop through to find the samw channel id and append 
-            # to the list. otherwise continue
-            if (flag1 == 1):
-                channels = 0
-                while channels < len(channel_info):
-                    if (channel_id_info == channel_info[channels]['channel_id']):
-                        if (check_duplicate(found_channel, channel_info[channels]) != 1):
-                            found_channel.append(channel_info[channels])
-                    channels += 1   
-        users += 1
-    
-    data_store.set(data)
-    
+    """ if (check_valid_token(token) == False):
+        raise AccessError("Invalid user") """
+
+    channel_list = []
+    i = 0
+    while i < len(channel_detail):
+        channel_member = channel_detail[i]['channel_members']
+        j = 0
+        while j < len(channel_member):
+            if (user_id == channel_member[j]['u_id']):
+                channel_list.append({
+                    'channel_id': channel_detail[i]['channel_id'],
+                    'name': channel_detail[i]['name']
+                })
+            j += 1
+        i += 1
+
     return {
-        'channels': found_channel
+        'channels': channel_list
     }
 
-def channels_listall_v1(auth_user_id):
+
+def channels_listall_v2(token):
     """An authorised user to check all existed channels
     
     Arguments:
@@ -84,37 +52,12 @@ def channels_listall_v1(auth_user_id):
         channel_id(integer) is channels id
         name(string) of the channel.
     """
-
-    # Obtain data already existed
     data = data_store.get()
 
-    # Test auth_user_id valid or not
-    # Collect ids store in the users dict
-    users_data = data['users']
-    users_element = 0
-    users_id = []
-    while users_element < len(users_data):
-        each_dict = users_data[users_element]
-        users_id.append(each_dict['u_id'])
-        users_element += 1     
-        
-    if auth_user_id not in users_id:
-        raise AccessError("Invalid ID")
-    
-    # Finish auth_user_id test
-
-    # Localized channels data, make while loop more easy to look
+    # Obatin all channels' information
     chan_data = data['channels']
-
-    # Store channels data into a list for return
-    out_channels = []
-
-    i = 0
-    while i < len(chan_data):
-        out_channels.append(chan_data[i])
-        i += 1
     
-    return {'channels': out_channels}
+    return {'channels': chan_data}
 
 def channels_create_v2(token, name, is_public):
     """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
@@ -175,4 +118,5 @@ def channels_create_v2(token, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
+
 

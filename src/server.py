@@ -1,15 +1,18 @@
 import sys
 import signal
-from json import dumps
+from json import dump, dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError, AccessError
 from src import config
-from src.channel import channel_addowner_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, check_exist_owner, check_permissions
-from src.channel import check_not_owner, check_only_owner, channel_removeowner_v1
-from src.dm import dm_details_v1, dm_create_v1
-from src.dm import check_valid_dmid, check_valid_dm_token, check_user, decode_token, is_valid_user
+from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
+from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions
+from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
+from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_remove_v1, dm_list_v1
+from src.dm import check_valid_dmid, check_valid_dm_token, decode_token, is_valid_dm, is_creator, check_user
+from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
+from src.error import InputError
+
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -52,21 +55,22 @@ def add_owner():
 
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError(description="Invalid channel_id")
+        raise InputError("Invalid channel_id")
 
     if check_valid_uid(u_id) == False:
-        raise InputError(description="Invalid user ID")
+        raise InputError("Invalid user ID")
 
-    new_owner_element = check_member(channel_id_element, u_id)
-    if new_owner_element == False:
-        raise InputError(description="User is not a member of this channel")
+    each_member_id = check_member(channel_id_element, u_id)
+    if each_member_id  == False:
+        raise InputError("User is not a member of this channel")
     
-    each_owner_id = check_exist_owner(channel_id_element, u_id)
-    if each_owner_id == False:
-        raise InputError(description="User already is an owner of channel")
+    each_owner_id = channel_owners_ids(channel_id_element)
+
+    if u_id in each_owner_id:
+        raise InputError("User already is an owner of channel")
     
-    if check_permissions(token, each_owner_id) == False:
-        raise AccessError(description="No permissions to add user")
+    if check_channel_owner_permissions(token, each_owner_id) == False:
+        raise AccessError("No permissions to add user")
 
     channel_addowner_v1(token, channel_id, u_id)
 
@@ -82,24 +86,52 @@ def remove_owner():
 
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError(description="Invalid channel_id")
+        raise InputError("Invalid channel_id")
 
     if check_valid_uid(u_id) == False:
-        raise InputError(description="Invalid user ID")
+        raise InputError("Invalid user ID")
 
-    each_owner_id = check_not_owner(channel_id_element, u_id)
-    if each_owner_id == False:
-        raise InputError(description="User is not an owner of channel")
+    each_owner_id = channel_owners_ids(channel_id_element)
 
-    if check_only_owner(channel_id_element, u_id) == False:
-        raise InputError(description="User is the only owner of channel")
+    if u_id not in each_owner_id:
+        raise InputError("User is not an owner of channel")
 
-    if check_permissions(token, each_owner_id) == False:
-        raise AccessError(description="No permissions to remove user")
+    if u_id in each_owner_id and len(each_owner_id) == 1:
+        raise InputError("User is the only owner of channel")
+
+    if check_channel_owner_permissions(token, each_owner_id) == False:
+        raise AccessError("No permissions to remove user")
 
     channel_removeowner_v1(token, channel_id, u_id)
 
     return dumps({})
+
+@APP.route('/channel/details/v2', methods=['GET'])
+def channel_details():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
+
+    if check_member(channel_id_element, token) == False:
+        raise AccessError("Not an member of channel")
+
+    channel_details = channel_details_v2(token, channel_id)
+
+    return dumps(channel_details)
+
+@APP.route('/channels/listall/v2', methods=['GET'])
+def channels_listall():
+    request_data = request.get_json()
+    token = request_data['token']
+
+    all_channels = channels_listall_v2(token)
+
+    return dumps(all_channels)
+
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
@@ -115,7 +147,84 @@ def dm_details():
         raise AccessError(description="Login user has not right to access dm_details")
 
     dm = dm_details_v1(token, dm_id)
+
     return dumps(dm)
+
+
+@APP.route('/dm/leave/v1', methods=['POST'])
+def dm_leave():
+    request_data = request.get_json()
+    token = request_data['token']
+    dm_id = request_data['dm_id']
+
+    dm_id_element = check_valid_dmid(dm_id)
+    if dm_id_element == False:
+        raise InputError(description="Invalid dm_id")
+
+    if check_valid_dm_token(token, dm_id_element) == False:
+        raise AccessError(description="Login user has not right to access this dm")
+
+    dm_leave_v1(token, dm_id)
+
+    return dumps({})
+
+@APP.route('/auth/register/v2', methods=['POST'])
+def auth_register_http():
+    request_data = request.get_json()
+
+    email = request_data['email']
+    password = request_data['password']
+    name_first = request_data['name_first']
+    name_last = request_data['name_last']
+
+    if check_name_length(name_first) == False:
+        raise InputError(description="Invalid name length")
+
+    if check_name_length(name_last) == False:
+        raise InputError(description="Invalid name length")
+    
+    if check_password_length(password) == False:
+        raise InputError(description="Invalid password length")
+    
+    if check_duplicate_email(email) == False:
+        raise InputError(description="Duplicate email")
+    
+    if check_valid_email(email) == False:
+        raise InputError(description="Invalid email")
+    
+    result = auth_register_v2(email, password, name_first, name_last)
+
+    return dumps(result)
+
+@APP.route('/auth/login/v2', methods=['POST'])
+def auth_login_http():
+    request_data = request.get_json()
+
+    email = request_data['email']
+    password = request_data['password']
+
+    if check_valid_email(email) == False:
+        raise InputError(description="Invalid email")
+    
+    result = auth_login_v2(email, password)
+
+    return dumps(result)
+
+@APP.route('/dm/remove/v1', methods=['DELETE'])
+def dm_remove():
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    
+    if (is_creator(token, dm_id) == False):
+        raise AccessError("Access denied, user is not a creator of this DM")
+
+    if (is_valid_dm(dm_id) == False):
+        raise InputError("Invalid DM ID")
+    
+    dm_remove_v1(token, dm_id)
+
+    return dumps({})
 
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create():
@@ -133,6 +242,41 @@ def dm_create():
     result = dm_create_v1(token, u_ids)
     return dumps(result)
 
+@APP.route('/dm/list/v1', methods=['GET'])
+def dm_list():
+    data = request.get_json()
+    token = data['token']
+
+    result = dm_list_v1(token)
+    return dumps(result)
+
+@APP.route('/channels/create/v2', methods=['POST'])
+def channels_create():
+    data = request.get_json()
+    token = data['token']
+    name = data['name']
+    is_public = data['is_public']
+    """ if (check_valid_token(token) == False):
+        raise AccessError("Invalid user") """
+
+    # check for invalid name
+    if len(name) > 20:
+        raise InputError(description="Invalid name: Too long")
+    elif len(name) == 0:
+        raise InputError(description="Invalid name: Too short")
+    
+    result = channels_create_v2(token, name, is_public)
+    return dumps(result)
+
+@APP.route('/channels/list/v2', methods=['GET'])
+def channels_list():
+    data = request.get_json()
+    token = data['token']
+    """ if (check_valid_token(token) == False):
+        raise AccessError(description="Invalid user") """
+    
+    result = channels_list_v2(token)
+    return dumps(result)
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

@@ -331,11 +331,6 @@ Return Value:
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
 
-# Checking that length of messages are over 1 and under 1000 characters 
-    valid_message_length = valid_message_length(message)
-    if valid_message_length == False:
-        raise InputError("Invalid message length")
-
 # Checking that message_id refers to a valid message
     valid_message_id = valid_message_id(message_id)
     if valid_message_id == False:

@@ -20,6 +20,7 @@ secret = 'COMP1531'
 def check_valid_dmid(dm_id):
     data = data_store.get()
 
+    dm_id = int(dm_id)
     dms_element = 0
     all_dm_id = []
     while dms_element  < len(data['dms_details']):
@@ -61,6 +62,7 @@ def check_valid_dm_token(token, dm_id_element):
         return False
 
     pass
+
 # Finish  authorised user member check
 # ==================================
 

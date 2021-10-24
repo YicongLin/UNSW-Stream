@@ -50,8 +50,8 @@ def test_invalid_token_id(valid):
     r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     assert r.status_code == 400
 
-# Testing for invalid message length
-def test_start_greater_than_total_messages():
+# Testing for valid message length
+def test_valid_start():
     token_1, _, dm_id_1, _, start_0 = valid
     payload = {
         "token": token_1,
@@ -60,7 +60,7 @@ def test_start_greater_than_total_messages():
     }
     r = requests.post(f'{BASE_URL}/dm/message/v1', json = payload)
     assert r.status_code == 200
-        
+
 # Testing all valid cases
 def test_valid(valid):
     token_1, _, _, _, dm_id_1, _ = valid

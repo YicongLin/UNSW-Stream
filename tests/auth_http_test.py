@@ -8,35 +8,6 @@ from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 
 BASE_URL = 'http://127.0.0.1:2220'
 
-# VALID IDS 
-@pytest.fixture
-def valid_id():
-    clear_v1()
-    id_1 = auth_register_v2("testing@email.com", "password1", "first1", "last1")['auth_user_id']
-    id_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['auth_user_id']
-    token_1 = auth_login_v2("testing@email.com", "password1")['token']
-
-    return id_1, id_2, token_1
-
-# def test_login(valid_id):
-#     id_1, id_2, token_1 = valid_id
-    
-#     # valid user 1
-#     payload = {
-#         "email" : "testing@email.com",
-#         "password" : "password1",
-#         "name_first" : "first1",
-#         "name_last" : "last1"
-#     }
-
-#     # valid email + password 
-#     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-#     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "testing@email.com", "password" : "password1"})
-
-#     resp = r.json()
-
-#     assert resp == {"auth_user_id" : id_1, "token" : resp['token']}
-
 # AUTH REGISTER 
 def test_auth_register():
     clear_v1()
@@ -237,7 +208,6 @@ def test_auth_logout(valid_token):
 
     # register and login valid user 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "randomemail@email.com", "password" : "password"})
     assert (r.status_code == 200)
 
     resp = r.json()
@@ -247,6 +217,13 @@ def test_auth_logout(valid_token):
     assert (r.status_code == 200)
 
     # login with invalid token 
+    payload = {
+        "token" : resp['token'],
+        "handle_str" : "newhandle"
+    } 
+    r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
+    assert (r.status_code == 403) 
+
     
 
     # invalid session id 

@@ -12,7 +12,11 @@ from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_remove_v1, dm_li
 from src.dm import check_valid_dmid, check_valid_dm_token, decode_token, check_user, is_valid_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
+<<<<<<< HEAD
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
+=======
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
+>>>>>>> 67d8123cadc974b3342cd64a16d64035326434b9
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
 from src.other import clear_v1
@@ -291,7 +295,6 @@ def dm_create():
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
     request_data = request.get_json()
-
     token = request_data['token']
     
     if token_check(token) == False:
@@ -317,6 +320,9 @@ def user_profile_http():
 
     if token_check(token) == False:
         raise AccessError(description="Invalid token")
+    
+    if u_id_check(token) == False:
+        raise InputError(description="Invalid u_id")
     
     result = user_profile_v1(token, u_id)
     return dumps(result)

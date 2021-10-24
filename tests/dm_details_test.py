@@ -2,8 +2,9 @@ import pytest
 import requests
 import json
 from src import config
+from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:8080'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ==================================
 # Test dm_details
@@ -18,7 +19,8 @@ def test_dm_details():
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
 
     # user_two ----> dm member
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
+    uid_2 = decode_JWT(json.loads(response.text)['token']) 
 
     # user_three ----> not member
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})
@@ -27,7 +29,7 @@ def test_dm_details():
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
     token_1 = json.loads(response.text)['token']
 
-    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [1, 2]})
+    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": uid_2})
     dm_id = json.loads(response.text)['dm_id']
 
     # Implement dm_details with invalid dm_id (InputError 400)

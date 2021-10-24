@@ -1,15 +1,15 @@
 import pytest
 from src.other import clear_v1
 from src.error import InputError, AccessError
-from src.auth import auth_register_v1
+from src.auth import auth_register_v2
 from src.users import users_all_v1, user_profile_v1, user_profile_setname_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 
 @pytest.fixture
 def valid():
     clear_v1()
-    id_1 = auth_register_v1("u1@test.com", "password", "1first", "1last")['auth_user_id']
-    id_2 = auth_register_v1("u2@test.com", "password", "2first", "2last")['auth_user_id']
-    id_3 = auth_register_v1("u3@test.com", "password", "3first", "3last")['auth_user_id']
+    id_1 = auth_register_v2("u1@test.com", "password", "1first", "1last")['auth_user_id']
+    id_2 = auth_register_v2("u2@test.com", "password", "2first", "2last")['auth_user_id']
+    id_3 = auth_register_v2("u3@test.com", "password", "3first", "3last")['auth_user_id']
     return id_1, id_2, id_3
 
 # USERS_ALL_V1

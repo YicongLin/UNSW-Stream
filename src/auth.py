@@ -25,34 +25,36 @@ def auth_login_v2(email, password):
     check_valid_email(email)
 
     # search if email is in datastore 
-    i = 1
-    while i < len(store['emailpw']):
-        user = store['emailpw'][i]
-        if user['email'] == email:
-            # if password is not correct, raise error 
-            if user['password'] != hashlib.sha256(password.encode()).hexdigest():
-                raise InputError('Incorrect password')
-            # if password is correct 
-            else:    
-                u_id = user['u_id']
-                permissions_id = store['emailpw'][i]['permissions_id']
-        
-                # create session id + store into session id list 
-                new_session_id = generate_new_session_id()
-                # append new session id into list of session id's 
-                store['emailpw'][i]['session_id'].append(new_session_id)
+    if len(store['emailpw']) == 0:
+        raise InputError("No matching email")
+    else:
+        i = 0
+        while i < len(store['emailpw']):
+            user = store['emailpw'][i]
+            if user['email'] == email:
+                # if password is not correct, raise error 
+                if user['password'] != hashlib.sha256(password.encode()).hexdigest():
+                    raise InputError('Incorrect password')
+                # if password is correct 
+                else:    
+                    u_id = user['u_id']
+                    permissions_id = store['emailpw'][i]['permissions_id']
+            
+                    # create session id + store into session id list 
+                    new_session_id = generate_new_session_id()
+                    # append new session id into list of session id's 
+                    store['emailpw'][i]['session_id'].append(new_session_id)
 
-                # generate token
-                token = generate_JWT(u_id, permissions_id, new_session_id)
-                data_store.set(store)
+                    # generate token
+                    token = generate_JWT(u_id, permissions_id, new_session_id)
+                    data_store.set(store)
 
-                return { 
-                        'token' : token,
-                        'auth_user_id': u_id
-                    }     
-        i += 1      
-    
-    raise InputError("No matching email")
+                    return { 
+                            'token' : token,
+                            'auth_user_id': u_id
+                        }     
+            i += 1      
+        raise InputError("No matching email")
 
 def auth_register_v2(email, password, name_first, name_last):
     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
@@ -81,7 +83,7 @@ def auth_register_v2(email, password, name_first, name_last):
     check_name_length(name_last)
     check_password_length(password)
     
-    if len(store['users']) > 1:
+    if len(store['users']) > 0:
         check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
@@ -99,7 +101,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # check if duplicate handle 
     flag = False
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
         if user['handle_str'][:20] == user_handle:
@@ -170,7 +172,7 @@ def auth_logout_v1(token):
     session_id = decoded_token['session_id']
 
     # remove session_id from user list of session id's
-    i = 1
+    i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 

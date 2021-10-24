@@ -4,6 +4,118 @@ import hashlib
 import jwt
 
 # helper functions ==============================================================================
+from src.channel import check_valid_token
+
+
+# Function to check if dm_id is valid 
+secret = 'COMP1531'
+def check_valid_dm_id(dm_id):
+
+    data = data_store.get()
+# ============================================================
+
+# ===========(Raise errors and associate functions)===========
+    dms_details_data = data['dms_details']
+# ============================================================
+    dms_members_element = 0
+
+    all_dm_id = []
+# ==================================
+    while dms_members_element < len(dms_details_data):
+# Check dm_id valid or not
+        all_dms_id.append(dms_details_data[dms_members_element]['dm_id'])
+# Serach information at data['dms_details']
+        dms_members_element += 1
+# If dm_id is invalid then return False
+
+# If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
+    dms_id_element = 0
+def check_valid_dmid(dm_id):
+    while dms_id_element < len(all_dms_id):
+    data = data_store.get()
+        if dm_id == all_dms_id[dms_id_element]:
+
+            return dm_ids_element 
+    dms_element = 0
+        dms_id_element += 1
+    all_dm_id = []
+
+    while dms_element  < len(data['dms_details']):
+    if dm_id not in all_dms_id:
+        all_dm_id.append(data['dms_details'][dms_element]['dm_id'])
+        return False
+        dms_element += 1
+            
+
+    pass
+    if dm_id not in all_dm_id :
+
+        return False
+# Function to check if user is a member of the dm 
+
+def check_member_dm(dm_id_element, u_id):
+    dm_id_element = 0
+    data = data_store.get()
+    while dm_id_element < len(all_dm_id):
+
+        if dm_id == all_dm_id[dm_id_element]:
+    members_in_dm = data['dms_details'][dm_id_element]['dm_members']
+            return dm_id_element
+    each_member_element = 0
+        dm_id_element += 1
+    each_member_id = []
+            
+    while each_member_element < len(members_in_dm):
+    pass
+        each_member_id.append(members_in_dm[each_member_element]['u_id'])
+# Finish valid dm_id check
+        each_member_element += 1 
+# ==================================
+
+
+    if u_id not in each_member_id:
+# ==================================
+        return False
+# Check authorised user is an member of dm or not
+
+# Serach information at data['dms_details'][dm_id_element]['dm_members']
+    return each_member_id
+# If authorised user is a not member of dm then return False
+
+# If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
+# Function to check whether the start of messages is greater than 
+def check_valid_dm_token(token, dm_id_element):
+# the total number of messages or not
+    data = data_store.get()
+def start_greater_than_total(dm_id, start):
+
+    data = data_store.get()
+    decoded_token = decode_JWT(token)
+    dms = data["dms_details"]
+    auth_user_id = decoded_token["u_id"]
+    
+
+    # Finding the specific dm
+    dm_members = data['dms_details'][dm_id_element]['members']
+    count = 0
+    all_members_id = []
+    for i in range(len(dms)):
+    member_id_element = 0
+        if dm_id == dms[i]["dm_id"]:
+    while member_id_element < len(dm_members):
+            break
+        all_members_id.append(dm_members[member_id_element]['u_id'])
+        count += 1
+        member_id_element += 1
+
+
+    x = dms[count]
+    if auth_user_id not in all_members_id:
+    messages = x["messages"]
+        return False
+    if start <= len(messages):
+
+        return False
 
 # Function to check if dm_id is valid 
 def check_valid_dm_id(dm_id):
@@ -207,6 +319,3 @@ def dm_messages_v1(token, dm_id, start):
             'end': end 
         }
     
-
-
-

@@ -3,7 +3,8 @@ from src.error import InputError
 from src.error import AccessError
 import hashlib
 import jwt
-from src.admin import is_valid_token
+from src.token_helpers import decode_JWT
+
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -16,6 +17,7 @@ from src.admin import is_valid_token
 def check_valid_channel_id(channel_id):
     data = data_store.get()
 
+    channel_id = int(channel_id)
     channels_details_data = data['channels_details']
     channels_members_element = 0
     all_channel_id = []
@@ -70,7 +72,8 @@ def check_member(channel_id_element, u_id):
     each_member_element = 0
     each_member_id = []
     while each_member_element < len(members_in_channel):
-        each_member_id.append(members_in_channel[each_member_element]['u_id'])
+        each_memeber = members_in_channel[each_member_element]
+        each_member_id.append(each_memeber['u_id'])
         each_member_element += 1 
 
     if u_id not in each_member_id:
@@ -99,29 +102,64 @@ def channel_owners_ids(channel_id_element):
 
 # ==================================
 # Check token of authorised user is valid or not
-# Search information at XXXXXXXX
-# def check_token(token):
-#     SECRET = 'COMP1531'
-#     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-# Finish authorised user valid token check
+# Search information at data['emailpw']
+# If authorised user with invalid token then return False
+# If authorised user with valid token then return True
+def check_valid_token(token):
+    # data = data_store.get()
+
+    # decoded_token = decode_JWT(token)
+    # auth_user_id = decoded_token["u_id"]
+    # user_session = decoded_token["session_id"]
+
+    # user_element = 0
+    # while user_element < len(data['emailpw']):
+    #     if data['emailpw'][user_element]['u_id'] == auth_user_id:
+    #         break
+    #     user_element += 1
+    
+    # session_list = data['emailpw'][user_element]['session_id']
+
+    # if user_session in session_list:
+    #     return True
+
+    # return False
+    store = data_store.get()
+    decoded_token = decode_JWT(token)
+    
+    found = False 
+    i = 1
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        # check if session id matches any current session id’s 
+        if decoded_token['session_id'] in user['session_id']:
+            found = True
+
+        i += 1 
+
+    if found == False:
+        return False
+    
+    pass
+
+#Finish authorised user valid token check
 # ==================================
 
 # ==================================
 # Check authorised user has channel owner permissions or not
-# Search information at XXXXXXX
-# If authorised user doesn't have channel owener permissions then return False
-# Decode details will be moved to config.py
+# Search information at each_owner_id(a list contains all owners' u_ids)
+# If authorised user has channel/global owener permissions then return False
+# If authorised user has channel/global owener permissions then return True
 def check_channel_owner_permissions(token, each_owner_id):
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    decoded_token = decode_JWT(token)
 
-    user_permission = decode_token['permission_id']
-    auth_user_id = decode_token['u_id']
+    owner_permission = decoded_token['permissions_id']
+    auth_user_id = decoded_token['u_id']
 
-    if user_permission != 1 and auth_user_id not in each_owner_id:
+    if owner_permission != 1 and auth_user_id not in each_owner_id:
         return False
 
-    pass
+    return True
 # Finish authorised user permissions check
 # ==================================
 
@@ -249,31 +287,36 @@ def channel_details_v2(token, channel_id):
     """An authorised user to check a channel’s detailed information which user is a member of it
     
     Arguments:
-        auth_user_id (integer) - the ID of an authorised user
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
         channel_id (integer) - the ID of an existing channel
 
     Exceptions:
-        AccessError - Occurs when user type in an invalid id
-        AccessError - Occurs when user type in an valid id and valid channel id 
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
             but user is not a member of that channel
-        InputError - Occurs when user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid channel id
 
     Return Value:
-    {name, is_public, owner_members, all_members }
-        name (string) - owner’s first name
-        is_public (boolean) - public or private channel
-        owner_members(member)
-        all_mambers(member)
-    {u_id, email, name_first, name_last, handle_str}
-        u_id(integer) - the ID of an authorised user
-        email (string) - the email of an authorised user
-        first name(string) - first name of an authorised user
-        last name(string) - last name of an authorised user
-        handle_str(string) - special string created for authorised user
+        {name, is_public, owner_members, all_members}
+            name (string) - owner’s first name
+            is_public (boolean) - public or private channel
+            owner_members (members)
+            all_mambers (members)
+
+        members(a list of dict): [{u_id, email, name_first, name_last, handle_str}]
+            u_id (integer) - the ID of an authorised user
+            email (string) - the email of an authorised user
+            first name (string) - first name of an authorised user
+            last name (string) - last name of an authorised user
+            handle_str (string) - special string created for authorised user
     """
 
     # Obtain data already existed
     data = data_store.get()
+
+    # Raise an AccessError if authorised user login with an invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Raise a InputError if authorised user type in invalid channel_id
     # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
@@ -281,21 +324,17 @@ def channel_details_v2(token, channel_id):
     if channel_id_element == False:
         raise InputError("Invalid channel_id")
 
-    # Check authorised user is a member of channel or not 
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
-
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
+    auth_user_id = decode_JWT(token)['u_id']
     if check_member(channel_id_element, auth_user_id) == False:
-        raise AccessError("Not is not authorised user an member of channel")
+        raise AccessError("Authorised user is not an member of channel")
 
 
     # For return
     channels_details_data = data['channels_details']
     
-    name = channels_details_data[channel_id_element]['channel_name']
+    name = channels_details_data[channel_id_element]['name']
     owner_members = channels_details_data[channel_id_element]['owner_members']
     all_members = channels_details_data[channel_id_element]['channel_members']
     is_public = channels_details_data[channel_id_element]['channel_status']
@@ -457,7 +496,33 @@ def channel_join_v2(token, channel_id):
     return {}
 
 def channel_addowner_v1(token, channel_id, u_id):
+    """An authorised user to add another user as an owner of a channel
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the user who is planned to be added as a new channel owner
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user has not owner permission to add owner
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid u_id
+        InputError - Occurs when authorised user type in an valid channel id
+            but that user is not a memeber of this channel
+        InputError - Occurs when authorised user try to add an existing channel owner as owner
+
+    Return Value:
+        {}
+    """
+
+    # Obtain data already existed
     data = data_store.get()
+
+    # Raise an AccessError if authorised user login with an invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Raise a InputError if authorised user type in invalid channel_id
     # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
@@ -493,7 +558,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     new_owner_element = 0
     while new_owner_element < len(each_member_id):
         if u_id == each_member_id[new_owner_element]:
-            return new_owner_element
+            break
         new_owner_element+= 1
     
     new_owner = data['channels_details'][channel_id_element]['channel_members'][new_owner_element]
@@ -502,7 +567,33 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {}
     
 def channel_removeowner_v1(token, channel_id, u_id):
+    """An authorised user to remove another channel's owner permission
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the user who's channel owner permission is planned to be removed
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user has not owner permission to remove owner
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid u_id
+        InputError - Occurs when authorised user type in an valid channel id
+            but that user is not a existing owner of this channel
+        InputError - Occurs when authorised user try to remove the channel owner's owner permission
+
+    Return Value:
+        {}
+    """
+    
+    # Obtain data already existed
     data = data_store.get()
+
+    # Raise an AccessError if authorised user login with an invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Raise a InputError if authorised user type in invalid channel_id
     # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])

@@ -1,10 +1,15 @@
+from _pytest.python_api import raises
 from src.data_store import data_store
 from src.error import InputError, AccessError
 import hashlib
 import jwt
+<<<<<<< HEAD
 from src.token_helpers import decode_JWT
 from src.channel import check_valid_token
 
+=======
+secret = 'COMP1531'
+>>>>>>> 0316a9130c9bfb8b8da69cbd81e3a053fb21c178
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -272,8 +277,7 @@ def dm_remove_v1(token, dm_id):
     data = data_store.get()
     dm_detail_info = data['dms_details']
     user_id = decode_token(token)
-    
-    
+
     # checking for both errors
     i = 0
     input = 0
@@ -363,7 +367,8 @@ def check_valid_token(token):
 #Finish authorised user valid token check
 
 def is_valid_token(token):
-    global secret
+    secret = 'COMP1531'
+
     u_id = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     session_id = jwt.decode(token, secret, algorithms=['HS256'])['session_id']
 

@@ -268,6 +268,41 @@ def auth_login_http():
 
     return dumps(result)
 
+@APP.route('/dm/remove/v1', methods=['DELETE'])
+def dm_remove():
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
+    """ if (is_creator(token, dm_id) == False):
+        raise AccessError("Access denied, user is not a creator of this DM")
+
+    if (is_valid_dm(dm_id) == False):
+        raise InputError("Invalid DM ID") """
+    
+    dm_remove_v1(token, dm_id)
+
+    return dumps({})
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create():
+    data = request.get_json()
+    token = data['token']
+    u_ids = data['u_ids']
+    #user_id = decode_token(token)
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
+    if (check_user(u_ids) == 0):
+        raise InputError(description="There is 1 or more invalid ids, please check again")
+    
+    """ if (check_valid_token(token) == False):
+        raise AccessError(description="Invalid user") """
+
+    result = dm_create_v1(token, u_ids)
+    return dumps(result)
+
+
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
     request_data = request.get_json()
@@ -399,7 +434,6 @@ def dm_list():
         raise AccessError("Invalid token")
     result = dm_list_v1(token)
     return dumps(result)
-
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

@@ -154,7 +154,24 @@ def channel_status(channel_id):
                 return False
 # Finish channel status check
 # ==================================
-  
+
+# ==================================
+# Checking if someone is already a member;
+# Return false if not
+def already_a_member(channel_id, token):
+    data = data_store.get()
+    channels = data["channels_details"]
+    SECRET = 'COMP1531'
+    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decode_token['u_id']
+    for i in range(len(channels)):
+        if channels[i]['channel_id'] == channel_id:
+            found = channels[i]['channel_members']
+            for j in range(len(found)):
+                if found[j]['u_id'] == auth_user_id:
+                    return True
+    return False
+
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
@@ -200,8 +217,8 @@ def channel_invite_v2(token, channel_id, u_id):
         raise AccessError("Invalid user")
 
     # Raising an error if u_id is already a member of the channel
-    already_a_member = check_member(channel_id, u_id)
-    if already_a_member != False:
+    already_a_member = check_member(channel_id, token)
+    if already_a_member == True:
         raise InputError("Already in channel")
   
     # Raising an error if the authorised user 
@@ -210,7 +227,7 @@ def channel_invite_v2(token, channel_id, u_id):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(channel_id, auth_user_id)
+    already_a_member = check_member(channel_id, token)
     if already_a_member == False:
         raise AccessError("You are not a member of the channel")
 
@@ -356,7 +373,7 @@ def channel_messages_v2(token, channel_id, start):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
     
-    already_a_member = check_member(channel_id, auth_user_id)
+    already_a_member = check_member(channel_id, token)
     if already_a_member == False:
         raise AccessError("You are not a member of the channel")  
 
@@ -416,7 +433,7 @@ def channel_join_v2(token, channel_id):
 
     # Raising an error if the authorised user 
     # is already a member of the channel
-    already_a_member = check_member(channel_id, auth_user_id)
+    already_a_member = check_member(channel_id, token)
     if already_a_member != False:
         raise InputError("Already in channel")
 
@@ -563,7 +580,7 @@ def channel_leave_v1(token, channel_id):
         
     # Raising an error if the authorised user is not 
     # a member of the valid channel
-    already_a_member = check_member(channel_id, auth_user_id)
+    already_a_member = check_member(channel_id, token)
     if already_a_member == False:
         raise AccessError("You are not a member of the channel")  
     

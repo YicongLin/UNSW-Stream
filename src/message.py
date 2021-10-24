@@ -16,7 +16,7 @@ def valid_dm_id(dm_id):
     dm_ids_list = []
     for i in range(len(dm_details)):
         dm_ids_list.append(dm_details[i]['dm_id'])
-    if dm_id not in dm_id_list:
+    if dm_id not in dm_ids_list:
         return False
 
 # Returns false if the message length is less than 1 or greater than 1000 characters
@@ -129,18 +129,15 @@ def message_senddm_v1(token, dm_id, message):
     auth_user_id = decode_token['u_id']
 
     # Check for valid dm_id
-    valid_dm_id = valid_dm_id(dm_id)
-    if valid_dm_id == False:
+    if valid_dm_id(dm_id) == False:
         raise InputError("Invalid DM")
     
     # Check for valid message length
-    valid_message_length = valid_message_length(message)
-    if valid_message_length == False:
+    if valid_message_length(message) == False:
         raise InputError("Invalid message length")
     
     # Raise an error if the authorised user is not a member of the DM
-    is_member = member(token)
-    if is_member == False:
+    if member(token) == False:
         raise AccessError("Not a member of the DM")
     
     # Otherwise, send the message to the specified DM

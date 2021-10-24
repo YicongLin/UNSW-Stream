@@ -122,13 +122,13 @@ def dm_create():
     data = request.get_json()
     token = data['token']
     u_ids = data['u_ids']
-    user_id = decode_token(token)
+    #user_id = decode_token(token)
     
     if (check_user(u_ids) == 0):
         raise InputError(description="There is 1 or more invalid ids, please check again")
     
-    if (is_valid_user(user_id) == False):
-        raise AccessError(description="Invalid user")
+    """ if (check_valid_token(token) == False):
+        raise AccessError(description="Invalid user") """
 
     result = dm_create_v1(token, u_ids)
     return dumps(result)

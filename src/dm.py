@@ -1,3 +1,4 @@
+from _pytest.python_api import raises
 from src.data_store import data_store
 from src.error import InputError, AccessError
 import hashlib
@@ -117,6 +118,8 @@ def dm_leave_v1(token, dm_id):
 
 
 def dm_create_v1(token, u_ids):
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
     data = data_store.get()
     dm = data['dms_details']
     user_id = decode_token(token)
@@ -215,23 +218,39 @@ def get_name(id_list):
 
 
 def dm_remove_v1(token, dm_id):
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
+    
     data = data_store.get()
     dm_detail_info = data['dms_details']
     user_id = decode_token(token)
     
-    if (is_creator(user_id, dm_id) == False):
-        raise AccessError("Access denied, user is not a creator of this DM")
     
-    if (is_valid_dm(dm_id) == False):
+    # checking for both errors
+    i = 0
+    input = 0
+    access = 0
+    while i < len(dm_detail_info):
+        if (dm_detail_info[i]['dm_id'] == dm_id):
+            input = 1
+            creator = dm_detail_info[i]['creator']
+            if (user_id == creator[0]['u_id']):
+                access = 1
+        i += 1
+    # didn't find the dm id in datastore
+    if (input == 0):
         raise InputError("Invalid DM ID")
 
+    # the user passed in is not the creator of this dm
+    if (access == 0):
+        raise AccessError("Access denied, user is not a creator of this DM")
     
     j = 0
     while j < len(dm_detail_info):
         if (dm_detail_info[j]['dm_id'] == dm_id):
             # check if the user is the creator of this dm
             creator = dm_detail_info[j]['creator']
-            if (user_id == creator['u_id']):
+            if (user_id == creator[0]['u_id']):
                 data['dms_details'].remove(dm_detail_info[j])
         j += 1
     
@@ -242,12 +261,15 @@ def dm_remove_v1(token, dm_id):
     }
 
 def dm_list_v1(token):
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
     data = data_store.get()
     dm_detail = data['dms_details']
     user_id = decode_token(token)
 
     """ if (is_valid_user(user_id) == False):
         raise AccessError("Invalid user") """
+    
 
     dm_list = []
     i = 0
@@ -267,14 +289,6 @@ def dm_list_v1(token):
         'dms': dm_list
     }
 
-# check if the dm id is valid
-def is_valid_dm(dm, id):
-    i = 0
-    while i < len(dm):
-        if (dm[i]['dm_id'] == id):
-            return True
-        i += 1
-    return False
 
 # Check token of authorised user is valid or not
 # Search information at data['emailpw']
@@ -282,37 +296,35 @@ def is_valid_dm(dm, id):
 # If authorised user with valid token then return True
 def check_valid_token(token):
     data = data_store.get()
-
+    emailpw = data['emailpw']
     
-    auth_user_id = decode_JWT(token)["u_id"]
-    user_session = decode_JWT(token)["session_id"]
+    auth_user_id = jwt.decode(token, secret, algorithms=['HS256'])["u_id"]
+    user_session = jwt.decode(token, secret, algorithms=['HS256'])["session_id"]
 
     user_element = 0
-    while user_element < len(data['emailpw']):
-        if data['emailpw'][user_element]['u_id'] == auth_user_id:
+    while user_element < len(emailpw):
+        if emailpw[user_element]['u_id'] == auth_user_id:
             break
         user_element += 1
     
-    session_id = data['emailpw'][user_element]['session_id']
+    session_id = emailpw[user_element]['session_id']
     if user_session in session_id:
         return True
 
     return False
 #Finish authorised user valid token check
 
-def decode_JWT(token):
-    return jwt.decode(token, secret, algorithms=['HS256'])
+def is_valid_token(token):
+    global secret
+    u_id = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
+    session_id = jwt.decode(token, secret, algorithms=['HS256'])['session_id']
 
-def is_creator(token, dm_id):
     data = data_store.get()
-    dm_detail = data['dms_details']
-    u_id = decode_token(token)
+    emailpw = data['emailpw']
     i = 0
-    while i < len(dm_detail):
-        if (dm_detail[i]['dm_id'] == dm_id):
-            # check if the user is the creator of this dm
-            creator = dm_detail[i]['creator']
-            if (u_id == creator['u_id']):
+    while i < len(emailpw):
+        if (emailpw[i]['u_id'] == u_id):
+            if (session_id in emailpw[i]['session_id']):
                 return True
         i += 1
     return False

@@ -1,6 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
-from src.dm import decode_token, is_valid_user
+from src.dm import decode_token, is_valid_token
 def check_duplicate(list, channel):
 
     # check for the element passed in is in the list or not
@@ -12,6 +12,8 @@ def check_duplicate(list, channel):
     return 0
     
 def channels_list_v2(token):
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
     data = data_store.get()
     channel_detail = data['channels_details']
     user_id = decode_token(token)
@@ -75,7 +77,8 @@ def channels_create_v2(token, name, is_public):
         channel_id(integer) is channels id
     """
 
-    
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
 
     # get data from datastore
     data = data_store.get()

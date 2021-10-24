@@ -28,40 +28,48 @@ Example usage:
 initial_object = {
     'users': [
         {
-            'u_id':1,
-            'email' : '34@email.com',
-            'password' : 'password', 
-            'first_name' : 'name_first', 
-            'last_name' : 'name_last', 
-            'handle_str': 'kevinlin'   
+            'u_id': 1,
+            'email':'1@email.com', 
+            'name_first': 'a', 
+            'name_last':'1last', 
+            'handle_str': 'ahandle1'   
         },
 
         {
             'u_id': 2,
-            'handle_str': 'kangliu' 
+            'email':'2@email.com', 
+            'name_first': 'b', 
+            'name_last':'2last', 
+            'handle_str': 'bhandle2' 
         },
 
         {
             'u_id': 3,
-            'handle_str': 'haydensmith' 
+            'email':'3@email.com', 
+            'name_first': 'c', 
+            'name_last':'3last', 
+            'handle_str': 'chandle3' 
         },
 
         {
             'u_id': 4,
-            'handle_str': 'harry' 
+            'email':'4@email.com', 
+            'name_first': 'd', 
+            'name_last':'4last', 
+            'handle_str': 'dhandle3' 
         }
     ],
     
     'emailpw' : [
-        """ {
-            'email' : email,
-            'password' : password,
-            'u_id' : new_id,
-            'permissions_id' : permissions_id,
-            'session_id' : session_id 
+        {
+            'email' : 'email',
+            'password' : 'password',
+            'u_id' : 'new_id',
+            'permissions_id' : 'permissions_id',
+            'session_id' : ['session_id']
         }, 
         
-        """
+       
     ],
 
     'dms_details': [
@@ -83,6 +91,16 @@ initial_object = {
                     'name_last':'2last', 
                     'handle_str': 'bhandle2'
                 },
+                {
+                    'u_id': 3,
+                    'email':'3@email.com', 
+                    'name_first': 'c', 
+                    'name_last':'3last', 
+                    'handle_str': 'chandle3'
+                },
+            ],
+
+            'creator': [
                 {
                     'u_id': 3,
                     'email':'3@email.com', 

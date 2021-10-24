@@ -5,6 +5,7 @@ from src import config
 from src.auth import auth_register_v2
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2, channel_join_v2
+from src.other import clear_v1
 
 BASE_URL = 'http://127.0.0.1:8080'
 
@@ -38,7 +39,7 @@ def test_invalid_token(valid):
         "channel_id": channel_1
     }
     r = requests.post(f'{BASE_URL}/channel/leave/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing for a case where the user is not a member of the channel
 def test_not_a_member(valid):
@@ -48,7 +49,7 @@ def test_not_a_member(valid):
         "channel_id": channel_1
     }
     r = requests.post(f'{BASE_URL}/channel/leave/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing valid case
 def test_valid(valid):

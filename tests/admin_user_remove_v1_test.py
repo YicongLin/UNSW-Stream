@@ -7,6 +7,7 @@ from src.token_helpers import decode_JWT
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2, channel_join_v2, channel_messages_v2
 from src.dm import dm_create_v1
+from src.other import clear_v1
 
 BASE_URL = 'http://127.0.0.1:8080'
 
@@ -61,20 +62,20 @@ def test_invalid_token(valid):
         "u_id": id_1
     }
     r = requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing for a case where the authorised user is not a global owner
-def test_not_global_owner(valid)
+def test_not_global_owner(valid):
     _, token_2, _, _, id_3, *_ = valid
     payload = {
         "token": token_2,
         "u_id": id_3
     }
     r = requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing for a case where u_id is the only global owner
-def test_only_global_owner(valid)
+def test_only_global_owner(valid):
     token_1, _, _, id_1, *_ = valid
     payload = {
         "token": token_1,
@@ -234,7 +235,7 @@ def test_user_list_and_profile(valid):
         "u_id": id_1,
         "email": qwe@rty.com,
         "name_first": "uio",
-        "name_last": "qwe"
+        "name_last": "qwe",
         "handle_str": "uioqwe"
     }
     response = r.json()

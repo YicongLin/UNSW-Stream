@@ -1,4 +1,5 @@
 import json
+import pytest
 from src import config
 from src.auth import auth_register_v2
 from src.channels import channels_create_v2

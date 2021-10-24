@@ -68,5 +68,5 @@ def test_invalid_message_length(valid):
         "message": ""
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 

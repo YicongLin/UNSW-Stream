@@ -19,7 +19,7 @@ def valid_uid(u_id):
         return False
 
 # Returns true if u_id is a user who is the only global owner
-def only_global_owner(u_id)
+def only_global_owner(u_id):
     data = data_store.get()
     emailpw = data['emailpw']
     is_global_owner = False
@@ -31,11 +31,11 @@ def only_global_owner(u_id)
             if emailpw[i]['permissions_id'] == 1:
                 is_global_owner = True
     if is_global_owner == True:
-        if len(global_owner_list) = 1:
+        if len(global_owner_list) == 1:
             return True
 
 # Returns true if the authorised user is not a global owner
-def not_a_global_owner(token)
+def not_a_global_owner(token):
     data = data_store.get()
     emailpw = data['emailpw']
     decoded_token = decode_JWT(token)
@@ -48,7 +48,11 @@ def not_a_global_owner(token)
 
 # Returns false if permission_id is invalid
 def valid_permission_id(permission_id):
-    if permission_id != 1 or permission_id != 2:
+    is_integer = isinstance(permission_id, int)
+    if is_integer == True:
+        if permission_id != 1 or permission_id != 2:
+            return False
+    else:
         return False
 
 # ==================================
@@ -100,7 +104,7 @@ def admin_user_remove_v1(token, u_id):
         channel_owner_members = channel_details[i]['owner_members']
         for j in range(len(channel_members)):
             if channel_members[j]['u_id'] == u_id:
-                remove(channel_members[j]
+                remove(channel_members[j])
         for j in range(len(channel_owner_members)):
             if channel_owner_members[j]['u_id'] == u_id:
                 remove(channel_owner_members[j])
@@ -118,10 +122,10 @@ def admin_user_remove_v1(token, u_id):
     for i in range(len(users)):
         if users[i]['u_id'] == u_id:
             deleted_user_dict = {
-                'u_id': u_id
-                'email': ''
-                'name_first': 'Removed'
-                'name_last': 'user'
+                'u_id': u_id,
+                'email': '',
+                'name_first': 'Removed',
+                'name_last': 'user',
                 'handle_str': ''
             }
             data['deleted_users'].append(deleted_user_dict)

@@ -26,6 +26,7 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
+<<<<<<< HEAD
     'users': [
         {
             'u_id':1,
@@ -51,18 +52,11 @@ initial_object = {
             'handle_str': 'harry' 
         }
     ],
+=======
+    'users': [ ],
+>>>>>>> fixed auth tests to auth_http_test.py
     
-    'emailpw' : [
-        """ {
-            'email' : email,
-            'password' : password,
-            'u_id' : new_id,
-            'permissions_id' : permissions_id,
-            'session_id' : session_id 
-        }, 
-        
-        """
-    ],
+    'emailpw' : [  ],
 
     'dms_details': [
      """{

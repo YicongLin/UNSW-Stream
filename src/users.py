@@ -15,7 +15,7 @@ def token_check(token):
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 
-        if decoded_token['session_id'] == user['session_id']:
+        if decoded_token['session_id'] in user['session_id']:
             found = True
 
         i += 1 

@@ -98,15 +98,15 @@ def check_password_length(password):
 def check_duplicate_email(email):
     store = data_store.get()
 
-    i = 1
-    while i < len(store['emailpw']):
-        user = store['emailpw'][i]
-        if user['email'] == email:
-            return False 
-        i += 1
-    
-    pass 
-
+    if len(store['emailpw']) == 0:
+        pass
+    else: 
+        i = 0
+        while i < len(store['emailpw']):
+            user = store['emailpw'][i]
+            if user['email'] == email:
+                return False 
+            i += 1 
 
 # USERS FUNCTIONS
 def users_all_v1(token):

@@ -99,7 +99,16 @@ initial_object = {
                     'handle_str': 'chandle3'
                 },
             ],
-
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789
+                },
+            ],
+            'start': 0,
+            'end': 50,  
             'creator': [
                 {
                     'u_id': 3,

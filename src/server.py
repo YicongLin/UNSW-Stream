@@ -6,16 +6,17 @@ from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, check_valid_token
-from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
-from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_remove_v1, dm_list_v1
-from src.dm import check_valid_dmid, check_valid_dm_token, decode_token, check_user, is_valid_token
+from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member
+from src.channels import channels_listall_v2, channels_create_v2
+from src.dm import dm_details_v1, dm_leave_v1
+from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
+from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
+from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
-from src.other import clear_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 
@@ -42,6 +43,126 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
+# Example
+@APP.route("/echo", methods=['GET'])
+def echo():
+    data = request.args.get('data')
+    if data == 'echo':
+   	    raise InputError(description='Cannot echo "echo"')
+    return dumps({})
+
+@APP.route('/clear/v1', methods=['DELETE'])
+def clear():
+    return dumps({})
+    
+@APP.route("/channel/invite/v2", methods=['POST'])
+def channel_invite_http():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    u_id = request_data['u_id']
+    
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError(description="Invalid channel_id")
+    
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
+        
+    if check_valid_uid(u_id) == False:
+        raise InputError(description="Invalid user ID")
+        
+    each_member_id = check_member(channel_id_element, u_id)
+    if each_member_id  != False:
+        raise InputError(description="User is already a member of this channel")
+
+    if check_member(channel_id_element, token) == False:
+        raise AccessError(description="Not an member of channel") 
+    
+    channel_invite_v2(token, channel_id, u_id)
+            
+    return dumps({})
+        
+@APP.route("/channel/join/v2", methods=['POST'])
+def channel_join_http():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError(description="Invalid channel_id")
+
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
+        
+    each_member_id = check_member(channel_id_element, token)
+    channel_status = channel_status(channel_id)
+    channel_owner_permissions = check_channel_owner_permissions(token, each_owner_id)
+    if each_member_id != False:
+        raise InputError(description="Already a member of this channel")
+    elif channel_owner_permissions == False and channel_status == False:
+        raise AccessError(description="Channel is private and you are not a global owner")
+
+    channel_join_v2(token, channel_id)
+            
+    return dumps({})
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages_http():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    u_id = request_data['u_id']
+    try:
+        channel_id_element = check_valid_channel_id(channel_id)
+        if channel_id_element == False:
+            raise InputError(description="Invalid channel_id")
+        
+        if is_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
+            
+        is_greater = start_greater_than_total(channel_id, start)
+        if is_greater == True:
+            raise InputError(description="Exceeded total number of messages in this channel")
+            
+        each_member_id = check_member(channel_id, u_id)
+        if each_member_id  == False:
+            raise InputError(description="User is not a member of this channel")
+        
+        messages = channel_messages_v2(token, channel_id, start)
+            
+        return dumps(messages)
+    
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+        raise AccessError
+
+@APP.route("/channel/leave/v1", methods=['POST'])
+def channel_leave_http():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    print("new")
+
+    try:
+        is_valid_channel = check_valid_channel_id(channel_id)
+        if is_valid_channel == False:
+            raise InputError(description="Invalid channel_id")
+        
+        if is_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
+        
+        already_a_member = check_member(channel_id, token)
+        if already_a_member == False:
+            raise AccessError(description="You are not a member of the channel")
+
+        channel_leave_v1(token, channel_id)
+            
+        return dumps({})
+
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+        raise AccessError
+
 @APP.route('/channel/addowner/v1', methods=['POST'])
 def add_owner():
     request_data = request.get_json()
@@ -50,9 +171,10 @@ def add_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
+    
 
         channel_id_element = check_valid_channel_id(channel_id)
         if channel_id_element == False:
@@ -253,6 +375,95 @@ def auth_login_http():
     result = auth_login_v2(email, password)
     return dumps(result)
 
+@APP.route('/message/senddm/v1', methods=['POST'])
+def message_senddm_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    dm_id = request_data['dm_id']
+    message = request_data['message']
+    try: 
+        if valid_dm_id == False:
+            raise InputError(description="Invalid DM")
+        
+        if is_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
+
+        if valid_message_length == False:
+            raise InputError(description="Invalid message length")
+
+        if member == False:
+            raise AccessError(description="Not a member of the DM")
+
+        result = message_senddm_v1(token, dm_id, message)
+
+        return dumps(result)
+
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+        raise AccessError
+
+@APP.route('/admin/user/remove/v1', methods=['DELETE'])
+def admin_user_remove_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    u_id = request_data['u_id']
+    try:
+
+        if valid_uid(u_id) == False:
+            raise InputError(description="Invalid user")
+
+        if is_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
+
+        if only_global_owner(token, u_id) == True:
+            raise InputError(description="Cannot remove the only global owner")
+        
+        if not_a_global_owner(token) == True:
+            raise AccessError(description="You are not a global owner")
+
+        admin_user_remove_v1(token, u_id)
+
+        return dumps({})
+
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+        raise AccessError
+
+@APP.route('/admin/userpermission/change/v1', methods=['POST'])
+def admin_userpermission_change_http():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    u_id = request_data['u_id']
+    permission_id = request_data['permission_id']
+
+    try:
+        if valid_uid(u_id) == False:
+            raise InputError(description="Invalid user")
+        
+        if is_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
+
+        if only_global_owner(token, u_id) == True and permission_id == 2:
+            raise InputError(description="Cannot demote the only global owner")
+        print('____________')
+        print('permission id is')
+        print(permission_id)
+        print('____________')
+
+        if permission_id not in [1,2]:
+            raise InputError("Invalid permission ID")
+        
+        if not_a_global_owner(token) == True:
+            raise InputError(description="You are not a global owner")
+        
+        admin_userpermission_change_v1(token, u_id, permission_id)
+
+        return dumps([])
+
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+        raise AccessError
+
 @APP.route('/dm/remove/v1', methods=['DELETE'])
 def dm_remove():
     data = request.get_json()
@@ -286,7 +497,6 @@ def dm_create():
 
     result = dm_create_v1(token, u_ids)
     return dumps(result)
-
 
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
@@ -384,7 +594,6 @@ def user_profile_sethandle_http():
 
     result = user_profile_sethandle_v1(token, handle_str)
     return dumps(result)
-
 
 @APP.route('/channels/create/v2', methods=['POST'])
 def channels_create():

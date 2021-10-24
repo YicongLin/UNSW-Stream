@@ -100,7 +100,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # check if duplicate handle 
     flag = False
-    i = 1
+    i = 0
     while i < len(store['users']):
         user = store['users'][i]
         if user['handle_str'][:20] == user_handle:

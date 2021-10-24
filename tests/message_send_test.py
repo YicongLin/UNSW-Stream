@@ -52,7 +52,7 @@ def test_invalid_token_id(valid):
         "message": "Hello World"
     }
     r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing for invalid message length
 def test_invalid_message_length(valid):

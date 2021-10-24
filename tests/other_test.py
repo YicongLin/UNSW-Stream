@@ -30,3 +30,4 @@ def test_clear_data():
     assert data['channels'] == []
     assert data['channels_details'] == []
     assert data['emailpw'] == []
+    assert data['dms_details'] == []

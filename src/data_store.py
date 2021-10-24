@@ -30,7 +30,6 @@ initial_object = {
         {
             'u_id':1,
             'email' : '34@email.com',
-            'password' : 'password', 
             'first_name' : 'name_first', 
             'last_name' : 'name_last', 
             'handle_str': 'kevinlin'   
@@ -89,8 +88,18 @@ initial_object = {
                     'name_first': 'c', 
                     'name_last':'3last', 
                     'handle_str': 'chandle3'
-                },
+                }
             ]
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789
+                }
+            ]
+            'start': 0,
+            'end': 50,  
         },
         """    
     ],
@@ -146,7 +155,7 @@ initial_object = {
             ]
             'messages': [
                 {
-                    'message_id': 1,
+                    'message_id': 2,
                     'u_id': 1,
                     'message': 'Hello world',
                     'time_created': 1582426789,
@@ -185,6 +194,16 @@ initial_object = {
     'dms': [
         # 'dm_id': 1,
         # 'name':
+    ],
+
+    'deleted_users': [
+        {
+            'u_id': 1
+            'email': ''
+            'name_first': 'Removed'
+            'name_last': 'user'
+            'handle_str': ''
+        }
     ]
 
 
@@ -207,3 +226,4 @@ print('Loading Datastore...')
 
 global data_store
 data_store = Datastore()
+

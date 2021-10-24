@@ -3,7 +3,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:2220'
+BASE_URL = 'http://127.0.0.1:7000'
  
 # ==================================
 # Test channel_details function

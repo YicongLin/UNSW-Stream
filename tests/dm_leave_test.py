@@ -3,7 +3,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:1024'
+BASE_URL = 'http://127.0.0.1:7000'
 
 # ==================================
 # Test dm_leave

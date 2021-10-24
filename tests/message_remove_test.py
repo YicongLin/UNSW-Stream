@@ -35,7 +35,7 @@ def valid():
         "message_id": message_id_1,
     }
     r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload)
-    assert r.status_code == 400
+    assert r.status_code == 403
 
 # Testing there is no error raised when there are no messages
    # def test_invalid_message_id():

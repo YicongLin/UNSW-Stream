@@ -292,10 +292,11 @@ def channel_details_v2(token, channel_id):
     if check_member(channel_id_element, auth_user_id) == False:
         raise AccessError("Authorised user is not an member of channel")
 
+
     # For return
     channels_details_data = data['channels_details']
     
-    name = channels_details_data[channel_id_element]['channel_name']
+    name = channels_details_data[channel_id_element]['name']
     owner_members = channels_details_data[channel_id_element]['owner_members']
     all_members = channels_details_data[channel_id_element]['channel_members']
     is_public = channels_details_data[channel_id_element]['channel_status']

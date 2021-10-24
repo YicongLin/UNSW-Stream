@@ -31,10 +31,10 @@ def test_channel_details():
     resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": 123123})
     assert (resp.status_code == 400)
 
-    # # Implement details function -----> successful implement
-    # response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
-    # assert (response.status_code == 200)
-    # assert (json.loads(response.text)== 123123)
+    # Implement details function -----> successful implement
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
+    assert (response.status_code == 200)
+    # assert (json.loads(response.text)== {})
 
     # User with invalid token to implement function (AccessError 403)
     resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": "asdfgh", "channel_id": channel_id})

@@ -9,21 +9,6 @@ BASE_URL = 'http://127.0.0.1:8080'
 # Test dm_leave
 # ==================================
 
-# (1) register users
-# (2) login user_one to create dm
-# (3) Implement dm_leave with invalid dm_id (InputError 400)
-# (4) user_one leave dm -----> successful implement (creator leave)
-# (5) logout user_one
-
-# (6) login user_three
-# (7) Implement dm_leave (not member) (AccessError 403)
-# (8) logout user_three
-
-# (9) login user_two
-# (10) Implement dm_details for visual check leave implementation
-# (11) user_one leave dm -----> successful implement ()
-
-
 def test_dm_leave():
     # Clear
     # requests.delete(f'{BASE_URL}/clear/v1')

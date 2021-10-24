@@ -162,7 +162,7 @@ def is_valid_user(u_id):
     return False
 
 def decode_token(token):
-    global secret
+    secret = 'COMP1531'
     result = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     u_id = result
     return u_id
@@ -173,15 +173,17 @@ def check_user(u_ids):
     data = data_store.get()
     users_dict = data['users']
     user_id_list = []
-    a = 0
-    while a < len(users_dict):
-        user_id_list.append(users_dict[a]['u_id'])
-        a += 1
-    b = 0
-    while b < len(u_ids):
-        if (u_ids[b] not in user_id_list):
-            return 0
-        b += 1
+    if (len(u_ids) >= 1):
+        a = 0
+        while a < len(users_dict):
+            user_id_list.append(users_dict[a]['u_id'])
+            a += 1
+        b = 0
+        while b < len(u_ids):
+            if (u_ids[b] not in user_id_list):
+                return 0
+            b += 1
+    
     return 1 
  
 # get the members details that on the list passed in

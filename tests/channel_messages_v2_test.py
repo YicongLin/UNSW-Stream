@@ -19,7 +19,7 @@ def valid():
 
     return token_1, token_2, channel
 
-# Test for invalid channel_id
+# Testing for invalid channel_id
 def test_invalid_channel_id(valid):
     token_1, *_ = valid
     payload = {
@@ -30,7 +30,7 @@ def test_invalid_channel_id(valid):
     r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
     assert r.status_code == 400
 
-# Test for invalid token
+# Testing for invalid token
 def test_invalid_token(valid):
     _, _, channel = valid
     payload = {
@@ -41,6 +41,7 @@ def test_invalid_token(valid):
     r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
     assert r.status_code == 400
 
+# Testing for a case where start is greater than the total number of messages
 def test_invalid_start(valid):
     token_1, _, channel = valid
     payload = {
@@ -51,8 +52,58 @@ def test_invalid_start(valid):
     r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
     assert r.status_code == 400
 
+# Testing for a case where the authorised user is not a member of the channel
+def test_not_a_member(valid):
+    _, token_2, channel = valid
+    payload = {
+        "token": token_2,
+        "channel_id": channel,
+        "start": 2
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
+    assert r.status_code == 400
 
+# Testing valid case
+def test_valid(valid):
+    token_1, _, channel = valid
+    payload = {
+        "token": token_1,
+        "channel_id": channel,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
+    assert r.status_code == 200
 
+# Assert correct return
+def test_correct_return(valid):
+    token_1, _, channel = valid
     
-    # two users: one not a member of channel
-    # send message, assert return type
+    # token_1 sends a message to the channel;
+    # the message will have message_id of 1
+    payload1 = {
+        "token": token_1,
+        "channel_id": channel,
+        "message": "Hello World"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created = time.replace(tzinfo=timezone.utc).timestamp()
+
+    # token_1 requests to return channel messages;
+    # assert that the message with relevant information is returned
+    payload = {
+        "token": token_1,
+        "channel_id": channel,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', json = payload)
+    message = {
+        'message_id': 1,
+        'u_id': token_1,
+        'message': 'Hello world',
+        'time_created': time_created
+    }
+    response = r.json()
+    assert response == {"messages": [message], "start": 0, "end": 50}

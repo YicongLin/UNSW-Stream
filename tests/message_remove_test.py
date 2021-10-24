@@ -1,10 +1,13 @@
 import pytest
 import requests
 import json
+import jwt
+from src.token_helpers import decode_JWT
 from src import config
 from src.auth import auth_register_v2
 from src.dm import dm_create_v1
 from src.message import message_remove_v1
+from src.other import clear_v1
 
 # Creating valid tokens, DMs and message IDs
 @pytest.fixture
@@ -23,12 +26,12 @@ def valid():
     id_list_1 = [id_2]
     id_list_2 = [id_1, id_2]
     # dms
-    dm_id_1 = dm_create_v1(token_1, id_list_1)
-    dm_id_2 = dm_create_v1(token_3, id_list_2)
+    dm_id_1 = dm_create_v1(token_1, id_list_1)['dm_id']
+    dm_id_2 = dm_create_v1(token_3, id_list_2)['dm_id']
     return token_1, token_2, token_3, id_1, dm_id_1, dm_id_2
 
 # Testing for access error 
-    def test_valid_access():
+    def test_valid_access(valid):
         token_1, _, _, _, dm_id_1, _ = valid
         payload = {
             "token": token_1,

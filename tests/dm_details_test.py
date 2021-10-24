@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:2220'
+BASE_URL = 'http://127.0.0.1:2325'
 
 # ==================================
 # Test dm_details

@@ -44,12 +44,12 @@ def valid_message_id(message_id):
     dms = data['dms_details']
 
     for i in range(len(channels)):
-        channel_messages = channels[i]['messages'])
+        channel_messages = channels[i]['messages']
         for j in range(len(channel_messages)):
             if channel_messages[j]['message_id'] == message_id:
                 return channels[i]['channel_id'], 'channel', channels[j]['u_id']
     for i in range(len(dms)):
-        dm_messages = dms[i]['messages'])
+        dm_messages = dms[i]['messages']
         for j in range(len(dm_messages)):
             if dm_messages[j]['message_id'] == message_id:
                 return dms[i]['dm_id'], 'dm', dms[j]['u_id']
@@ -57,7 +57,7 @@ def valid_message_id(message_id):
 
 # Returns false if the authorised user doesn't have owner permissions 
 # in the channel/DM that a given message is in
-def owner_permissions(token)
+def owner_permissions(token):
     data = data_store.get()
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
@@ -72,8 +72,8 @@ def owner_permissions(token)
             if channels[i]['channel_id'] == a:
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
-                    owner_members_list.append(owner_members[j]['u_id']
-    if auth_user_id not in owner_members_list:
+                    owner_members_list.append(owner_members[j]['u_id'])
+    if  auth_user_id not in owner_members_list:
         return False
     if b == 'dm':
         for i in range(len(dms)):
@@ -160,7 +160,7 @@ def message_senddm_v1(token, dm_id, message):
         'message_id': message_id,
         'u_id': auth_user_id,
         'message': message,
-        'time_created': time_created,'
+        'time_created': time_created,
     }
     
     return {message_id}

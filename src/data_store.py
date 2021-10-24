@@ -198,10 +198,10 @@ initial_object = {
 
     'deleted_users': [
         {
-            'u_id': 1
-            'email': ''
-            'name_first': 'Removed'
-            'name_last': 'user'
+            'u_id': 1,
+            'email': '',
+            'name_first': 'Removed',
+            'name_last': 'user',
             'handle_str': ''
         }
     ]

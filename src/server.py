@@ -343,7 +343,7 @@ def admin_user_remove_http():
     return dumps({})
 
 @APP.route('/admin/userpermission/change/v1', methods=['POST'])
-def admin_user_remove_http():
+def admin_userpermission_change_http():
     request_data = request.get_json()
 
     token = request_data['token']

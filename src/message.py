@@ -95,7 +95,7 @@ def owner_permissions(token):
             if channels[i]['channel_id'] == a:
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
-                    owner_members_list.append(owner_members[j]['u_id']
+                    owner_members_list.append(owner_members[j]['u_id'])
     if auth_user_id not in owner_members_list:
         return False
     if b == 'dm':
@@ -190,8 +190,7 @@ def message_senddm_v1(token, dm_id, message):
 
 # function for sending messages
 def message_send_v1(token, channel_id, message):
-
-     """
+    """
      Send a message from the authorised user to the specified channel.
    
     Arguments:
@@ -207,6 +206,7 @@ def message_send_v1(token, channel_id, message):
     Return Value:
         Returns message_id on all valid conditions
     """
+ 
     #Obtaining data
     data = data_store.get()
     SECRET = 'COMP1531'
@@ -256,23 +256,23 @@ def message_send_v1(token, channel_id, message):
 
 # function for editing messages
 def message_edit_v1(token, message_id, message):
-"""
-Given a message, update its text with new text.
+    """
+    Given a message, update its text with new text.
 
-Arguments:
+    Arguments:
         token (string) - the token of a authorised user
         message_id (integer) - the ID of a message
         message (string) - message to be sent
 
-Exceptions: 
-    InputError - message_id does not refer to a valid message within a channel/DM
-    InputError - length of message is less than 1 or over 1000 characters
-    AccessError - when message_id refers to a valid message in a joined channel/DM
-                  where the message was sent by the authorised user and the user has owner permissions
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - length of message is less than 1 or over 1000 characters
+        AccessError - when message_id refers to a valid message in a joined channel/DM
+                    where the message was sent by the authorised user and the user has owner permissions
 
-Return Value:
-    Returns an empty dictionary on all valid conditions. 
-"""
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
 # Obtaining data
     data = data_store.get()
     SECRET = 'COMP1531'
@@ -299,36 +299,36 @@ Return Value:
     dm_details = data['dms_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
-    unedited_messages = data(dm_details[‘messages’])
+    unedited_messages = data[dm_details]['messages']
     unedited_messages['message'] = edited_message
 
 # Editing the message in a channel
     channel_details = data['channels_details']
     for i in range(len(dm_details)):
         length_of_messages += len(channel_details[i]['messages'])
-    undeleted_channel_messages = data(channel_details[‘messages’])
+    undeleted_channel_messages = data[channel_details]['messages']
     undeleted_channel_messages['message'].remove(message)  
     
-return {}
+    return {}
 
 # function for removing messages
 def message_remove_v1(token, message_id):
-"""
-Given a message_id for a message, this message is removed from the channel/DM
+    """
+    Given a message_id for a message, this message is removed from the channel/DM
 
-Arguments:
-        token (string) - the token of a authorised user
-        message_id (integer) - the ID of a message
+    Arguments:
+            token (string) - the token of a authorised user
+            message_id (integer) - the ID of a message
 
-Exceptions: 
-    InputError - message_id does not refer to a valid message within a channel/DM
-    InputError - length of message is less than 1 or over 1000 characters
-    AccessError - when message_id refers to a valid message in a joined channel/DM
-                  where the message was sent by the authorised user and the user has owner permissions
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - length of message is less than 1 or over 1000 characters
+        AccessError - when message_id refers to a valid message in a joined channel/DM
+                    where the message was sent by the authorised user and the user has owner permissions
 
-Return Value:
-    Returns an empty dictionary on all valid conditions. 
-"""
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
 # Obtaining data
     data = data_store.get()
     SECRET = 'COMP1531'
@@ -350,14 +350,14 @@ Return Value:
     dm_details = data['dms_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
-    undeleted_dm_messages = data(dm_details[‘messages’])
+    undeleted_dm_messages = data[dm_details]['messages']
     undeleted_dm_messages['message'].remove(message)  
 
 #Removing the message from channels
     channel_details = data['channels_details']
     for i in range(len(channel_details)):
         length_of_messages += len(channel_details[i]['messages'])
-    undeleted_channel_messages = data(channel_details[‘messages’])
+    undeleted_channel_messages = data[channel_details]['messages']
     undeleted_channel_messages['message'].remove(message)  
 
-return {}
+    return {}

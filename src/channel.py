@@ -406,7 +406,7 @@ def channel_join_v2(token, channel_id):
     already_a_member = check_member(channel_id, auth_user_id)
     if already_a_member != False:
         raise InputError("Already in channel")
-
+        
     # Raising an error if the channel is private
     channel_status = channel_status(channel_id)
     if channel_status == False and decode_token['permissions_id'] != 1:

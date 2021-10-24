@@ -3,7 +3,11 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 import hashlib
 import jwt
+from src.token_helpers import decode_JWT
+from src.channel import check_valid_token
+
 secret = 'COMP1531'
+
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -15,12 +19,12 @@ secret = 'COMP1531'
 # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
 def check_valid_dmid(dm_id):
     data = data_store.get()
-    dms_details_data = data['dms_details']
+
     dms_element = 0
     all_dm_id = []
-    while dms_element  < len(dms_details_data):
-        all_dm_id.append(dms_details_data[dms_element]['dm_id'])
-        dms_element  += 1
+    while dms_element  < len(data['dms_details']):
+        all_dm_id.append(data['dms_details'][dms_element]['dm_id'])
+        dms_element += 1
 
     if dm_id not in all_dm_id :
         return False
@@ -43,21 +47,17 @@ def check_valid_dmid(dm_id):
 def check_valid_dm_token(token, dm_id_element):
     data = data_store.get()
 
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token["u_id"]
 
-    dm_members = data['dms_details'][dm_id_element]['dm_members']
+    dm_members = data['dms_details'][dm_id_element]['members']
     all_members_id = []
-
     member_id_element = 0
     while member_id_element < len(dm_members):
         all_members_id.append(dm_members[member_id_element]['u_id'])
-        if u_id == dm_members[member_id_element]['u_id']:
-            return member_id_element
         member_id_element += 1
 
-    if u_id not in all_members_id:
+    if auth_user_id not in all_members_id:
         return False
 
     pass
@@ -70,7 +70,35 @@ def check_valid_dm_token(token, dm_id_element):
 # ============================================================
 
 def dm_details_v1(token, dm_id):
+    """An authorised user to check a dm’s detailed information which user is a member of it
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        dm_id (integer) - the ID of an existing dm
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that dm
+        InputError - Occurs when authorised user type in an invalid dm id
+
+    Return Value:
+        {name, members}
+            name (string) - name of dm
+            members(a list of dict): [{u_id, email, name_first, name_last, handle_str}]
+                u_id (integer) - the ID of an authorised user
+                email (string) - the email of an authorised user
+                first name (string) - first name of an authorised user
+                last name (string) - last name of an authorised user
+                handle_str (string) - special string created for authorised user
+    """
+
+    # Obtain data already existed
     data = data_store.get()
+
+    # Raise an AccessError if authorised user login with an invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Raise a InputError if authorised user type in invalid dm_id
     # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
@@ -85,7 +113,7 @@ def dm_details_v1(token, dm_id):
 
     # Pick out dm name and its members from data['dms_details'][dm_id_element]
     name = data['dms_details'][dm_id_element]['name']
-    members = data['dms_details'][dm_id_element]['dm_members']
+    members = data['dms_details'][dm_id_element]['members']
 
     return {
         'name': name,
@@ -94,10 +122,31 @@ def dm_details_v1(token, dm_id):
 
 
 def dm_leave_v1(token, dm_id):
+    """An authorised user leaves a dm
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        dm_id (integer) - the ID of an existing dm
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that dm
+        InputError - Occurs when authorised user type in an invalid dm id
+
+    Return Value:
+        {}
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
-     # Raise a InputError if authorised user type in invalid dm_id
-     # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
+    # Raise an AccessError if authorised user login with an invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
+
+    # Raise a InputError if authorised user type in invalid dm_id
+    # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
     dm_id_element = check_valid_dmid(dm_id)
     if dm_id_element == False:
         raise InputError("Invalid dm_id")
@@ -109,13 +158,11 @@ def dm_leave_v1(token, dm_id):
     if member_id_element == False:
         raise AccessError("Login user has not right to access this dm")
 
-
     # Pick out dict from dm's members and then delete it 
-    leave_dm_member = data['dms_details'][dm_id_element]['dm_members'][member_id_element]
-    data['dms_details'][dm_id_element]['dm_members'].remove(leave_dm_member)
+    leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
+    data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
 
     return {}
-
 
 def dm_create_v1(token, u_ids):
     if (is_valid_token(token) == False):
@@ -129,7 +176,6 @@ def dm_create_v1(token, u_ids):
     
     if (check_user(u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")
-    
     
     creator_detail = get_member_detail([user_id])
     

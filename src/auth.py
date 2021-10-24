@@ -21,11 +21,12 @@ def auth_login_v2(email, password):
         Returns auth_user_id if the correct password is returned for the email
     """
 
-    store = data_store.get()
     check_valid_email(email)
+    
+    store = data_store.get()
 
     # search if email is in datastore 
-    i = 1
+    i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         if user['email'] == email:
@@ -40,7 +41,7 @@ def auth_login_v2(email, password):
                 # create session id + store into session id list 
                 new_session_id = generate_new_session_id()
                 # append new session id into list of session id's 
-                store['emailpw'][i]['session_id'].append(new_session_id)
+                user['session_id'].append(new_session_id)
 
                 # generate token
                 token = generate_JWT(u_id, permissions_id, new_session_id)
@@ -81,8 +82,8 @@ def auth_register_v2(email, password, name_first, name_last):
     check_name_length(name_last)
     check_password_length(password)
     
-    if len(store['users']) > 1:
-        check_duplicate_email(email)
+    # if len(store['users']) > 1:
+    check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
@@ -164,13 +165,15 @@ def auth_register_v2(email, password, name_first, name_last):
 
 def auth_logout_v1(token):
     store = data_store.get()
-    token_check(token)
+
+    if token_check(token) == False:
+        raise AccessError
 
     decoded_token = decode_JWT(token)
     session_id = decoded_token['session_id']
 
     # remove session_id from user list of session id's
-    i = 1
+    i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 
@@ -179,7 +182,6 @@ def auth_logout_v1(token):
             user['session_id'].remove(session_id)
             data_store.set(store)
             return { }
-        
         i += 1 
 
     raise InputError("Invalid session id")

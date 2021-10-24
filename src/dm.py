@@ -61,6 +61,42 @@ def start_greater_than_total(dm_id, start):
     if start <= len(messages):
         return False
 
+def dm_create_v1(token, u_ids):
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
+    data = data_store.get()
+    dm = data['dms_details']
+    user_id = decode_token(token)
+
+    """ if (check_valid_token(token) == False):
+        raise AccessError("Invalid user") """
+    
+    if (check_user(u_ids) == 0):
+        raise InputError("There is 1 or more invalid ids, please check again")
+    
+    
+    creator_detail = get_member_detail([user_id])
+    
+    new_dm_id = len(dm) + 1
+    u_ids.append(user_id)
+    handle_str = get_name(u_ids)
+    member_detail = get_member_detail(u_ids)
+
+    dm_detail_dict = {
+        'dm_id': new_dm_id,
+        'name': handle_str,
+        'members': member_detail,
+        'creator': creator_detail
+    }
+
+    
+    data['dms_details'].append(dm_detail_dict)
+    data_store.set(data)
+    return {
+        'dm_id': new_dm_id
+    }
+
+
 # dm messages function ==========================================================================
 def dm_messages_v1(token, dm_id, start):
     """The function dm_messages_v1 returns up to 50 messages between the two indexes “start”
@@ -105,14 +141,14 @@ def dm_messages_v1(token, dm_id, start):
     # Defining the end index
         end = start + 50
     
-<<<<<<< HEAD
+#<<<<<<< HEAD
     # Raising an error if the given dm ID is not 
     # a valid dm in the created list
     is_valid_dm = check_valid_dm_id(dm_id)
     if is_valid_dm == False:
         raise InputError("Invalid dm_id")
 
-=======
+#=======
     # Creating a list of valid dm IDS
     valid_dm_ids = []
     for i in range(len(dms)):
@@ -135,7 +171,7 @@ def dm_messages_v1(token, dm_id, start):
             break
         count += 1
        
->>>>>>> master
+#>>>>>>> master
     # Raising an error if start is greater than
     # the total number of messages in the given dm
     is_greater = start_greater_than_total(dm_id, start)

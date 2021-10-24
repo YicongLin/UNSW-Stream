@@ -15,7 +15,8 @@ from src.error import InputError
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
-
+from src.other import clear_v1
+from jwt import InvalidSignatureError
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -122,23 +123,29 @@ def channel_details():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
 
-    if check_valid_token(token) == False:
-        raise AccessError(description="Invalid token")
 
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError(description="Invalid channel_id")
+    try:
+        if check_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
 
-    if check_member(channel_id_element, token) == False:
-        raise AccessError(description="Not an member of channel")
+        channel_id_element = check_valid_channel_id(channel_id)
+        if channel_id_element == False:
+            raise InputError(description="Invalid channel_id")
 
-    auth_user_id = decode_JWT(token)['u_id']
-    if check_member(channel_id_element, auth_user_id) == False:
-        raise AccessError("Authorised user is not an member of channel")
+        if check_member(channel_id_element, token) == False:
+            raise AccessError(description="Not an member of channel")
 
-    channel_details = channel_details_v2(token, channel_id)
+        auth_user_id = decode_JWT(token)['u_id']
+        if check_member(channel_id_element, auth_user_id) == False:
+            raise AccessError("Authorised user is not an member of channel")
 
-    return dumps(channel_details)
+        channel_details = channel_details_v2(token, channel_id)
+
+        return dumps(channel_details)
+
+    except InvalidSignatureError:
+        raise AccessError from error
+
 
 @APP.route('/channels/listall/v2', methods=['GET'])
 def channels_listall():
@@ -401,6 +408,11 @@ def dm_list():
         raise AccessError("Invalid token")
     result = dm_list_v1(token)
     return dumps(result)
+
+@APP.route("/clear/v1,", methods = ['DELETE'])
+def clear():
+    clear_v1()
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

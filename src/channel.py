@@ -67,12 +67,13 @@ def check_valid_uid(u_id):
 # If the user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
 def check_member(channel_id_element, u_id):
     data = data_store.get()
-    
+
     members_in_channel = data['channels_details'][channel_id_element]['channel_members']
     each_member_element = 0
     each_member_id = []
     while each_member_element < len(members_in_channel):
-        each_member_id.append(members_in_channel[each_member_element]['u_id'])
+        each_memeber = members_in_channel[each_member_element]
+        each_member_id.append(each_memeber['u_id'])
         each_member_element += 1 
 
     if u_id not in each_member_id:

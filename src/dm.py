@@ -315,7 +315,7 @@ def check_valid_token(token):
 #Finish authorised user valid token check
 
 def is_valid_token(token):
-    global secret
+    secret = 'COMP1531'
     u_id = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     session_id = jwt.decode(token, secret, algorithms=['HS256'])['session_id']
 

@@ -2,32 +2,26 @@ import pytest
 import requests
 import json
 from src import config
-import jwt
 from src.auth import auth_register_v2
-from src.dm import dm_create_v1
-from src.token_helpers import decode_JWT
 
 BASE_URL = 'http://127.0.0.1:8080'
 
-# Creating valid tokens, DMs and user IDs
+# Creating valid tokens and u_ids
 @pytest.fixture
 def valid():
     clear_v1()
     # tokens
     token_1 = auth_register_v2("qwe@rty.com", "password", "uio", "qwe")['token']
     token_2 = auth_register_v2("asd@fgh.com", "password", "jkl", "asd")['token']
-    token_3 = auth_register_v2("abc@gmail.com", "password", "abc", "def")['token']
-    # id and id lists
-    decoded_token_1 = decode_JWT(token_1)
-    id_1 = decoded_token['u_id']
-    decoded_token_2 = decode_JWT(token_2)
-    id_2 = decode_token['u_id']
-    id_list_1 = [id_2]
-    id_list_2 = [id_1, id_2]
-    # dms
-    dm_id_1 = dm_create_v1(token_1, id_list_1)
-    dm_id_2 = dm_create_v1(token_3, id_list_2)
-    return token_1, token_2, token_3, id_1, dm_id_1, dm_id_2
+    # auth user id
+    SECRET = 'COMP1531'
+    decode_token = jwt.decode(token_1, SECRET, algorithms=['HS256'])
+    id_1 = decode_token['u_id']
+    # u_id
+    decode_token = jwt.decode(token_1, SECRET, algorithms=['HS256'])
+    u_id = decode_token['u_id']
+   return token_1, token_2, id_1, u_id
+
 
 # Testing for invalid dm_id
 def test_invalid_dm_id(valid):
@@ -93,48 +87,3 @@ def test_valid(valid):
     }
     r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     assert r.status_code == 200
-
-# Testing to ensure the message was sent to the specified DM
-def test_sent_messages(valid):
-    token_1, token_2, _, id_1, _, dm_id_2 = valid
-    # token_1 sends a message to dm_id_2
-    payload = {
-        "token": token_1,
-        "dm_id": dm_id_2,
-        "message": "Hello World"
-    }
-    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
-
-    # Obtaining the time the message is created
-    time = datetime.now()
-    time_created = time.replace(tzinfo=timezone.utc).timestamp()
-
-    # token_2 returns messages in dm_id_2
-    payload = {
-        "token": token_2,
-        "dm_id": dm_id_2,
-        "start": 0
-    }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
-    assert r.status_code = 200
-    message = {
-        "message_id": 1,
-        "u_id": id_1,
-        "message": 'Hello world',
-        "time_created": time_created
-    }
-    response = r.json()
-    assert response == {"messages": [message], "start": 0, "end": 50}
-
-
-
-
-
-
-
-
-    
-  
-
-
-

@@ -229,27 +229,28 @@ def channel_details_v2(token, channel_id):
     """An authorised user to check a channel’s detailed information which user is a member of it
     
     Arguments:
-        auth_user_id (integer) - the ID of an authorised user
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
         channel_id (integer) - the ID of an existing channel
 
     Exceptions:
-        AccessError - Occurs when user type in an invalid id
-        AccessError - Occurs when user type in an valid id and valid channel id 
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
             but user is not a member of that channel
-        InputError - Occurs when user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid channel id
 
     Return Value:
-    {name, is_public, owner_members, all_members }
-        name (string) - owner’s first name
-        is_public (boolean) - public or private channel
-        owner_members(member)
-        all_mambers(member)
-    {u_id, email, name_first, name_last, handle_str}
-        u_id(integer) - the ID of an authorised user
-        email (string) - the email of an authorised user
-        first name(string) - first name of an authorised user
-        last name(string) - last name of an authorised user
-        handle_str(string) - special string created for authorised user
+        {name, is_public, owner_members, all_members}
+            name (string) - owner’s first name
+            is_public (boolean) - public or private channel
+            owner_members (members)
+            all_mambers (members)
+
+        members(a list of dict): [{u_id, email, name_first, name_last, handle_str}]
+            u_id (integer) - the ID of an authorised user
+            email (string) - the email of an authorised user
+            first name (string) - first name of an authorised user
+            last name (string) - last name of an authorised user
+            handle_str (string) - special string created for authorised user
     """
 
     # Obtain data already existed
@@ -452,6 +453,28 @@ def channel_join_v1(auth_user_id, channel_id):
     return {}
 
 def channel_addowner_v1(token, channel_id, u_id):
+    """An authorised user to add another user as an owner of a channel
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the user who is planned to be added as a new channel owner
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user has not owner permission to add owner
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid u_id
+        InputError - Occurs when authorised user type in an valid channel id
+            but that user is not a memeber of this channel
+        InputError - Occurs when authorised user try to add an existing channel owner as owner
+
+    Return Value:
+        {}
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
@@ -501,6 +524,28 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {}
     
 def channel_removeowner_v1(token, channel_id, u_id):
+    """An authorised user to remove another channel's owner permission
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        u_id (integer) - the ID of the user who's channel owner permission is planned to be removed
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user has not owner permission to remove owner
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in an invalid u_id
+        InputError - Occurs when authorised user type in an valid channel id
+            but that user is not a existing owner of this channel
+        InputError - Occurs when authorised user try to remove the channel owner's owner permission
+
+    Return Value:
+        {}
+    """
+    
+    # Obtain data already existed
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token

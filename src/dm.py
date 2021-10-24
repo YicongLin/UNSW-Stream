@@ -71,6 +71,30 @@ def check_valid_dm_token(token, dm_id_element):
 # ============================================================
 
 def dm_details_v1(token, dm_id):
+    """An authorised user to check a dm’s detailed information which user is a member of it
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        dm_id (integer) - the ID of an existing dm
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that dm
+        InputError - Occurs when authorised user type in an invalid dm id
+
+    Return Value:
+        {name, members}
+            name (string) - name of dm
+            members(a list of dict): [{u_id, email, name_first, name_last, handle_str}]
+                u_id (integer) - the ID of an authorised user
+                email (string) - the email of an authorised user
+                first name (string) - first name of an authorised user
+                last name (string) - last name of an authorised user
+                handle_str (string) - special string created for authorised user
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
@@ -99,6 +123,23 @@ def dm_details_v1(token, dm_id):
 
 
 def dm_leave_v1(token, dm_id):
+    """An authorised user leaves a dm
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        dm_id (integer) - the ID of an existing dm
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that dm
+        InputError - Occurs when authorised user type in an invalid dm id
+
+    Return Value:
+        {}
+    """
+
+    # Obtain data already existed
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token

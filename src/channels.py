@@ -75,16 +75,20 @@ def channels_listall_v2(token):
     """An authorised user to check all existed channels
     
     Arguments:
-        auth_user_id (integer) - the ID of an authorised user
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
 
     Exceptions:
-        AccessError - Occurs when user type in an invalid id
+        AccessError - Occurs when authorised user with an invalid token
 
     Return Value:
-        a list of dictionaries, where  { channel_id, name }.
-        channel_id(integer) is channels id
-        name(string) of the channel.
+        {channels}
+            channels(a list of dict): [{channel_id, name}]
+
+            channel_id (integer) - ID of the channel
+            name (string) - name of the channel.
     """
+
+    # Obtain data already existed
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token

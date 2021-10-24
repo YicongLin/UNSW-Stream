@@ -297,13 +297,10 @@ Return Value:
 
 # Editing the message 
     dm_details = data['dms_details']
-    channel_details = data['channels_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
-    for i in range(len(channel_details)):
-        length_of_messages += len(channel_details[i]['messages'])
-    unedited_messages = data(dm_details[‘messages’])(channel_details['messages'])
-    unedited_messages['messages'] = edited_message
+    unedited_messages = data(dm_details[‘messages’])
+    unedited_messages['message'] = edited_message
 
 return {}
 
@@ -344,12 +341,9 @@ Return Value:
 
 # Removing the message 
     dm_details = data['dms_details']
-    channel_details = data['channels_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
-    for i in range(len(channel_details)):
-        length_of_messages += len(channel_details[i]['messages'])
-    undeleted_messages = data(dm_details[‘messages’])(channel_details['messages'])
-    undeleted_messages['messages'].remove(message)  
+    undeleted_messages = data(dm_details[‘messages’])
+    undeleted_messages['message'].remove(message)  
 
 return {}

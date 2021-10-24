@@ -295,13 +295,20 @@ Return Value:
     if conditional_edit == False:
         raise AccessError("Do not have access to edit message")
 
-# Editing the message 
+# Editing the message in a dm
     dm_details = data['dms_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
     unedited_messages = data(dm_details[‘messages’])
     unedited_messages['message'] = edited_message
 
+# Editing the message in a channel
+    channel_details = data['channels_details']
+    for i in range(len(dm_details)):
+        length_of_messages += len(channel_details[i]['messages'])
+    undeleted_channel_messages = data(channel_details[‘messages’])
+    undeleted_channel_messages['message'].remove(message)  
+    
 return {}
 
 # function for removing messages
@@ -339,11 +346,18 @@ Return Value:
     if conditional_edit == False:
         raise AccessError("Do not have access to edit message")
 
-# Removing the message 
+# Removing the message from DMS
     dm_details = data['dms_details']
     for i in range(len(dm_details)):
         length_of_messages += len(dm_details[i]['messages'])
-    undeleted_messages = data(dm_details[‘messages’])
-    undeleted_messages['message'].remove(message)  
+    undeleted_dm_messages = data(dm_details[‘messages’])
+    undeleted_dm_messages['message'].remove(message)  
+
+#Removing the message from channels
+    channel_details = data['channels_details']
+    for i in range(len(channel_details)):
+        length_of_messages += len(channel_details[i]['messages'])
+    undeleted_channel_messages = data(channel_details[‘messages’])
+    undeleted_channel_messages['message'].remove(message)  
 
 return {}

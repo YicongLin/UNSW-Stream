@@ -142,6 +142,7 @@ def dm_message():
 
 @APP.route("clear/v1," methods = ['DELETE'])
 def clear():
+    clear_v1()
     return dumps({})
 
 

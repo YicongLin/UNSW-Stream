@@ -26,35 +26,7 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-<<<<<<< HEAD
-    'users': [
-        {
-            'u_id':1,
-            'email' : '34@email.com',
-            'password' : 'password', 
-            'first_name' : 'name_first', 
-            'last_name' : 'name_last', 
-            'handle_str': 'kevinlin'   
-        },
-
-        {
-            'u_id': 2,
-            'handle_str': 'kangliu' 
-        },
-
-        {
-            'u_id': 3,
-            'handle_str': 'haydensmith' 
-        },
-
-        {
-            'u_id': 4,
-            'handle_str': 'harry' 
-        }
-    ],
-=======
     'users': [ ],
->>>>>>> fixed auth tests to auth_http_test.py
     
     'emailpw' : [  ],
 

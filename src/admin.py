@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
+import hashlib
 import jwt
 from src.token_helpers import decode_JWT
 
@@ -46,14 +47,19 @@ def not_a_global_owner(token):
             if emailpw[i]['permissions_id'] != 1:
                 return True
 
-# Returns false if permission_id is invalid
-def valid_permission_id(permission_id):
-    is_integer = isinstance(permission_id, int)
-    if is_integer == True:
-        if permission_id != 1 or permission_id != 2:
-            return False
-    else:
-        return False
+# Returns false if token is invalid
+def is_valid_token(token):
+    data = data_store.get()
+    emailpw = data['emailpw']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
+    session_id = decode_JWT(token)['session_id']
+
+    for i in range(len(emailpw)):
+        if emailpw[i]['u_id'] == auth_user_id:
+            if session_id not in emailpw[i]['session_id']:
+                return False
+    return True
 
 # ==================================
 # FUNCTIONS
@@ -69,6 +75,10 @@ def admin_user_remove_v1(token, u_id):
     valid_uid = valid_uid(u_id)
     if valid_uid == False:
         raise InputError("Invalid user")
+    
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
     
     # Raise an error if u_id refers to a user who is the only global owner
     only_global_owner = only_global_owner(u_id)
@@ -133,8 +143,16 @@ def admin_user_remove_v1(token, u_id):
     return {}
 
 def admin_userpermission_changes_v1(token, u_id, permission_id):
+    print('_________________')
+    print(permission_id)
+    print('_________________')
     #Obtaining data
     data = data_store.get()
+
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
+    
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
 
@@ -149,9 +167,8 @@ def admin_userpermission_changes_v1(token, u_id, permission_id):
         raise InputError("Cannot demote the only global owner")
     
     # Check for valid permission_id
-    valid_permission_id = valid_permission_id(permission_id)
-    if valid_permission_id == False:
-        raise InputError("Invlid permission ID")
+    if permission_id != 1 or permission_id != 2:
+        raise InputError("Invalid permission ID")
     
     # Raising an error if the authorised user is not a global owner
     not_a_global_owner = not_a_global_owner(token)

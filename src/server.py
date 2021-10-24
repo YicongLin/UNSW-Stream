@@ -13,7 +13,7 @@ from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
 from src.message import valid_dm_id, valid_message_length, member
-from src.admin import valid_uid, only_global_owner, not_a_global_owner, valid_permission_id
+from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
@@ -59,6 +59,9 @@ def channel_invite_http():
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
         raise InputError(description="Invalid channel_id")
+    
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
         
     if check_valid_uid(u_id) == False:
         raise InputError(description="Invalid user ID")
@@ -69,9 +72,9 @@ def channel_invite_http():
 
     if check_member(channel_id_element, token) == False:
         raise AccessError(description="Not an member of channel") 
-        
-    channel_invite_v2(token, channel_id, u_id)
     
+    channel_invite_v2(token, channel_id, u_id)
+            
     return dumps({})
         
 @APP.route("/channel/join/v2", methods=['POST'])
@@ -80,10 +83,13 @@ def channel_join_http():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-    
+
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
         raise InputError(description="Invalid channel_id")
+
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
         
     each_member_id = check_member(channel_id_element, token)
     channel_status = channel_status(channel_id)
@@ -92,9 +98,9 @@ def channel_join_http():
         raise InputError(description="Already a member of this channel")
     elif channel_owner_permissions == False and channel_status == False:
         raise AccessError(description="Channel is private and you are not a global owner")
-        
+
     channel_join_v2(token, channel_id)
-    
+            
     return dumps({})
 
 @APP.route("/channel/messages/v2", methods=['GET'])
@@ -103,10 +109,13 @@ def channel_messages_http():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-    
+
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
         raise InputError(description="Invalid channel_id")
+    
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
         
     is_greater = start_greater_than_total(channel_id, start)
     if is_greater == True:
@@ -117,7 +126,7 @@ def channel_messages_http():
         raise InputError(description="User is not a member of this channel")
     
     messages = channel_messages_v2(token, channel_id, start)
-    
+        
     return dumps(messages)
 
 @APP.route("/channel/leave/v1", methods=['POST'])
@@ -126,17 +135,20 @@ def channel_leave_http():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-    
+
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
         raise InputError(description="Invalid channel_id")
     
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
+    
     already_a_member = check_member(channel_id, auth_user_id)
     if already_a_member == False:
         raise AccessError(description="You are not a member of the channel")
-    
+
     channel_leave_v1(token, channel_id)
-    
+        
     return dumps({})
 
 @APP.route('/channel/addowner/v1', methods=['POST'])
@@ -314,6 +326,9 @@ def message_senddm_http():
 
     if valid_dm_id == False:
         raise InputError(description="Invalid DM")
+    
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     if valid_message_length == False:
         raise InputError(description="Invalid message length")
@@ -335,6 +350,9 @@ def admin_user_remove_http():
     if valid_uid(u_id) == False:
         raise InputError(description="Invalid user")
 
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
+
     if only_global_owner(u_id) == True:
         raise InputError(description="Cannot remove the only global owner")
     
@@ -351,16 +369,35 @@ def admin_userpermission_change_http():
 
     token = request_data['token']
     u_id = request_data['u_id']
-    permission_id = request_data['permissions_id']
+    permission_id = request_data['permission_id']
+
+    print('______________')
+    print('permission id is')
+    print(permission_id)
+    print('______________')
 
     if valid_uid(u_id) == False:
         raise InputError(description="Invalid user")
+    
+    if is_valid_token(token) == False:
+        raise AccessError(description="Invalid token")
 
     if only_global_owner(u_id) == True and permission_id == 2:
         raise InputError(description="Cannot demote the only global owner")
+    print('____________')
+    print('permission id is')
+    print(permission_id)
+    print('____________')
+    if permission_id != 1 or permission_id != 2:
+        raise InputError("Invalid permission ID")
     
-    if valid_permission_id(permission_id) == False:
-        raise InputError(description="Invlid permission ID")
+    admin_userpermission_change_v1(token, u_id, permission_id)
+
+    return dumps([])
+
+@APP.route('/clear/v1', methods=['DELETE'])
+def clear():
+    return dumps({})
 
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():

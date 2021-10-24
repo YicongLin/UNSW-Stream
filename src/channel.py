@@ -3,6 +3,7 @@ from src.error import InputError
 from src.error import AccessError
 import hashlib
 import jwt
+from src.admin import is_valid_token
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -182,6 +183,10 @@ def channel_invite_v2(token, channel_id, u_id):
     data = data_store.get()
     channels = data["channels_details"]
 
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
+
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
     is_valid_channel = check_valid_channel_id(channel_id)
@@ -334,6 +339,10 @@ def channel_messages_v2(token, channel_id, start):
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
         raise InputError("Invalid channel_id")
+    
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Raising an error if start is greater than
     # the total number of messages in the given channel
@@ -396,6 +405,10 @@ def channel_join_v2(token, channel_id):
     if is_valid_channel == False:
         raise InputError("Invalid channel_id")
     
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
+        
     # Decoding token, accessing u_id
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
@@ -406,7 +419,7 @@ def channel_join_v2(token, channel_id):
     already_a_member = check_member(channel_id, auth_user_id)
     if already_a_member != False:
         raise InputError("Already in channel")
-        
+
     # Raising an error if the channel is private
     channel_status = channel_status(channel_id)
     if channel_status == False and decode_token['permissions_id'] != 1:
@@ -533,6 +546,10 @@ def channel_leave_v1(token, channel_id):
     # Accessing data
     data = data_store.get() 
     channels = data["channels_details"]
+
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
 
     # Decode token, access u_id
     SECRET = 'COMP1531'

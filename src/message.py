@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
+from src.admin import is_valid_token
 import hashlib
 import jwt
 
@@ -118,6 +119,11 @@ def message_senddm_v1(token, dm_id, message):
     """
     #Obtaining data
     data = data_store.get()
+
+    # Check for invalid token
+    if is_valid_token(token) == False:
+        raise AccessError("Invalid token")
+    
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']

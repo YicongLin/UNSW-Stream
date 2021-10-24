@@ -52,15 +52,15 @@ initial_object = {
     ],
     
     'emailpw' : [
-        """ {
-            'email' : email,
-            'password' : password,
-            'u_id' : new_id,
-            'permissions_id' : permissions_id,
-            'session_id' : session_id 
+        {
+            'email' : 'email',
+            'password' : 'password',
+            'u_id' : 'new_id',
+            'permissions_id' : 'permissions_id',
+            'session_id' : 'session_id'
         }, 
         
-        """
+        
     ],
 
     'dms_details': [

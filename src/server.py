@@ -83,7 +83,7 @@ def send_message():
 def edit_message():  
     request_data = request.get_json()
     token = request_data['token']
-    message_id = request_data['message_id']
+    message_id = request_data['messages']
     
     message_length_element = valid_message_length(message)
     if message_length_element == False:
@@ -102,7 +102,7 @@ def edit_message():
 def remove_message(): 
     request_data = request.get_json()
     token = request_data['token']
-    message_id = request_data['message_id']
+    message_id = request_data['messages']
     
     message_length_element = valid_message_length(message)
     if message_length_element == False:
@@ -142,7 +142,6 @@ def dm_message():
 
 @APP.route("clear/v1," methods = ['DELETE'])
 def clear():
-    clear_v1()
     return dumps({})
 
 

@@ -1,15 +1,15 @@
 import sys
 import signal
-from json import dumps
+from json import dump, dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError, AccessError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions
-from src.channels import channels_listall_v2
-from src.dm import dm_details_v1, dm_leave_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
+from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_remove_v1, dm_list_v1
+from src.dm import check_valid_dmid, check_valid_dm_token, decode_token, is_valid_dm, is_creator, check_user
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
 
@@ -210,7 +210,73 @@ def auth_login_http():
 
     return dumps(result)
 
+@APP.route('/dm/remove/v1', methods=['DELETE'])
+def dm_remove():
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    
+    if (is_creator(token, dm_id) == False):
+        raise AccessError("Access denied, user is not a creator of this DM")
 
+    if (is_valid_dm(dm_id) == False):
+        raise InputError("Invalid DM ID")
+    
+    dm_remove_v1(token, dm_id)
+
+    return dumps({})
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create():
+    data = request.get_json()
+    token = data['token']
+    u_ids = data['u_ids']
+    #user_id = decode_token(token)
+    
+    if (check_user(u_ids) == 0):
+        raise InputError(description="There is 1 or more invalid ids, please check again")
+    
+    """ if (check_valid_token(token) == False):
+        raise AccessError(description="Invalid user") """
+
+    result = dm_create_v1(token, u_ids)
+    return dumps(result)
+
+@APP.route('/dm/list/v1', methods=['GET'])
+def dm_list():
+    data = request.get_json()
+    token = data['token']
+
+    result = dm_list_v1(token)
+    return dumps(result)
+
+@APP.route('/channels/create/v2', methods=['POST'])
+def channels_create():
+    data = request.get_json()
+    token = data['token']
+    name = data['name']
+    is_public = data['is_public']
+    """ if (check_valid_token(token) == False):
+        raise AccessError("Invalid user") """
+
+    # check for invalid name
+    if len(name) > 20:
+        raise InputError(description="Invalid name: Too long")
+    elif len(name) == 0:
+        raise InputError(description="Invalid name: Too short")
+    
+    result = channels_create_v2(token, name, is_public)
+    return dumps(result)
+
+@APP.route('/channels/list/v2', methods=['GET'])
+def channels_list():
+    data = request.get_json()
+    token = data['token']
+    """ if (check_valid_token(token) == False):
+        raise AccessError(description="Invalid user") """
+    
+    result = channels_list_v2(token)
+    return dumps(result)
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

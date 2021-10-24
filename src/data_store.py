@@ -65,10 +65,10 @@ initial_object = {
     ],
 
     'dms_details': [
-     """{
-            'dm_id': 1
-            'name': ["ahandle1", "bhandle2", "chandle3"]
-            'dm_members': [
+     {
+            'dm_id': 1,
+            'name': ["ahandle1", "bhandle2", "chandle3"],
+            'members': [
                 {
                     'u_id': 1,
                     'email':'1@email.com', 
@@ -92,7 +92,7 @@ initial_object = {
                 },
             ]
         },
-        """    
+           
     ],
 
     'channels': [
@@ -115,7 +115,7 @@ initial_object = {
     'channels_details': [     
             #Input channel_id to track
         """ {
-            'channel_name': 'channel1'
+            'name': 'channel1',
             'channel_id': 1, 
             'channel_status': True,
             'owner_members': [
@@ -126,7 +126,7 @@ initial_object = {
                     'name_last':'1last', 
                     'handle_str': '1str'
                 },
-            ]
+            ],
             'channel_members': [ 
                 {
                     'u_id': 1,
@@ -143,7 +143,7 @@ initial_object = {
                     'name_last':'2last', 
                     'handle_str': '2str'
                 },
-            ]
+            ],
             'messages': [
                 {
                     'message_id': 1,
@@ -158,8 +158,9 @@ initial_object = {
 
         {
             'channel_id': 2, 
-            'channel_statu': True,
-            'channels_members': [ 
+            'name': 'channel2',
+            'channel_status': True,
+            'channel_members': [ 
                 {
                     'u_id': 1,
                     'email':'1@email.com', 
@@ -169,23 +170,28 @@ initial_object = {
                 },
                 
                 {
-                    'u_id': 2,
+                    'u_id': 4,
+                    'email':'2@email.com', 
+                    'name_first':'2first', 
+                    'name_last':'2last', 
+                    'handle_str': '2str'
+                },
+
+                {
+                    'u_id': 5,
                     'email':'2@email.com', 
                     'name_first':'2first', 
                     'name_last':'2last', 
                     'handle_str': '2str'
                 },
             ]
-        },
-        """                
+        }, """
+                       
     ],  
 
     
 
-    'dms': [
-        # 'dm_id': 1,
-        # 'name':
-    ]
+    
 
 
 }

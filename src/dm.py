@@ -20,12 +20,11 @@ secret = 'COMP1531'
 def check_valid_dmid(dm_id):
     data = data_store.get()
 
-    dms_details_data = data['dms_details']
     dms_element = 0
     all_dm_id = []
-    while dms_element  < len(dms_details_data):
-        all_dm_id.append(dms_details_data[dms_element]['dm_id'])
-        dms_element  += 1
+    while dms_element  < len(data['dms_details']):
+        all_dm_id.append(data['dms_details'][dms_element]['dm_id'])
+        dms_element += 1
 
     if dm_id not in all_dm_id :
         return False
@@ -60,12 +59,6 @@ def check_valid_dm_token(token, dm_id_element):
 
     if auth_user_id not in all_members_id:
         return False
-
-    member_id_element = 0
-    while member_id_element < len(all_members_id):
-        if all_members_id[member_id_element] == auth_user_id:
-            return member_id_element
-        member_id_element += 1
 
     pass
 # Finish  authorised user member check

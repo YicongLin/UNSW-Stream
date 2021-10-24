@@ -106,7 +106,7 @@ def channel_messages_http():
         raise InputError(description="Invalid channel_id")
         
     is_greater = start_greater_than_total(channel_id, start)
-    if is_greater = True:
+    if is_greater == True:
         raise InputError(description="Exceeded total number of messages in this channel")
         
     each_member_id = check_member(channel_id, u_id)
@@ -128,8 +128,8 @@ def channel_leave_http():
     if is_valid_channel == False:
         raise InputError(description="Invalid channel_id")
     
-    already_a_member = check_member(channel_id, auth_user_id):
-    if already_a_member == False
+    already_a_member = check_member(channel_id, auth_user_id)
+    if already_a_member == False:
         raise AccessError(description="You are not a member of the channel")
     
     channel_leave_v1(token, channel_id)
@@ -353,7 +353,7 @@ def admin_user_remove_http():
     if valid_uid(u_id) == False:
         raise InputError(description="Invalid user")
 
-    if only_global_owner(u_id) == True and permission_id = 2:
+    if only_global_owner(u_id) == True and permission_id == 2:
         raise InputError(description="Cannot demote the only global owner")
     
     if valid_permission_id(permission_id) == False:

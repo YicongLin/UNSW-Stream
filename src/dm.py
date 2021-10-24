@@ -51,18 +51,21 @@ def check_valid_dm_token(token, dm_id_element):
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token["u_id"]
 
-    dm_members = data['dms_details'][dm_id_element]['dm_members']
+    dm_members = data['dms_details'][dm_id_element]['members']
     all_members_id = []
-
     member_id_element = 0
     while member_id_element < len(dm_members):
         all_members_id.append(dm_members[member_id_element]['u_id'])
-        if auth_user_id == dm_members[member_id_element]['u_id']:
-            return member_id_element
         member_id_element += 1
 
     if auth_user_id not in all_members_id:
         return False
+
+    member_id_element = 0
+    while member_id_element < len(all_members_id):
+        if all_members_id[member_id_element] == auth_user_id:
+            return member_id_element
+        member_id_element += 1
 
     pass
 # Finish  authorised user member check
@@ -117,7 +120,7 @@ def dm_details_v1(token, dm_id):
 
     # Pick out dm name and its members from data['dms_details'][dm_id_element]
     name = data['dms_details'][dm_id_element]['name']
-    members = data['dms_details'][dm_id_element]['dm_members']
+    members = data['dms_details'][dm_id_element]['members']
 
     return {
         'name': name,
@@ -163,8 +166,8 @@ def dm_leave_v1(token, dm_id):
         raise AccessError("Login user has not right to access this dm")
 
     # Pick out dict from dm's members and then delete it 
-    leave_dm_member = data['dms_details'][dm_id_element]['dm_members'][member_id_element]
-    data['dms_details'][dm_id_element]['dm_members'].remove(leave_dm_member)
+    leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
+    data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
 
     return {}
 

@@ -11,7 +11,7 @@ BASE_URL = 'http://127.0.0.1:2220'
     
 def test_channel_details():
     # Clear
-    # requests.delete(f'{BASE_URL}/clear/v1')
+    requests.delete(f'{BASE_URL}/clear/v1')
 
     # Register two users
     # user_one ----> channel creator (only member)
@@ -60,4 +60,4 @@ def test_channel_details():
     assert (resp.status_code == 403)
 
     # Clear
-    # requests.delete(f'{BASE_URL}/clear/v1')
+    requests.delete(f'{BASE_URL}/clear/v1')

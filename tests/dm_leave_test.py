@@ -3,7 +3,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:2325'
+BASE_URL = 'http://127.0.0.1:1024'
 
 # ==================================
 # Test dm_leave
@@ -11,7 +11,7 @@ BASE_URL = 'http://127.0.0.1:2325'
 
 def test_dm_leave():
     # Clear
-    # requests.delete(f'{BASE_URL}/clear/v1')
+    requests.delete(f'{BASE_URL}/clear/v1')
 
     # Register three users
     # user_one ----> dm creator
@@ -27,7 +27,7 @@ def test_dm_leave():
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
     token_1 = json.loads(response.text)['token']
 
-    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [1, 2]})
+    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [2]})
     dm_id = json.loads(response.text)['dm_id']
 
     # User with invalid token to implement function (AccessError 403)
@@ -35,7 +35,7 @@ def test_dm_leave():
     assert (resp.status_code == 403)
 
     # Implement dm_leave with invalid dm_id (InputError 400)
-    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
+    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": 123123})
     assert (resp.status_code == 400)
 
     # User with invalid token and invalid dm_id to implement function (AccessError 403)
@@ -44,21 +44,21 @@ def test_dm_leave():
 
     # Check dm_details(user_one and user_two)
     response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_1, "dm_id": dm_id})
-    assert (json.loads(response.text)== {   })
+    # assert (json.loads(response.text)== {   })
 
     # user_one leave dm -----> successful implement (creator leave)
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
     assert (resp.status_code == 200)
 
     # Logout user_one
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_1})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # ===================================
     # Switch user
     # ===================================
     
     # Login user_three
-    requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
     token_3 = json.loads(response.text)['token']
 
     # Implement dm_leave (not member) (AccessError 403)
@@ -66,7 +66,7 @@ def test_dm_leave():
     assert (resp.status_code == 403)
 
     # logout user_three
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_3})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_3})
 
     # ===================================
     # Switch user
@@ -78,11 +78,11 @@ def test_dm_leave():
  
     # Check dm_details(user_two)
     response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_2, "dm_id": dm_id})
-    assert (json.loads(response.text) == {   })
+    # assert (json.loads(response.text) == {   })
 
     # user_one leave dm -----> successful implement ()
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_2, "dm_id": dm_id})
     assert (resp.status_code == 200)
 
     # Clear
-    # requests.delete(f'{BASE_URL}/clear/v1')
+    requests.delete(f'{BASE_URL}/clear/v1')

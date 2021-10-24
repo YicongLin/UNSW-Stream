@@ -12,7 +12,7 @@ BASE_URL = 'http://127.0.0.1:2325'
 
 def test_addowner_removeowner():
     # Clear
-    # requests.delete(f'{BASE_URL}/clear/v1')
+    requests.delete(f'{BASE_URL}/clear/v1')
     
     # Register three users
     # user_one ----> global owner
@@ -106,7 +106,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 400)
 
     # Logout user_two
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_2})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_2})
 
     # ===================================
     # Switch user
@@ -137,7 +137,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 400)
 
     # Logout user_one
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_1})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # ===================================
     # Switch user

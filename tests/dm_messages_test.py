@@ -83,7 +83,7 @@ def test_valid(valid):
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
-    assert r.status_code = 200
+    assert r.status_code == 200
     message = {
         "message_id": 1,
         "u_id": id_1,

@@ -81,8 +81,8 @@ def auth_register_v2(email, password, name_first, name_last):
     check_name_length(name_last)
     check_password_length(password)
     
-    if len(store['users']) > 1:
-        check_duplicate_email(email)
+    # if len(store['users']) > 1:
+    check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
     new_id = len(store['users']) + 1
@@ -154,7 +154,6 @@ def auth_register_v2(email, password, name_first, name_last):
     
     # add email+password dictionary into the list 'emailpw'
     store['emailpw'].append(email_password)
-
 
     data_store.set(store)
     

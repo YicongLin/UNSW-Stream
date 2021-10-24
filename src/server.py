@@ -50,15 +50,15 @@ def messages():
     
     channel_id_element = check_valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError("Invalid channel_id")
+        raise InputError(description="Invalid channel_id")
         
     is_greater = start_greater_than_total(channel_id, start)
     if is_greater != False:
-        raise InputError("Exceeded total number of messages in this channel")
+        raise InputError(description="Exceeded total number of messages in this channel")
         
     each_member_id = check_member(channel_id, u_id)
     if each_member_id  == False:
-        raise InputError("User is not a member of this channel")
+        raise InputError(description="User is not a member of this channel")
     
     messages = channel_messages_v2(token, channel_id, start)
     
@@ -73,11 +73,11 @@ def send_message():
 
     channel_id_element = valid_channel_id(channel_id)
     if channel_id_element == False:
-        raise InputError("Invalid channel_id")
+        raise InputError(description="Invalid channel_id")
     
     each_member_id = channel_member(token)
     if each_member_id  == False:
-        raise InputError("User is not a member of this channel")
+        raise InputError(description="User is not a member of this channel")
 
 @APP.route("message/edit/v1", methods = ['PUT'])
 def edit_message():  
@@ -87,15 +87,15 @@ def edit_message():
     
     message_length_element = valid_message_length(message)
     if message_length_element == False:
-        raise InputError("Invalid message length")
+        raise InputError(description="Invalid message length")
 
     message_id_element = valid_message_id(message_id)
     if message_id_element == False:
-        raise InputError("Invalid message_id")
+        raise InputError(description="Invalid message_id")
     
     edit_condition_element = conditional_edit(token, message_id)
     if edit_condition_element == False:
-        raise AccessError("Do not have access to edit message")
+        raise AccessError(description="Do not have access to edit message")
     return({dumps})
 
 @APP.route("message/remove/v1", methods = ['DELETE'])
@@ -106,15 +106,15 @@ def remove_message():
     
     message_length_element = valid_message_length(message)
     if message_length_element == False:
-        raise InputError("Invalid message length")
+        raise InputError(description="Invalid message length")
 
     message_id_element = valid_message_id(message_id)
     if message_id_element == False:
-        raise InputError("Invalid message_id")
+        raise InputError(description="Invalid message_id")
     
     edit_condition_element = conditional_edit(token, message_id)
     if edit_condition_element == False:
-        raise AccessError("Do not have access to edit message")
+        raise AccessError(description="Do not have access to edit message")
     return({dumps})
 
 @APP.route("dm/messages/v1", methods = ['GET'])
@@ -126,15 +126,15 @@ def dm_message()
     
     dm_id_element = check_valid_dm_id(dm_id)
     if dm_id_element == False:
-        raise InputError("Invalid dm_id")
+        raise InputError(description="Invalid dm_id")
         
     is_greater = start_greater_than_total(dm_id, start)
     if is_greater != False:
-        raise InputError("Exceeded total number of messages in this dm")
+        raise InputError(description="Exceeded total number of messages in this dm")
         
     each_member_id = check_member_dm(dm_id, u_id)
     if each_member_id  == False:
-        raise InputError("User is not a member of this dm")
+        raise InputError(description="User is not a member of this dm")
     
     messages = dm_messages_v1(token, dm_id, start)
     

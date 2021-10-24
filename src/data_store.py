@@ -26,15 +26,57 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-    'users': [ ],
+    'users': [
+        {
+            'u_id': 1,
+            'email':'1@email.com', 
+            'name_first': 'a', 
+            'name_last':'1last', 
+            'handle_str': 'ahandle1'   
+        },
+
+        {
+            'u_id': 2,
+            'email':'2@email.com', 
+            'name_first': 'b', 
+            'name_last':'2last', 
+            'handle_str': 'bhandle2' 
+        },
+
+        {
+            'u_id': 3,
+            'email':'3@email.com', 
+            'name_first': 'c', 
+            'name_last':'3last', 
+            'handle_str': 'chandle3' 
+        },
+
+        {
+            'u_id': 4,
+            'email':'4@email.com', 
+            'name_first': 'd', 
+            'name_last':'4last', 
+            'handle_str': 'dhandle3' 
+        }
+    ],
     
-    'emailpw' : [  ],
+    'emailpw' : [
+        {
+            'email' : 'email',
+            'password' : 'password',
+            'u_id' : 'new_id',
+            'permissions_id' : 'permissions_id',
+            'session_id' : ['session_id']
+        }, 
+        
+       
+    ],
 
     'dms_details': [
-     """{
-            'dm_id': 1
-            'name': ["ahandle1", "bhandle2", "chandle3"]
-            'dm_members': [
+     {
+            'dm_id': 1,
+            'name': ["ahandle1", "bhandle2", "chandle3"],
+            'members': [
                 {
                     'u_id': 1,
                     'email':'1@email.com', 
@@ -56,9 +98,19 @@ initial_object = {
                     'name_last':'3last', 
                     'handle_str': 'chandle3'
                 },
+            ],
+
+            'creator': [
+                {
+                    'u_id': 3,
+                    'email':'3@email.com', 
+                    'name_first': 'c', 
+                    'name_last':'3last', 
+                    'handle_str': 'chandle3'
+                },
             ]
         },
-        """    
+           
     ],
 
     'channels': [
@@ -80,8 +132,8 @@ initial_object = {
 
     'channels_details': [     
             #Input channel_id to track
-        """ {
-            'channel_name': 'channel1'
+        {
+            'name': 'channel1',
             'channel_id': 1, 
             'channel_status': True,
             'owner_members': [
@@ -92,7 +144,7 @@ initial_object = {
                     'name_last':'1last', 
                     'handle_str': '1str'
                 },
-            ]
+            ],
             'channel_members': [ 
                 {
                     'u_id': 1,
@@ -109,7 +161,7 @@ initial_object = {
                     'name_last':'2last', 
                     'handle_str': '2str'
                 },
-            ]
+            ],
             'messages': [
                 {
                     'message_id': 1,
@@ -124,8 +176,9 @@ initial_object = {
 
         {
             'channel_id': 2, 
-            'channel_statu': True,
-            'channels_members': [ 
+            'name': 'channel2',
+            'channel_status': True,
+            'channel_members': [ 
                 {
                     'u_id': 1,
                     'email':'1@email.com', 
@@ -135,6 +188,14 @@ initial_object = {
                 },
                 
                 {
+                    'u_id': 4,
+                    'email':'2@email.com', 
+                    'name_first':'2first', 
+                    'name_last':'2last', 
+                    'handle_str': '2str'
+                },
+
+                {
                     'u_id': 2,
                     'email':'2@email.com', 
                     'name_first':'2first', 
@@ -143,15 +204,12 @@ initial_object = {
                 },
             ]
         },
-        """                
+                       
     ],  
 
     
 
-    'dms': [
-        # 'dm_id': 1,
-        # 'name':
-    ]
+    
 
 
 }

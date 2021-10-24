@@ -127,7 +127,7 @@ def test_sent_messages(valid):
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload)
-    assert r.status_code = 200
+    assert r.status_code == 200
     message = {
         "message_id": 1,
         "u_id": id_1,

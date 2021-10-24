@@ -67,12 +67,12 @@ def valid_message_id(message_id):
     dms = data['dms_details']
 
     for i in range(len(channels)):
-        channel_messages = channels[i]['messages'])
+        channel_messages = (channels[i]['messages'])
         for j in range(len(channel_messages)):
             if channel_messages[j]['message_id'] == message_id:
                 return channels[i]['channel_id'], 'channel', channels[j]['u_id']
     for i in range(len(dms)):
-        dm_messages = dms[i]['messages'])
+        dm_messages = (dms[i]['messages'])
         for j in range(len(dm_messages)):
             if dm_messages[j]['message_id'] == message_id:
                 return dms[i]['dm_id'], 'dm', dms[j]['u_id']
@@ -80,7 +80,7 @@ def valid_message_id(message_id):
 
 # Returns false if the authorised user doesn't have owner permissions 
 # in the channel/DM that a given message is in
-def owner_permissions(token)
+def owner_permissions(token):
     data = data_store.get()
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])

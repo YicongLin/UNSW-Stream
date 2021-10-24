@@ -1,6 +1,7 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.dm import decode_token, is_valid_token
+from src.channel import check_valid_token
 def check_duplicate(list, channel):
 
     # check for the element passed in is in the list or not

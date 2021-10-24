@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:2220'
 
 # ==================================
 # Test both addowner and removeowner (cooperate with details function)
@@ -47,7 +47,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 400)
 
     # Remove owner with invalid u_id (InputError 400)
-    resp = requests.post(f'{BASE_URL}/channel/removewner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": 123})
+    resp = requests.post(f'{BASE_URL}/channel/removeowner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": 123})
     assert (resp.status_code == 400)
 
     # Add user_one(not an member yet) as owner (InputError 400)
@@ -75,15 +75,15 @@ def test_addowner_removeowner():
     assert (resp.status_code == 403)
 
     # Check channel details(owner_members: user_two)
-    response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
-    assert (json.loads(response.text)['owner_members'] == 222)
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
+    assert (json.loads(response.text) == 222)
 
     # Add user_one as owner-----> successful implement
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": uid_1})
     assert (resp.status_code == 200)
 
     # Check channel details(user_two, user_one)
-    response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
     assert (json.loads(response.text)['owner_members'] == 111)
 
     # Add user_one as owner again(alreadt is an owner) (InputError 400)
@@ -95,7 +95,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 200)
 
     # Check channel details(user_two)
-    response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_2, "channel_id": channel_id})
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
     assert (json.loads(response.text)['owner_members'] == 222)
 
     # Remove user_one (not an owner yet) permissions (InputError 400)
@@ -118,7 +118,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 200)
 
     # Check channel details(owner_members: user_two, user_three)
-    response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_1, "channel_id": channel_id})
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
     assert (json.loads(response.text)['owner_members'] == 2321)
 
     # Remove user_three owner permissions -----> successful implement
@@ -126,7 +126,7 @@ def test_addowner_removeowner():
     assert (resp.status_code == 200)
 
     # Check channel details(user_two)
-    response = requests.get(f"{BASE_URL}/channel/details/v2", json={"token": token_1, "channel_id": channel_id})
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
     assert (json.loads(response.text)['owner_members'] == 213)
 
     # Remove user_two(only owner) owner permissions ------> (InputError 400)

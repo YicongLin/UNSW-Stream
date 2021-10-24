@@ -17,6 +17,7 @@ from src.token_helpers import decode_JWT
 def check_valid_channel_id(channel_id):
     data = data_store.get()
 
+    channel_id = int(channel_id)
     channels_details_data = data['channels_details']
     channels_members_element = 0
     all_channel_id = []
@@ -66,7 +67,7 @@ def check_valid_uid(u_id):
 # If the user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
 def check_member(channel_id_element, u_id):
     data = data_store.get()
-
+    
     members_in_channel = data['channels_details'][channel_id_element]['channel_members']
     each_member_element = 0
     each_member_id = []
@@ -104,24 +105,42 @@ def channel_owners_ids(channel_id_element):
 # If authorised user with invalid token then return False
 # If authorised user with valid token then return True
 def check_valid_token(token):
-    data = data_store.get()
+    # data = data_store.get()
 
-    decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token["u_id"]
-    user_session = decoded_token["session_id"]
+    # decoded_token = decode_JWT(token)
+    # auth_user_id = decoded_token["u_id"]
+    # user_session = decoded_token["session_id"]
 
-    user_element = 0
-    while user_element < len(data['emailpw']):
-        if data['emailpw'][user_element]['u_id'] == auth_user_id:
-            break
-        user_element += 1
+    # user_element = 0
+    # while user_element < len(data['emailpw']):
+    #     if data['emailpw'][user_element]['u_id'] == auth_user_id:
+    #         break
+    #     user_element += 1
     
-    session_list = data['emailpw'][user_element]['session_id']
+    # session_list = data['emailpw'][user_element]['session_id']
 
-    if user_session in session_list:
-        return True
+    # if user_session in session_list:
+    #     return True
 
-    return False
+    # return False
+    store = data_store.get()
+    decoded_token = decode_JWT(token)
+    
+    found = False 
+    i = 1
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        # check if session id matches any current session id’s 
+        if decoded_token['session_id'] in user['session_id']:
+            found = True
+
+        i += 1 
+
+    if found == False:
+        return False
+    
+    pass
+
 #Finish authorised user valid token check
 # ==================================
 

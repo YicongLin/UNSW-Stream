@@ -3,7 +3,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:8080'
+BASE_URL = 'http://127.0.0.1:2220'
  
 # ==================================
 # Test listall function
@@ -27,10 +27,11 @@ def test_listall():
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
     token_1 = json.loads(response.text)['token']
 
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_1 , "name": "channel1", "is_public": True})
+    response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_1 , "name": "channel1", "is_public": True})
+    channel_id1 = json.loads(response.text)['channel_id']
 
     # Logout user_one
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_1})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
     # ===================================
     # Switch user
     # ===================================  
@@ -39,10 +40,11 @@ def test_listall():
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
     token_2 = json.loads(response.text)['token']
 
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
+    response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel2", "is_public": False})
+    channel_id2 = json.loads(response.text)['channel_id']
 
     # Logout user_two
-    requests.post(f'{BASE_URL}/auth/logout/v2', json={"token": token_2})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_2})
 
     # ===================================
     # Switch user
@@ -53,13 +55,13 @@ def test_listall():
     token_3 = json.loads(response.text)['token']
 
     # User with invalid token to implement function (AccessError 403)
-    resp = requests.get(f'{BASE_URL}/channels/listall/v2', json={"token": 1231213})
+    resp = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": 1231213})
     assert (resp.status_code == 403)
 
     # Implement listall function -----> successful implement
-    response = requests.get(f'{BASE_URL}/channels/listall/v2', json={"token": token_3})
+    response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_3})
     assert (response.status_code == 200)
-    assert (json.loads(response.text) == {})
+    assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}, {'channel_id': channel_id2, 'name': 'channel2'}]})
 
     # Clear
     # requests.delete(f'{BASE_URL}/clear/v1')

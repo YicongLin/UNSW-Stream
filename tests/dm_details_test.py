@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:2220'
 
 # ==================================
 # Test dm_details
@@ -33,19 +33,19 @@ def test_dm_details():
     dm_id = json.loads(response.text)['dm_id']
 
     # Implement dm_details with invalid dm_id (InputError 400)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_1, "dm_id": 123})
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123})
     assert (resp.status_code == 400)
 
     # User with invalid token to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": "asdfgh", "dm_id": dm_id})
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": dm_id})
     assert (resp.status_code == 403)
 
     # User with invalid token and invalid dm_id to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": "asdfgh", "dm_id": 123123})
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": 123123})
     assert (resp.status_code == 403)
 
     # Show details of dm -----> successful implement
-    response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_1, "dm_id": dm_id})
+    response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
     assert (response.status_code == 200)
     assert (json.loads(response.text) == {   })
 
@@ -61,7 +61,7 @@ def test_dm_details():
     token_2 = json.loads(response.text)['token']
 
     # Show details of dm -----> successful implement (same as previous output)
-    response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_2, "dm_id": dm_id})
+    response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_2, "dm_id": dm_id})
     assert (response.status_code == 200)
     assert (json.loads(response.text) == {   })
 
@@ -77,7 +77,7 @@ def test_dm_details():
     token_3 = json.loads(response.text)['token']
 
     # Implement dm_details(no a member) (AccessError 403)
-    response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_3, "dm_id": dm_id})
+    response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_3, "dm_id": dm_id})
     assert (response.status_code == 403)
 
     # Clear

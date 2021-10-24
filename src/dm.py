@@ -3,13 +3,11 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 import hashlib
 import jwt
-<<<<<<< HEAD
 from src.token_helpers import decode_JWT
 from src.channel import check_valid_token
 
-=======
 secret = 'COMP1531'
->>>>>>> 0316a9130c9bfb8b8da69cbd81e3a053fb21c178
+
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -183,7 +181,6 @@ def dm_create_v1(token, u_ids):
     if (check_user(u_ids) == 0):
         raise InputError("There is 1 or more invalid ids, please check again")
     
-    
     creator_detail = get_member_detail([user_id])
     
     new_dm_id = len(dm) + 1
@@ -226,16 +223,18 @@ def check_user(u_ids):
     data = data_store.get()
     users_dict = data['users']
     user_id_list = []
-    a = 0
-    while a < len(users_dict):
-        user_id_list.append(users_dict[a]['u_id'])
-        a += 1
-    b = 0
-    while b < len(u_ids):
-        if (u_ids[b] not in user_id_list):
-            return 0
-        b += 1
-    return 1 
+    if (len(u_ids) >= 1):
+        a = 0
+        while a < len(users_dict):
+            user_id_list.append(users_dict[a]['u_id'])
+            a += 1
+        b = 0
+        while b < len(u_ids):
+            if (u_ids[b] not in user_id_list):
+                return 0
+            b += 1
+    
+    return 1
  
 # get the members details that on the list passed in
 def get_member_detail(id_list):
@@ -277,7 +276,8 @@ def dm_remove_v1(token, dm_id):
     data = data_store.get()
     dm_detail_info = data['dms_details']
     user_id = decode_token(token)
-
+    
+    
     # checking for both errors
     i = 0
     input = 0
@@ -368,7 +368,6 @@ def check_valid_token(token):
 
 def is_valid_token(token):
     secret = 'COMP1531'
-
     u_id = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     session_id = jwt.decode(token, secret, algorithms=['HS256'])['session_id']
 

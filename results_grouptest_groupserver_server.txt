@@ -1,0 +1,2 @@
+Couldn't run '/tmp_amd/kamen/export/kamen/3/cs1531/project-automarking/tempstore/src/server.py' as Python code: SyntaxError: invalid syntax (server.py, line 202)
+Coverage.py warning: No data was collected. (no-data-collected)

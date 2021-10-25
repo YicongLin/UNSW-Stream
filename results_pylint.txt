@@ -1,0 +1,122 @@
+************* Module tests.dm_remove_v1_test
+tests/dm_remove_v1_test.py:5:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/dm_remove_v1_test.py:5:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module tests.admin_userpermission_change_v1_test
+tests/admin_userpermission_change_v1_test.py:9:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/admin_userpermission_change_v1_test.py:9:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+tests/admin_userpermission_change_v1_test.py:92:4: W0612: Unused variable 'resp' (unused-variable)
+tests/admin_userpermission_change_v1_test.py:93:13: W0612: Unused variable 'token_2' (unused-variable)
+tests/admin_userpermission_change_v1_test.py:93:31: W0612: Unused variable 'id_2' (unused-variable)
+************* Module tests.channel_leave_v1_test
+tests/channel_leave_v1_test.py:47:7: W0612: Unused variable 'token_2' (unused-variable)
+tests/channel_leave_v1_test.py:47:19: W0612: Unused variable 'channel_1' (unused-variable)
+tests/channel_leave_v1_test.py:114:22: E0602: Undefined variable 'channel' (undefined-variable)
+tests/channel_leave_v1_test.py:88:4: W0612: Unused variable 'token_1' (unused-variable)
+tests/channel_leave_v1_test.py:88:19: W0612: Unused variable 'channel_1' (unused-variable)
+tests/channel_leave_v1_test.py:109:4: W0612: Unused variable 'channel_id' (unused-variable)
+************* Module tests.dm_create_v1_test
+tests/dm_create_v1_test.py:5:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/dm_create_v1_test.py:5:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module tests.dm_list_v1_test
+tests/dm_list_v1_test.py:5:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/dm_list_v1_test.py:5:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module tests.message
+tests/message.py:18:20: E0602: Undefined variable 'dm_id_list' (undefined-variable)
+tests/message.py:28:25: E0602: Undefined variable 'channel_id_list' (undefined-variable)
+tests/message.py:91:31: E0602: Undefined variable 'message_id' (undefined-variable)
+tests/message.py:98:20: E0602: Undefined variable 'owner_members_list' (undefined-variable)
+tests/message.py:99:27: E0602: Undefined variable 'owner_members_list' (undefined-variable)
+tests/message.py:91:10: W0612: Unused variable 'c' (unused-variable)
+tests/message.py:92:4: W0612: Unused variable 'owner_members_list1' (unused-variable)
+tests/message.py:113:4: W0612: Unused variable 'data' (unused-variable)
+tests/message.py:118:4: W0612: Unused variable 'a' (unused-variable)
+tests/message.py:118:7: W0612: Unused variable 'b' (unused-variable)
+tests/message.py:149:18: E0601: Using variable 'valid_dm_id' before assignment (used-before-assignment)
+tests/message.py:154:27: E0601: Using variable 'valid_message_length' before assignment (used-before-assignment)
+tests/message.py:179:39: E0602: Undefined variable 'timezone' (undefined-variable)
+tests/message.py:182:4: W0612: Unused variable 'message_dict' (unused-variable)
+tests/message.py:217:23: E0601: Using variable 'valid_channel_id' before assignment (used-before-assignment)
+tests/message.py:222:27: E0601: Using variable 'valid_message_length' before assignment (used-before-assignment)
+tests/message.py:237:30: E0602: Undefined variable 'channels_details' (undefined-variable)
+tests/message.py:238:30: E0602: Undefined variable 'channels_details' (undefined-variable)
+tests/message.py:245:39: E0602: Undefined variable 'timezone' (undefined-variable)
+tests/message.py:235:4: W0612: Unused variable 'dm_details' (unused-variable)
+tests/message.py:236:4: W0612: Unused variable 'channel_details' (unused-variable)
+tests/message.py:248:4: W0612: Unused variable 'message_dict' (unused-variable)
+tests/message.py:283:27: E0601: Using variable 'valid_message_length' before assignment (used-before-assignment)
+tests/message.py:288:23: E0601: Using variable 'valid_message_id' before assignment (used-before-assignment)
+tests/message.py:294:23: E0601: Using variable 'conditional_edit' before assignment (used-before-assignment)
+tests/message.py:303:35: E0602: Undefined variable 'edited_message' (undefined-variable)
+tests/message.py:280:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+tests/message.py:339:23: E0601: Using variable 'valid_message_id' before assignment (used-before-assignment)
+tests/message.py:345:23: E0601: Using variable 'conditional_edit' before assignment (used-before-assignment)
+tests/message.py:354:44: E0602: Undefined variable 'message' (undefined-variable)
+tests/message.py:361:49: E0602: Undefined variable 'message' (undefined-variable)
+tests/message.py:336:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+************* Module tests.auth_http_test
+tests/auth_http_test.py:200:4: W0612: Unused variable 'token_1' (unused-variable)
+tests/auth_http_test.py:200:13: W0612: Unused variable 'token_2' (unused-variable)
+************* Module tests.message_senddm_v1_test
+tests/message_senddm_v1_test.py:7:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/message_senddm_v1_test.py:7:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module tests.users_http_test
+tests/users_http_test.py:23:4: W0612: Unused variable 'id_1' (unused-variable)
+tests/users_http_test.py:23:10: W0612: Unused variable 'id_2' (unused-variable)
+tests/users_http_test.py:23:16: W0612: Unused variable 'token_1' (unused-variable)
+************* Module tests.echo_test
+tests/echo_test.py:3:0: E0611: No name 'echo' in module 'src' (no-name-in-module)
+tests/echo_test.py:3:0: E0401: Unable to import 'src.echo' (import-error)
+************* Module tests.channels_listall_v2_test
+tests/channels_listall_v2_test.py:31:4: W0612: Unused variable 'channel_id1' (unused-variable)
+tests/channels_listall_v2_test.py:44:4: W0612: Unused variable 'channel_id2' (unused-variable)
+************* Module tests.admin_user_remove_v1_test
+tests/admin_user_remove_v1_test.py:9:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/admin_user_remove_v1_test.py:9:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module tests.channels_list_v2_test
+tests/channels_list_v2_test.py:5:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+tests/channels_list_v2_test.py:5:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module src.dm
+src/dm.py:35:8: E0001: invalid syntax (<unknown>, line 35) (syntax-error)
+************* Module src.token_helpers
+src/token_helpers.py:14:11: E1101: Instance of 'sha256' has no 'hexidigest' member; maybe 'hexdigest'? (no-member)
+************* Module src.admin
+src/admin.py:25:4: W0612: Unused variable 'emailpw' (unused-variable)
+src/admin.py:121:16: E0602: Undefined variable 'remove' (undefined-variable)
+src/admin.py:143:12: E0602: Undefined variable 'remove' (undefined-variable)
+src/admin.py:76:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+src/admin.py:158:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+************* Module src.message
+src/message.py:69:31: E0602: Undefined variable 'message_id' (undefined-variable)
+src/message.py:76:20: E0602: Undefined variable 'owner_members_list' (undefined-variable)
+src/message.py:77:28: E0602: Undefined variable 'owner_members_list' (undefined-variable)
+src/message.py:69:10: W0612: Unused variable 'c' (unused-variable)
+src/message.py:70:4: W0612: Unused variable 'owner_members_list1' (unused-variable)
+src/message.py:91:4: W0612: Unused variable 'data' (unused-variable)
+src/message.py:96:4: W0612: Unused variable 'a' (unused-variable)
+src/message.py:96:7: W0612: Unused variable 'b' (unused-variable)
+src/message.py:159:39: E0602: Undefined variable 'timezone' (undefined-variable)
+src/message.py:162:4: W0612: Unused variable 'message_dict' (unused-variable)
+************* Module src.server
+src/server.py:202:10: E0001: invalid syntax (<unknown>, line 202) (syntax-error)
+************* Module src.channels
+src/channels.py:3:0: E0611: No name 'dm' in module 'src' (no-name-in-module)
+src/channels.py:3:0: E0001: Cannot import 'src.dm' due to syntax error 'invalid syntax (<unknown>, line 35)' (syntax-error)
+************* Module src.channel
+src/channel.py:242:7: E0602: Undefined variable 'is_valid_token' (undefined-variable)
+src/channel.py:253:35: E0602: Undefined variable 'uid' (undefined-variable)
+src/channel.py:276:23: E0602: Undefined variable 'users' (undefined-variable)
+src/channel.py:277:11: E0602: Undefined variable 'users' (undefined-variable)
+src/channel.py:282:13: E0602: Undefined variable 'channel_count' (undefined-variable)
+src/channel.py:282:54: E0602: Undefined variable 'users' (undefined-variable)
+src/channel.py:266:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+src/channel.py:400:7: E0602: Undefined variable 'is_valid_token' (undefined-variable)
+src/channel.py:413:4: W0612: Unused variable 'auth_user_id' (unused-variable)
+src/channel.py:465:7: E0602: Undefined variable 'is_valid_token' (undefined-variable)
+src/channel.py:480:21: E0601: Using variable 'channel_status' before assignment (used-before-assignment)
+src/channel.py:495:4: E0602: Undefined variable 'channels' (undefined-variable)
+src/channel.py:495:13: E0602: Undefined variable 'channel_count' (undefined-variable)
+src/channel.py:659:7: E0602: Undefined variable 'is_valid_token' (undefined-variable)
+
+-------------------------------------------------------------------
+Your code has been rated at 8.16/10 (previous run: 10.00/10, -1.84)
+

@@ -107,6 +107,19 @@ def check_duplicate_email(email):
     
     pass 
 
+def find_user_given_token(token):
+    store = data_store.get()
+
+    decoded_token = decode_JWT(token)
+    
+    i = 0
+    while i < len(store['users']):
+        user = store['users'][i] 
+        if (user['u_id'] == decoded_token['u_id']):
+            return user['u_id']
+        i += 1
+
+    return None 
 
 # USERS FUNCTIONS
 def users_all_v1(token):
@@ -134,7 +147,9 @@ def user_profile_v1(token, u_id):
         raise InputError
  
     decoded_token = decode_JWT(token)
-    
+    if find_user_given_token == None:
+        raise InputError("Invalid token")
+
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 
@@ -161,11 +176,14 @@ def user_profile_setname_v1(token, name_first, name_last):
     token_check(token)
     decoded_token = decode_JWT(token)
 
+    if find_user_given_token == None:
+        raise AccessError("Invalid token")
+
     # update users dict 
     i = 0
     while i < len(store['users']):
         user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
+        if user['u_id'] == decoded_token['u_id'] and user['u_id'] == find_user_given_token():
             user['name_first'] = name_first
             user['name_last'] = name_last
             data_store.set(store)

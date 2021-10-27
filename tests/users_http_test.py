@@ -103,6 +103,8 @@ def test_user_profile():
     
     assert (r.status_code == 403) 
 
+    # test valid token, but not matching id 
+
 
 # USER PROFILE SETNAME 
 def test_user_profile_setname():

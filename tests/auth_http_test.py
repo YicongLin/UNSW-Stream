@@ -6,7 +6,7 @@ from src import config
 from src.other import clear_v1
 from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 
-BASE_URL = 'http://127.0.0.1:3005'
+BASE_URL = 'http://127.0.0.1:3178'
 
 # AUTH REGISTER 
 def test_auth_register():
@@ -146,6 +146,10 @@ def test_auth_register():
 # AUTH LOGIN 
 def test_auth_login():
     clear_v1()
+
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "thisisanothertest2@email.com", "password" : "password"})
+    assert (r.status_code == 400)
+    clear_v1()
     
     # test invalid email 
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "invalid email", "password" : "password"})
@@ -185,19 +189,25 @@ def test_auth_login():
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "test2@email.com", "password" : "wrongpassword"})
     assert (r.status_code == 400)
 
-# VALID TOKENS 
-@pytest.fixture
-def valid_token():
-    clear_v1()
-    token_1 = auth_register_v2("testingrandom@email.com", "password1", "first1", "last1")['token']
-    token_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['token']
+    # testing clear function 
+    # clear_v1()
+    # r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "thisisanothertest2@email.com", "password" : "password"})
+    # assert (r.status_code == 400)
 
-    return token_1, token_2
+
+# VALID TOKENS 
+# @pytest.fixture
+# def valid_token():
+#     clear_v1()
+#     token_1 = auth_register_v2("testingrandom@email.com", "password1", "first1", "last1")['token']
+#     token_2 = auth_register_v2("anotherone@email.com", "password2", "hellllo", "world")['token']
+
+#     return token_1, token_2
  
 # AUTH LOGOUT  
-def test_auth_logout(valid_token):
+def test_auth_logout():
     clear_v1()
-    token_1, token_2 = valid_token
+    #token_1, token_2 = valid_token
 
     payload = {
         "email" : "randomemail@email.com",

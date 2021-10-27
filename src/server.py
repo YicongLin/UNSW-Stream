@@ -18,6 +18,7 @@ from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, us
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -41,14 +42,6 @@ APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
-
-# Example
-@APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({})
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
@@ -432,7 +425,7 @@ def send_message():
 
     return dumps(result)
 
-@APP.route("message/edit/v1", methods = ['PUT'])
+@APP.route("/message/edit/v1", methods = ['PUT'])
 def edit_message():  
     request_data = request.get_json()
     token = request_data['token']
@@ -456,7 +449,7 @@ def edit_message():
 
     return dumps(result)
 
-@APP.route("message/remove/v1", methods = ['DELETE'])
+@APP.route("/message/remove/v1", methods = ['DELETE'])
 def remove_message(): 
     request_data = request.get_json()
     token = request_data['token']

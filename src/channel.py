@@ -166,12 +166,12 @@ def check_channel_owner_permissions(token, each_owner_id):
 # ==================================
 # Check whether a user is a global owner or not;
 # Returns true if global owner
-def check_global_owner(token)
-decoded_token = decode_JWT(token)
-if decoded_token['permissions_id'] == 1:
-    return True
+def check_global_owner(token):
+    decoded_token = decode_JWT(token)
+    if decoded_token['permissions_id'] == 1:
+        return True
 
-return False
+    return False
 # Finish global owner check
 # ==================================
 
@@ -242,15 +242,13 @@ def channel_invite_v2(token, channel_id, u_id):
     if check_valid_token(token) == False:
         raise AccessError("Invalid token")
 
-    # Raising an error if the given channel ID is not 
-    # a valid channel in the created list
+    # Raising an error if the given channel ID is not valid
     if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel_id")
     else: 
         channel_id_index = check_valid_channel_id(channel_id)
         
     # Raising an error if u_id is not a valid user 
-    # in the created list
     if check_valid_uid(uid) == False:
         raise AccessError("Invalid user")
 
@@ -475,7 +473,7 @@ def channel_join_v2(token, channel_id):
     if check_member(channel_id_index, auth_user_id) != False:
         raise InputError("Already in channel")
 
-    # Raising an error if the channel is private
+    # Raising an error if the channel is private and the authorised user is not a global owner
     if channel_status(channel_id) == False and decoded_token['permissions_id'] != 1:
         raise AccessError("Channel is private and you are not a global owner") 
         

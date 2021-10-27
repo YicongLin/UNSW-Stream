@@ -483,7 +483,7 @@ def dm_messages_v1(token, dm_id, start):
        
     # Raising an error if start is greater than
     # the total number of messages in the given dm
-    if start_greater -= True:
+    if start_greater == True:
         raise InputError("Exceeded total number of messages in this dm") 
         
     # Raising an error if the authorised user 

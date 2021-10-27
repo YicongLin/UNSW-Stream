@@ -16,7 +16,6 @@ from src.message import message_senddm_v1, message_send_v1, message_edit_v1, mes
 from src.admin import only_global_owner, not_a_global_owner, admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.error import InputError, AccessError
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 
@@ -96,7 +95,8 @@ def channel_join_http():
 
     if check_valid_channel_id(channel_id) == False:
         raise InputError(description="Invalid channel_id")
-    else channel_id_index = check_valid_channel_id(channel_id)
+    else:
+        channel_id_index = check_valid_channel_id(channel_id)
 
     if check_valid_token(token) == False:
         raise AccessError(description="Invalid token")
@@ -176,34 +176,34 @@ def add_owner():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError("Invalid channel_id")
-    
-
+    try:
         channel_id_element = check_valid_channel_id(channel_id)
         if channel_id_element == False:
-            raise InputError(description="Invalid channel_id")
+            raise InputError("Invalid channel_id")
 
-        if check_valid_uid(u_id) == False:
-            raise InputError(description="Invalid user ID")
 
-        each_member_id = check_member(channel_id_element, u_id)
-        if each_member_id  == False:
-            raise InputError(description="User is not a member of this channel")
-        
-        each_owner_id = channel_owners_ids(channel_id_element)
+            channel_id_element = check_valid_channel_id(channel_id)
+            if channel_id_element == False:
+                raise InputError(description="Invalid channel_id")
 
-        if u_id in each_owner_id:
-            raise InputError(description="User already is an owner of channel")
-        
-        if check_channel_owner_permissions(token, each_owner_id) == False:
-            raise AccessError(description="No permissions to add user")
+            if check_valid_uid(u_id) == False:
+                raise InputError(description="Invalid user ID")
 
-        channel_addowner_v1(token, channel_id, u_id)
+            each_member_id = check_member(channel_id_element, u_id)
+            if each_member_id  == False:
+                raise InputError(description="User is not a member of this channel")
+            
+            each_owner_id = channel_owners_ids(channel_id_element)
 
-        return dumps({})
+            if u_id in each_owner_id:
+                raise InputError(description="User already is an owner of channel")
+            
+            if check_channel_owner_permissions(token, each_owner_id) == False:
+                raise AccessError(description="No permissions to add user")
+
+            channel_addowner_v1(token, channel_id, u_id)
+
+            return dumps({})
 
     except (InvalidSignatureError, DecodeError, InvalidTokenError):
         raise AccessError
@@ -413,7 +413,7 @@ def send_message():
     request_data = request.get_json()
     token = request_data['token']
     channel_id = request_data['channel_id']
-    message = request_data['message]
+    message = request_data['message']
     decoded_token = decode_JWT(token)
     u_id = decoded_token['u_id']
 

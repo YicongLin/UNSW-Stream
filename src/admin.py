@@ -121,9 +121,9 @@ def admin_user_remove_v1(token, u_id):
     return {}
 
 def admin_userpermission_change_v1(token, u_id, permission_id):
-    print('_________________')
-    print(permission_id)
-    print('_________________')
+    # print('_________________')
+    # print(permission_id)
+    # print('_________________')
     #Obtaining data
     data = data_store.get()
 

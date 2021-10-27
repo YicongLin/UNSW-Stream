@@ -9,7 +9,7 @@ from src.channel import channel_details_v2, channel_join_v2, channel_messages_v2
 from src.dm import dm_create_v1
 from src.other import clear_v1
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:7000'
 
 # Creating valid tokens and ids
 @pytest.fixture
@@ -53,36 +53,36 @@ def test_invalid_u_id():
     r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload)
     assert r.status_code == 400
 
-# # Testing for invalid token
-# def test_invalid_token(valid):
-#     clear_v1()
-#     token_1, token_2, _, id_1, _, id_3 = valid
-#     requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token_1})
-#     payload = {
-#         "token": token_1,
-#         "u_id": id_3,
-#         "permission_id": 2
-#     }
-    # '''r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload)
-    # assert r.status_code == 400
-    # # login first user
-    # r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "qwe@rty.com", "password" : "password"})
-    # resp1 = r.json()
+# Testing for invalid token
+def test_invalid_token(valid):
+    clear_v1()
+    token_1, token_2, _, id_1, _, id_3 = valid
+    requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token_1})
+    payload = {
+        "token": token_1,
+        "u_id": id_3,
+        "permission_id": 2
+    }
+    '''r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload)
+    assert r.status_code == 400
+    # login first user
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "qwe@rty.com", "password" : "password"})
+    resp1 = r.json()
 
-    # # register and login second user
-    # payload = {"email": "hi@bye.com", "password": "password", "name_first": "hi", "name_last": "bye"}
-    # requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    # r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "hi@bye.com", "password" : "password"})
-    # resp2 = r.json()
+    # register and login second user
+    payload = {"email": "hi@bye.com", "password": "password", "name_first": "hi", "name_last": "bye"}
+    requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "hi@bye.com", "password" : "password"})
+    resp2 = r.json()
 
-    # # first user logs out
-    # requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp1['token']})
+    # first user logs out
+    requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp1['token']})
 
-    # # first user attempts to demote id_2
-    # payload = {"token": resp1['token'], "u_id": resp2['auth_user_id'], "permission_id": 1}
-    # '''
-    # r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload)
-    # assert r.status_code == 403
+    # first user attempts to demote id_2
+    payload = {"token": resp1['token'], "u_id": resp2['auth_user_id'], "permission_id": 1}
+    '''
+    r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload)
+    assert r.status_code == 403
 
 # Testing for a case where u_id is the only global owner 
 # and they are being demoted

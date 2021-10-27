@@ -5,19 +5,10 @@ from datetime import datetime
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
+from src.channel import check_valid_uid, check_valid_token
 
 # HELPER FUNCTIONS
 # ==================================
-
-# Returns false if u_id does not refer to a valid user
-def valid_uid(u_id):
-    data = data_store.get()
-    users = data['users']
-    users_list = []
-    for i in range(len(users)):
-        users_list.append(users[i]['u_id'])
-    if u_id not in users_list:
-        return False
 
 # Returns true if u_id is a user who is the only global owner
 def only_global_owner(token, u_id):
@@ -51,20 +42,6 @@ def not_a_global_owner(token):
             if emailpw[i]['permissions_id'] != 1:
                 return True
 
-# Returns false if token is invalid
-def is_valid_token(token):
-    data = data_store.get()
-    emailpw = data['emailpw']
-    decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token['u_id']
-    session_id = decode_JWT(token)['session_id']
-
-    for i in range(len(emailpw)):
-        if emailpw[i]['u_id'] == auth_user_id:
-            if session_id not in emailpw[i]['session_id']:
-                return False
-    return True
-
 # ==================================
 # FUNCTIONS
 
@@ -76,11 +53,11 @@ def admin_user_remove_v1(token, u_id):
     auth_user_id = decoded_token['u_id']
 
     # Check for valid u_id
-    if valid_uid(u_id) == False:
+    if check_valid_uid(u_id) == False:
         raise InputError("Invalid user")
     
     # Check for invalid token
-    if is_valid_token(token) == False:
+    if check_valid_token(token) == False:
         raise AccessError("Invalid token")
     
     # Raise an error if u_id refers to a user who is the only global owner
@@ -151,14 +128,14 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     data = data_store.get()
 
     # Check for invalid token
-    if is_valid_token(token) == False:
+    if check_valid_token(token) == False:
         raise AccessError("Invalid token")
     
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
 
     # Check for valid u_id
-    if valid_uid(u_id) == False:
+    if check_valid_uid(u_id) == False:
         raise InputError("Invalid user")
     
     # Raising an error if u_id is the only global owner and they are being demoted to a user

@@ -164,6 +164,18 @@ def check_channel_owner_permissions(token, each_owner_id):
 # ==================================
 
 # ==================================
+# Check whether a user is a global owner or not;
+# Returns true if global owner
+def check_global_owner(token)
+decoded_token = decode_JWT(token)
+if decoded_token['permissions_id'] == 1:
+    return True
+
+return False
+# Finish global owner check
+# ==================================
+
+# ==================================
 # Check whether the start of messages is greater than 
 # the total number of messages or not.
 # Returns true if start is greater. 
@@ -192,23 +204,6 @@ def channel_status(channel_id):
                 return False
 # Finish channel status check
 # ==================================
-
-# ==================================
-# Checking if someone is already a member;
-# Return false if not
-def already_a_member(channel_id, token):
-    data = data_store.get()
-    channels = data["channels_details"]
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
-    for i in range(len(channels)):
-        if channels[i]['channel_id'] == channel_id:
-            found = channels[i]['channel_members']
-            for j in range(len(found)):
-                if found[j]['u_id'] == auth_user_id:
-                    return True
-    return False
 
 # ============================================================
 # =====================(Actual functions)=====================
@@ -251,6 +246,8 @@ def channel_invite_v2(token, channel_id, u_id):
     # a valid channel in the created list
     if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel_id")
+    else: 
+        channel_id_index = check_valid_channel_id(channel_id)
         
     # Raising an error if u_id is not a valid user 
     # in the created list
@@ -258,12 +255,12 @@ def channel_invite_v2(token, channel_id, u_id):
         raise AccessError("Invalid user")
 
     # Raising an error if u_id is already a member of the channel
-    if check_member(channel_id, u_id) == True:
+    if check_member(channel_id_index, u_id) == True:
         raise InputError("Already in channel")
   
     # Raising an error if the authorised user 
     # is not a member of the valid channel
-    if check_member(channel_id, auth_user_id) == False:
+    if check_member(channel_id_index, auth_user_id) == False:
         raise AccessError("You are not a member of the channel")
 
     # Otherwise, add the user to the channel
@@ -402,6 +399,8 @@ def channel_messages_v2(token, channel_id, start):
     # a valid channel in the created list
     if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel_id")
+    else:
+        channel_id_index = check_valid_channel_id(channel_id)
     
     # Check for invalid token
     if check_valid_token(token) == False:
@@ -414,8 +413,7 @@ def channel_messages_v2(token, channel_id, start):
         
     # Raising an error if the authorised user 
     # is not a member of the valid channel
-    already_a_member = check_member(channel_id, token)
-    if check_member(channel_id, auth_user_id) == False:
+    if check_member(channel_id_index, auth_user_id) == False:
         raise AccessError("You are not a member of the channel")  
 
     # Append all messages in a list
@@ -461,6 +459,8 @@ def channel_join_v2(token, channel_id):
     # Raising an error if the given channel ID is not a valid channel 
     if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel_id")
+    else:
+        channel_id_index = check_valid_channel_id(channel_id)
     
     # Check for invalid token
     if check_valid_token(token) == False:
@@ -472,7 +472,7 @@ def channel_join_v2(token, channel_id):
 
     # Raising an error if the authorised user 
     # is already a member of the channel
-    if check_member(channel_id, auth_user_id) != False:
+    if check_member(channel_id_index, auth_user_id) != False:
         raise InputError("Already in channel")
 
     # Raising an error if the channel is private
@@ -672,10 +672,12 @@ def channel_leave_v1(token, channel_id):
     # Raising an error if the given channel ID is not a valid channel
     if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel_id")
+    else:
+        channel_id_index = check_valid_channel_id(channel_id)
         
     # Raising an error if the authorised user is not 
     # a member of the valid channel
-    if check_member(channel_id, auth_user_id) == False:
+    if check_member(channel_id_index, auth_user_id) == False:
         raise AccessError("You are not a member of the channel")  
     
     # Otherwise, remove the user as a member of the channel

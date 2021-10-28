@@ -17,7 +17,8 @@ def test_dm_details():
     # Register three users
     # user_one ----> dm creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
-    
+    uid_1 = decode_JWT(json.loads(response.text)['token'])['u_id']
+
     # user_two ----> dm member
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
     uid_2 = decode_JWT(json.loads(response.text)['token'])['u_id']
@@ -47,7 +48,21 @@ def test_dm_details():
     # Show details of dm -----> successful implement
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
     assert (response.status_code == 200)
-    # assert (json.loads(response.text) == {   })
+    assert (json.loads(response.text) == {
+        'members': [
+            {'email': 'testpersontwo@email.com',
+            'handle_str': 'testtwopersontwo',
+            'name_first': 'Testtwo',
+            'name_last': 'Persontwo',
+            'u_id': uid_2},
+            {'email': 'testperson@email.com',
+            'handle_str': 'testperson',
+            'name_first': 'Test',
+            'name_last': 'Person',
+            'u_id': uid_1}
+            ],
+        'name': ['testperson', 'testtwopersontwo'],
+    })
 
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
@@ -63,6 +78,22 @@ def test_dm_details():
     # Show details of dm -----> successful implement (same as previous output)
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_2, "dm_id": dm_id})
     assert (response.status_code == 200)
+    assert (json.loads(response.text) == {
+        'members': [
+            {'email': 'testpersontwo@email.com',
+            'handle_str': 'testtwopersontwo',
+            'name_first': 'Testtwo',
+            'name_last': 'Persontwo',
+            'u_id': uid_2},
+            
+            {'email': 'testperson@email.com',
+            'handle_str': 'testperson',
+            'name_first': 'Test',
+            'name_last': 'Person',
+            'u_id': uid_1}
+            ],
+        'name': ['testperson', 'testtwopersontwo'],
+    })
 
     # Logout user_two
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_2})

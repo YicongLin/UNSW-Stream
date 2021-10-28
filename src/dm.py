@@ -204,7 +204,7 @@ def dm_leave_v1(token, dm_id):
     member_id_element = 0
     while member_id_element < len(each_member_id):
         if data['dms_details'][dm_id_element]['members'][member_id_element]['u_id'] == auth_user_id:
-            return member_id_element
+            break
         member_id_element += 1
 
     # Pick out dict from dm's members and then delete it 
@@ -489,7 +489,7 @@ def dm_messages_v1(token, dm_id, start):
        
     # Raising an error if start is greater than
     # the total number of messages in the given dm
-    if start_greater -= True:
+    if start_greater != True:
         raise InputError("Exceeded total number of messages in this dm") 
         
     # Raising an error if the authorised user 

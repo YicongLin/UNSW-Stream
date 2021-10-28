@@ -17,7 +17,8 @@ def test_channel_details():
 
     # Register two users
     # user_one ----> channel creator (only member)
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+    uid_1 = decode_JWT(json.loads(response.text)['token'])['u_id']
 
     # user_two ----> not a member
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
@@ -36,7 +37,24 @@ def test_channel_details():
     # Implement details function -----> successful implement
     response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
     assert (response.status_code == 200)
-    # assert (json.loads(response.text)== {})
+    assert (json.loads(response.text)==  { 
+        'all_members': [{
+            'email': 'testperson@email.com',
+            'handle_str': 'testperson',
+            'name_first': 'Test',
+            'name_last': 'Person',
+            'u_id': uid_1
+            }],
+        'is_public': True,
+        'name': 'channel1',
+        'owner_members': [{
+            'email': 'testperson@email.com',
+            'handle_str': 'testperson',
+            'name_first': 'Test',
+            'name_last': 'Person',
+            'u_id': uid_1
+        }],
+    })
 
     # User with invalid token to implement function (AccessError 403)
     resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": "asdfgh", "channel_id": channel_id})
@@ -60,7 +78,6 @@ def test_channel_details():
     # Implement details function (not a member of channel) (AccessError 403)
     resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
     assert (resp.status_code == 403)
-    # Clear is needed
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')

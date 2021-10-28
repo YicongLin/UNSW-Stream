@@ -61,7 +61,7 @@ def test_listall():
     # Implement listall function -----> successful implement
     response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_3})
     assert (response.status_code == 200)
-    # Clear function is needed!!!!!!!!!!
+    # Clear is needed!!!!!!!!!!!!
     # assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}, {'channel_id': channel_id2, 'name': 'channel2'}]}) 
 
     # Clear

@@ -4,7 +4,7 @@ from src.error import AccessError
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
-
+from src.admin import is_valid_token
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -25,14 +25,14 @@ def check_valid_channel_id(channel_id):
         all_channel_id.append(channels_details_data[channels_members_element]['channel_id'])
         channels_members_element += 1
 
+    if channel_id not in all_channel_id:
+            return False
+
     channel_id_element = 0
     while channel_id_element < len(all_channel_id):
         if channel_id == all_channel_id[channel_id_element]:
             return channel_id_element 
         channel_id_element += 1
-
-    if channel_id not in all_channel_id:
-        return False
             
     pass
 # Finish authorised user check
@@ -106,24 +106,6 @@ def channel_owners_ids(channel_id_element):
 # If authorised user with invalid token then return False
 # If authorised user with valid token then return True
 def check_valid_token(token):
-    # data = data_store.get()
-
-    # decoded_token = decode_JWT(token)
-    # auth_user_id = decoded_token["u_id"]
-    # user_session = decoded_token["session_id"]
-
-    # user_element = 0
-    # while user_element < len(data['emailpw']):
-    #     if data['emailpw'][user_element]['u_id'] == auth_user_id:
-    #         break
-    #     user_element += 1
-    
-    # session_list = data['emailpw'][user_element]['session_id']
-
-    # if user_session in session_list:
-    #     return True
-
-    # return False
     store = data_store.get()
     decoded_token = decode_JWT(token)
     

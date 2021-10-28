@@ -2,8 +2,9 @@ import pytest
 import requests
 import json
 from src import config
+from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:7000'
+BASE_URL = 'http://127.0.0.1:1231'
 
 # ==================================
 # Test dm_leave
@@ -19,6 +20,7 @@ def test_dm_leave():
 
     # user_two ----> dm member
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
+    uid_2 = decode_JWT(json.loads(response.text)['token'])['u_id']
 
     # user_three ----> not member
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})
@@ -27,7 +29,7 @@ def test_dm_leave():
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
     token_1 = json.loads(response.text)['token']
 
-    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [2]})
+    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [uid_2]})
     dm_id = json.loads(response.text)['dm_id']
 
     # User with invalid token to implement function (AccessError 403)
@@ -80,7 +82,7 @@ def test_dm_leave():
     response = requests.get(f"{BASE_URL}/dm/details/v1", json={"token": token_2, "dm_id": dm_id})
     # assert (json.loads(response.text) == {   })
 
-    # user_one leave dm -----> successful implement ()
+    # user_two leave dm -----> successful implement ()
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_2, "dm_id": dm_id})
     assert (resp.status_code == 200)
 

@@ -3,7 +3,9 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:7000'
+from src.token_helpers import decode_JWT
+
+BASE_URL = 'http://127.0.0.1:1231'
  
 # ==================================
 # Test channel_details function
@@ -58,6 +60,7 @@ def test_channel_details():
     # Implement details function (not a member of channel) (AccessError 403)
     resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
     assert (resp.status_code == 403)
+    # Clear is needed
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')

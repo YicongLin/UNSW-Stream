@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:7000'
+BASE_URL = 'http://127.0.0.1:1231'
 
 # ==================================
 # Test dm_details
@@ -16,11 +16,11 @@ def test_dm_details():
 
     # Register three users
     # user_one ----> dm creator
-    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
-
+    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+    
     # user_two ----> dm member
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
-    uid_2 = decode_JWT(json.loads(response.text)['token']) ['u_id']
+    uid_2 = decode_JWT(json.loads(response.text)['token'])['u_id']
 
     # user_three ----> not member
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})
@@ -31,7 +31,6 @@ def test_dm_details():
 
     response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [uid_2]})
     dm_id = json.loads(response.text)['dm_id']
-    assert json.loads(response.text) == {"dm_id": dm_id}
 
     # Implement dm_details with invalid dm_id (InputError 400)
     resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123})
@@ -58,13 +57,12 @@ def test_dm_details():
     # ===================================
 
     # Login user_two
-    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
     token_2 = json.loads(response.text)['token']
 
     # Show details of dm -----> successful implement (same as previous output)
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_2, "dm_id": dm_id})
     assert (response.status_code == 200)
-    # assert (json.loads(response.text) == {   })
 
     # Logout user_two
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_2})

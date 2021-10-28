@@ -5,11 +5,11 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
-from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member
+from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_invite_v2, channel_messages_v2, channel_join_v2, channel_leave_v1
+from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member, check_valid_token
 from src.channels import channels_listall_v2, channels_create_v2
 from src.dm import dm_details_v1, dm_leave_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+from src.dm import check_valid_dmid, check_valid_dm_token, check_user, dm_create_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.error import InputError
 from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
@@ -19,6 +19,7 @@ from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -42,19 +43,6 @@ APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
-
-# Example
-@APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({})
-
-@APP.route('/clear/v1', methods=['DELETE'])
-def clear():
-    return dumps({})
-    
 @APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite_http():
     request_data = request.get_json()
@@ -171,31 +159,28 @@ def add_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError("Invalid channel_id")
-    
+    try:
+        if check_valid_token(token) == False:
+            raise AccessError(description="Invalid token")
 
         channel_id_element = check_valid_channel_id(channel_id)
         if channel_id_element == False:
-            raise InputError(description="Invalid channel_id")
+            raise InputError("Invalid channel_id")
 
         if check_valid_uid(u_id) == False:
-            raise InputError(description="Invalid user ID")
+            raise InputError("Invalid user ID")
 
         each_member_id = check_member(channel_id_element, u_id)
         if each_member_id  == False:
-            raise InputError(description="User is not a member of this channel")
-        
-        each_owner_id = channel_owners_ids(channel_id_element)
+            raise InputError("User is not a member of this channel")
 
         if u_id in each_owner_id:
-            raise InputError(description="User already is an owner of channel")
-        
-        if check_channel_owner_permissions(token, each_owner_id) == False:
-            raise AccessError(description="No permissions to add user")
+            raise InputError("User already is an owner of channel")
 
-        channel_addowner_v1(token, channel_id, u_id)
+        if check_channel_owner_permissions(token, each_owner_id) == False:
+            raise AccessError("No permissions to add user")
+
+        channel_removeowner_v1(token, channel_id, u_id)
 
         return dumps({})
 
@@ -244,7 +229,6 @@ def channel_details():
 
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
-
 
     try:
         if check_valid_token(token) == False:
@@ -299,7 +283,8 @@ def dm_details():
         if dm_id_element == False:
             raise InputError(description="Invalid dm_id")
 
-        if check_valid_dm_token(token, dm_id_element) == False:
+        auth_user_id = decode_JWT(token)['u_id']
+        if check_valid_dm_token(auth_user_id, dm_id_element) == False:
             raise AccessError(description="Login user has not right to access dm_details")
 
         dm = dm_details_v1(token, dm_id)
@@ -324,7 +309,8 @@ def dm_leave():
         if dm_id_element == False:
             raise InputError(description="Invalid dm_id")
 
-        if check_valid_dm_token(token, dm_id_element) == False:
+        auth_user_id = decode_JWT(token)["u_id"]
+        if check_valid_dm_token(auth_user_id, dm_id_element) == False:
             raise AccessError(description="Login user has not right to access this dm")
 
         dm_leave_v1(token, dm_id)
@@ -633,7 +619,7 @@ def dm_list():
     result = dm_list_v1(token)
     return dumps(result)
 
-@APP.route("/clear/v1,", methods = ['DELETE'])
+@APP.route('/clear/v1,', methods = ['DELETE'])
 def clear():
     clear_v1()
     return dumps({})

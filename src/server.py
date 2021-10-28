@@ -619,7 +619,7 @@ def dm_list():
     result = dm_list_v1(token)
     return dumps(result)
 
-@APP.route('/clear/v1,', methods = ['DELETE'])
+@APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     clear_v1()
     return dumps({})

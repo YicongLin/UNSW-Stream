@@ -20,7 +20,7 @@ def test_addowner_removeowner():
     decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
     uid_1 = decoded_token_1['u_id']
     
-    # user_two ----> channel owner
+    # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
     decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
     uid_2 = decoded_token_2['u_id']
@@ -36,6 +36,10 @@ def test_addowner_removeowner():
 
     response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
     channel_id = json.loads(response.text)['channel_id']
+
+    # Check channel owner details(user_two)
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
+    assert (json.loads(response.text) == {})
 
     # Add owner with invalid channel_id (InputError 400)
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": 123, "u_id": uid_1})
@@ -79,13 +83,13 @@ def test_addowner_removeowner():
 
     # Check channel details(owner_members: user_two)
     response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
-    # assert (json.loads(response.text)['owner_members'] == [{ 'email': 'testpersontwo@email.com', 'handle_str': 'testtwopersontwo','name_last': 'Persontwo','u_id': 6},])
+    assert (json.loads(response.text)['owner_members'] == [{ 'email': 'testpersontwo@email.com', 'handle_str': 'testtwopersontwo','name_last': 'Persontwo','u_id': 6},])
 
     # Add user_one as owner-----> successful implement
     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_2, "channel_id": channel_id, "u_id": uid_1})
     assert (resp.status_code == 200)
 
-    # Check channel details(user_two, user_one)
+    # Check channel owner details(user_two, user_one)
     response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})
     # assert (json.loads(response.text)['owner_members'] == {})
 

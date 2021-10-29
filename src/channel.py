@@ -6,8 +6,8 @@ import jwt
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
 
 # ==================================
 # Check channel_id valid or not
@@ -129,7 +129,7 @@ def check_channel_owner_permissions(token, each_owner_id):
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
->>>>>>> master
+# >>>>>>> master
 
 # ==================================
 # Check channel_id valid or not
@@ -295,30 +295,30 @@ def channel_invite_v2(token, channel_id, u_id):
     # Accessing contents of the data store
     data = data_store.get()
     channels = data["channels_details"]
-<<<<<<< HEAD
+# <<<<<<< HEAD
     users = data["users"]
 
-=======
+# =======
     valid_channel_ids = []
     for i in range(len(channels)):
         valid_channel_ids.append(channels[i]["channel_id"])
         
->>>>>>> master
+# >>>>>>> master
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
         raise InputError("Invalid channel_id")
         
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
     # Creating a list of all valid user IDs
     users = data["users"]
     valid_user_ids = []
     for i in range(len(channels)):
         valid_user_ids.append(users[i]["u_id"])
   
->>>>>>> master
+# >>>>>>> master
     # Raising an error if u_id is not a valid user 
     # in the created list
     is_valid_uid = check_valid_uid(uid)
@@ -326,12 +326,12 @@ def channel_invite_v2(token, channel_id, u_id):
         raise AccessError("Invalid user")
 
     # Raising an error if u_id is already a member of the channel
-<<<<<<< HEAD
+# <<<<<<< HEAD
     already_a_member = check_member(channel_id, u_id)
     if already_a_member != False:
         raise InputError("Already in channel")
   
-=======
+# =======
     channel_count = 0
     for i in range(len(channels)): 
         if channel_id == channels[i]["channel_id"]:
@@ -342,7 +342,7 @@ def channel_invite_v2(token, channel_id, u_id):
         if u_id == member["u_id"]:
             raise InputError("Already in channel")
     
->>>>>>> master
+# >>>>>>> master
     # Raising an error if the authorised user 
     # is not a member of the valid channel
     SECRET = 'COMP1531'
@@ -473,14 +473,14 @@ def channel_messages_v2(token, channel_id, start):
     # Defining the end index
         end = start + 50
     
-<<<<<<< HEAD
+# <<<<<<< HEAD
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
         raise InputError("Invalid channel_id")
 
-=======
+# =======
     # Creating a list of valid channel IDS
     valid_channel_ids = []
     for i in range(len(channels)):
@@ -503,7 +503,7 @@ def channel_messages_v2(token, channel_id, start):
             break
         count += 1
        
->>>>>>> master
+# >>>>>>> master
     # Raising an error if start is greater than
     # the total number of messages in the given channel
     is_greater = start_greater_than_total(channel_id, start)
@@ -560,26 +560,26 @@ def channel_join_v2(token, channel_id):
     # Accessing contents of the data store
     data = data_store.get()
    
-<<<<<<< HEAD
+#<<<<<<< HEAD
     # Raising an error if the given channel ID is not a valid channel 
     is_valid_channel = check_valid_channel_id(channel_id)
     if is_valid_channel == False:
-=======
+#=======
     # Creating a list of all valid channel IDs.
-    channels = data["channels_details"]
-    valid_channel_ids = []
+        channels = data["channels_details"]
+        valid_channel_ids = []
     for i in range(len(channels)):
         valid_channel_ids.append(channels[i]["channel_id"])
         
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
     if channel_id not in valid_channel_ids:
->>>>>>> master
+#>>>>>>> master
         raise InputError("Invalid channel_id")
     
     # Raising an error if the authorised user 
     # is already a member of the channel
-<<<<<<< HEAD
+#<<<<<<< HEAD
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
@@ -587,7 +587,7 @@ def channel_join_v2(token, channel_id):
     already_a_member = check_member(channel_id, u_id)
     if already_a_member != False:
         raise InputError("Already in channel")
-=======
+
     channel_count = 0
     for i in range(len(channels)):
         if channel_id == channels[i]["channel_id"]:
@@ -597,7 +597,7 @@ def channel_join_v2(token, channel_id):
     for member in members:
         if auth_user_id == member["u_id"]:
             raise InputError("Already in channel")
->>>>>>> master
+
     
     # Raising an error if the channel is private
     if channels[channel_count]["channel_status"] != True:
@@ -706,7 +706,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     return {}
 
-<<<<<<< HEAD
+
 def channel_leave_v1(token, channel_id):
     data = data_store.get() 
     channels = data["channels_details"]
@@ -735,14 +735,70 @@ def channel_leave_v1(token, channel_id):
                     channel_members.remove(channel_members[j]["u_id"])
 
     return {}
+
+def channels_create_v2(token, name, is_public):
+    """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
+
+    Arguments:
+        auth_user_id (integer) - the ID of an authorised user
+        name(string)- channel’s name authorised user deign
+        is_public(boolean) - channel’s status (public or private)
+
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+        InputError - Length of channel name is more than 20 or less than 1
+
+    Return Value:
+        channel_id(integer) is channels id
+    """
+
+    if (is_valid_token(token) == False):
+        raise AccessError("Invalid token")
+
+    # get data from datastore
+    data = data_store.get()
+    users_info = data['users']
+    channels_detail = data['channels_details']
+    user_id = decode_token(token)
+    
+    # check for invalid user
+    """ if (is_valid_user(user_id) == False):
+        raise AccessError("Invalid user") """
+
+    # check for invalid name
+    if len(name) > 20:
+        raise InputError("Invalid name: Too long")
+    elif len(name) == 0:
+        raise InputError("Invalid name: Too short")
+    
+    new_channel_id = len(channels_detail) + 1
+    
+    # a dictionary for the channel
+    channels_dict = {
+        'channel_id': new_channel_id,
+        'name': name
+    }
+
+    channels_detail_dict = {
+        'channel_id': new_channel_id,
+        'name': name,
+        'channel_status': is_public,
+        'owner_members': [
+            users_info[user_id - 1]
+        ],
+        'channel_members': [
+            users_info[user_id - 1]
+        ]
+    }
+    
+    # append all data and return
+    data['channels'].append(channels_dict)
+    data['channels_details'].append(channels_detail_dict)
+    data_store.set(data)
+    return { "channel_id": new_channel_id }
+
                 
     
         
     
     
-=======
-
-
-
-    
->>>>>>> master

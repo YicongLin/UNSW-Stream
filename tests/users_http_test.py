@@ -9,43 +9,42 @@ from src.users import token_check, u_id_check
 
 BASE_URL = 'http://127.0.0.1:7224'
 
-# # USERS ALL 
-# def test_users_all():
+# USERS ALL 
+def test_users_all():
 
-#     # valid user 1
-#     payload = {
-#         "email" : "Ijks98ruwio@email.com",
-#         "password" : "password",
-#         "name_first" : "firstname",
-#         "name_last" : "lastname"
-#     }
+    # valid user 1
+    payload = {
+        "email" : "Ijks98ruwio@email.com",
+        "password" : "password",
+        "name_first" : "firstname",
+        "name_last" : "lastname"
+    }
 
-#     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-#     assert (r.status_code == 200)   
-#     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "Ijks98ruwio@email.com", "password" : "password"})
-#     assert (r.status_code == 200)  
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)   
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "Ijks98ruwio@email.com", "password" : "password"})
+    assert (r.status_code == 200)  
 
-#     # valid token 
-#     resp = r.json()
-#     valid_token = resp['token']
-#     # token_check(valid_token) 
+    # valid token 
+    resp = r.json()
+    valid_token = resp['token']
 
-#     r = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : valid_token})
-#     assert (r.status_code == 200)
+    r = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : valid_token})
+    assert (r.status_code == 200)
 
-#     # login without registering 
-#     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "2qioaj90wio@email.com", "password" : "password"})
-#     assert (r.status_code == 400)
+    # login without registering 
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "2qioaj90wio@email.com", "password" : "password"})
+    assert (r.status_code == 400)
 
-#     # logout  
-#     r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
-#     assert (r.status_code == 200)
+    # logout  
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
 
-#     # invalid token 
-#     invalid_token = resp['token']
+    # invalid token 
+    invalid_token = resp['token']
 
-#     r = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : invalid_token})
-#     assert (r.status_code == 403)
+    r = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : invalid_token})
+    assert (r.status_code == 403)
 
 def test_user_profile_valid():
     requests.delete(f'{BASE_URL}/clear/v1')
@@ -72,9 +71,6 @@ def test_user_profile_valid():
     resp = r.json()
 
     assert resp['auth_user_id'] == 2
-
-    # u_id_check(resp['auth_user_id'])
-    # token_check(resp['token']) 
 
     # invalid token?????
 
@@ -143,10 +139,9 @@ def test_user_profile():
         "token" : resp['token'],
         "u_id" : resp['auth_user_id']
     }
-    
+
     r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload)
     assert (r.status_code == 403) 
-
 
 # USER PROFILE SETNAME 
 def test_user_profile_setname():

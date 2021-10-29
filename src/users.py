@@ -11,11 +11,6 @@ def token_check(token):
     store = data_store.get()
     decoded_token = decode_JWT(token)
     
-    users_list = store['users']
-    emailpw_list = store['emailpw']
-    print(f"token users: {users_list}")
-    print(f"token emailpw: {emailpw_list}")
-
     i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
@@ -30,20 +25,15 @@ def token_check(token):
 def u_id_check(u_id):
     store = data_store.get()
     
+    users_length = len(store['users'])
+
     found = False 
-
-    emailpw_list = store['emailpw']
-    users_list = store['users']
-
-    print(f"users: {users_list}")
-    print(f"emailpw: {emailpw_list}")
-
     i = 0
-    while i < len(emailpw_list):
+    while i < users_length:
         user = store['users'][i]
         # check if uid matches any uid
         if int(user["u_id"]) == int(u_id):
-            found == True
+            found = True
 
         i += 1 
     
@@ -124,14 +114,15 @@ def user_profile_v1(token, u_id):
     """
 
     store = data_store.get()
- 
-    decoded_token = decode_JWT(token)
+    token_check(token)
     u_id_check(u_id)
+
+    decoded_token = decode_JWT(token)
 
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 
-        if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == u_id):
+        if int(user['u_id']) == int(decoded_token['u_id']) == int(u_id):
             return {'user' : user}
         i += 1 
 

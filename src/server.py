@@ -6,7 +6,7 @@ from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_invite_v2, channel_messages_v2, channel_join_v2, channel_leave_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member, check_valid_token
+from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, check_valid_token
 from src.channels import channels_listall_v2, channels_create_v2
 from src.dm import dm_details_v1, dm_leave_v1
 from src.dm import check_valid_dmid, check_valid_dm_token, check_user, dm_create_v1

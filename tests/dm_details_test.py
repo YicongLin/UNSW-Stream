@@ -37,14 +37,6 @@ def test_dm_details():
     resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123})
     assert (resp.status_code == 400)
 
-    # User with invalid token to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": dm_id})
-    assert (resp.status_code == 403)
-
-    # User with invalid token and invalid dm_id to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": 123123})
-    assert (resp.status_code == 403)
-
     # Show details of dm -----> successful implement
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
     assert (response.status_code == 200)
@@ -109,6 +101,16 @@ def test_dm_details():
     # Implement dm_details(no a member) (AccessError 403)
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_3, "dm_id": dm_id})
     assert (response.status_code == 403)
+
+    # User with invalid token to implement function (AccessError 403)
+    # token_1 is invalid already (same token formation)
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
+    assert (resp.status_code == 403)
+
+    # User with invalid token and invalid dm_id to implement function (AccessError 403)
+    # token_1 is invalid already (same token formation)
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123123})
+    assert (resp.status_code == 403)
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')

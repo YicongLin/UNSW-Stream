@@ -22,7 +22,7 @@ def test_channel_details():
 
     # user_two ----> not a member
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
-
+    
     # Login user_one to create a public channel
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
     token_1 = json.loads(response.text)['token']
@@ -31,8 +31,8 @@ def test_channel_details():
     channel_id = json.loads(response.text)['channel_id']
 
     # Implement details function with invalid channel_id (InputError 400)
-    resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": 123123})
-    assert (resp.status_code == 400)
+    response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": 1212})
+    assert (response.status_code == 400)
 
     # Implement details function -----> successful implement
     response = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_1, "channel_id": channel_id})
@@ -50,19 +50,11 @@ def test_channel_details():
         'owner_members': [{
             'email': 'testperson@email.com',
             'handle_str': 'testperson',
-            'name_first': 'Test',
+            # 'name_first': 'Test',
             'name_last': 'Person',
             'u_id': uid_1
         }],
     })
-
-    # User with invalid token to implement function (AccessError 403)
-    resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": "asdfgh", "channel_id": channel_id})
-    assert (resp.status_code == 403)
-
-    # User with invalid token and channel_id to implement function (AccessError 403)
-    resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": "asdfgh", "channel_id": "asdfgh"})
-    assert (resp.status_code == 403)
 
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
@@ -74,6 +66,16 @@ def test_channel_details():
     # Login user_two 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
     token_2 = json.loads(response.text)['token']
+
+    # User with invalid token to implement function (AccessError 403)
+    # token_1 is invalid already (same token formation)
+    resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": token_1, "channel_id": channel_id})
+    assert (resp.status_code == 403)
+
+    # User with invalid token and channel_id to implement function (AccessError 403)
+    # token_1 is invalid already (same token formation)
+    resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": token_1, "channel_id": 123123})
+    assert (resp.status_code == 403)
 
     # Implement details function (not a member of channel) (AccessError 403)
     resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})

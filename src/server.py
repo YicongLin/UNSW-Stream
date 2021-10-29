@@ -8,17 +8,17 @@ from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member
 from src.channels import channels_listall_v2, channels_create_v2
-from src.dm import dm_details_v1, dm_leave_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+# from src.dm import dm_details_v1, dm_leave_v1
+# from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.error import InputError
-from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
-from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
+# from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
+# from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
+from src.other import clear_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -53,6 +53,7 @@ def echo():
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
+    clear_v1()
     return dumps({})
     
 @APP.route("/channel/invite/v2", methods=['POST'])
@@ -175,7 +176,7 @@ def add_owner():
     if channel_id_element == False:
         raise InputError("Invalid channel_id")
     
-
+    try:
         channel_id_element = check_valid_channel_id(channel_id)
         if channel_id_element == False:
             raise InputError(description="Invalid channel_id")
@@ -343,22 +344,6 @@ def auth_register_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
-
-    if check_name_length(name_first) == False:
-        raise InputError(description="Invalid name length")
-
-    if check_name_length(name_last) == False:
-        raise InputError(description="Invalid name length")
-    
-    if check_password_length(password) == False:
-        raise InputError(description="Invalid password length")
-    
-    if check_duplicate_email(email) == False:
-        raise InputError(description="Duplicate email")
-    
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
-    
     result = auth_register_v2(email, password, name_first, name_last)
     return dumps(result)
 
@@ -368,9 +353,6 @@ def auth_login_http():
 
     email = request_data['email']
     password = request_data['password']
-
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
     
     result = auth_login_v2(email, password)
     return dumps(result)
@@ -502,9 +484,6 @@ def dm_create():
 def auth_logout_http():
     request_data = request.get_json()
     token = request_data['token']
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
 
     result = auth_logout_v1(token)
     return dumps(result)
@@ -513,9 +492,6 @@ def auth_logout_http():
 def users_all_http():
     token = request.args.get('token')
 
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-
     result = users_all_v1(token)
     return dumps(result)
 
@@ -523,12 +499,6 @@ def users_all_http():
 def user_profile_http():
     token = request.args.get('token')
     u_id = request.args.get('u_id')
-
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
-    if u_id_check(token) == False:
-        raise InputError(description="Invalid u_id")
     
     result = user_profile_v1(token, u_id)
     return dumps(result)
@@ -541,16 +511,6 @@ def user_profile_setname_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
-
-    if check_name_length(name_first) == False:
-        raise InputError(description='Invalid first name')
-    
-    if check_name_length(name_last) == False:
-        raise InputError(description='Invalid last name')
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
     result = user_profile_setname_v1(token, name_first, name_last)
     return dumps(result)
 
@@ -561,15 +521,6 @@ def user_profile_setemail_http():
     token = request_data['token']
     email = request_data['email']
 
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
-    if check_duplicate_email == False:
-        raise InputError(description='Duplicate email')
-    
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
-
     result = user_profile_setemail_v1(token, email)
     return dumps(result)
 
@@ -579,18 +530,6 @@ def user_profile_sethandle_http():
 
     token = request_data['token']
     handle_str = request_data['handle_str']
-
-    if check_handle == False: 
-        raise InputError(description='Invalid handle')
-    
-    if check_alpha_num(handle_str) == False:
-        raise InputError(description='Invalid handle length')
-    
-    if check_duplicate_handle == False:
-        raise InputError(description='Duplicate handle')
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
 
     result = user_profile_sethandle_v1(token, handle_str)
     return dumps(result)
@@ -632,11 +571,6 @@ def dm_list():
         raise AccessError("Invalid token")
     result = dm_list_v1(token)
     return dumps(result)
-
-@APP.route("/clear/v1,", methods = ['DELETE'])
-def clear():
-    clear_v1()
-    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

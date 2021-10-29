@@ -11,20 +11,16 @@ def token_check(token):
     store = data_store.get()
     decoded_token = decode_JWT(token)
     
-    found = False 
     i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 
         if decoded_token['session_id'] in user['session_id']:
-            found = True
-
-        i += 1 
-
-    if found == False:
-        return False
+            return 
     
-    pass
+    i += 1 
+    
+    raise AccessError(description = 'token_check: Invalid token')
 
 def u_id_check(u_id):
     store = data_store.get()

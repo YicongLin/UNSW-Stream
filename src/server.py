@@ -201,9 +201,13 @@ def dm_details():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
 
-    dm = dm_details_v1(token, dm_id)
+    try:
+        dm = dm_details_v1(token, dm_id)
 
-    return dumps(dm)
+        return dumps(dm)
+
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+            raise AccessError
 
 
 

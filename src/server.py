@@ -159,33 +159,10 @@ def add_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    channel_removeowner_v1(token, channel_id, u_id)
 
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError("Invalid channel_id")
+    return dumps({})
 
-        if check_valid_uid(u_id) == False:
-            raise InputError("Invalid user ID")
-
-        each_member_id = check_member(channel_id_element, u_id)
-        if each_member_id  == False:
-            raise InputError("User is not a member of this channel")
-
-        if u_id in each_owner_id:
-            raise InputError("User already is an owner of channel")
-
-        if check_channel_owner_permissions(token, each_owner_id) == False:
-            raise AccessError("No permissions to add user")
-
-        channel_removeowner_v1(token, channel_id, u_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
 
 @APP.route('/channel/removeowner/v1', methods=['POST'])
 def remove_owner():
@@ -195,34 +172,9 @@ def remove_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    channel_removeowner_v1(token, channel_id, u_id)
 
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError("Invalid channel_id")
-
-        if check_valid_uid(u_id) == False:
-            raise InputError("Invalid user ID")
-
-        each_owner_id = channel_owners_ids(channel_id_element)
-
-        if u_id not in each_owner_id:
-            raise InputError("User is not an owner of channel")
-
-        if u_id in each_owner_id and len(each_owner_id) == 1:
-            raise InputError("User is the only owner of channel")
-
-        if check_channel_owner_permissions(token, each_owner_id) == False:
-            raise AccessError("No permissions to remove user")
-
-        channel_removeowner_v1(token, channel_id, u_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps({})
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
@@ -230,69 +182,29 @@ def channel_details():
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    channel_details = channel_details_v2(token, channel_id)
 
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError(description="Invalid channel_id")
+    return dumps(channel_details)
 
-        auth_user_id = decode_JWT(token)['u_id']
-        if check_member(channel_id_element, auth_user_id) == False:
-            raise AccessError(description="Not an member of channel")
-
-        auth_user_id = decode_JWT(token)['u_id']
-        if check_member(channel_id_element, auth_user_id) == False:
-            raise AccessError("Authorised user is not an member of channel")
-
-        channel_details = channel_details_v2(token, channel_id)
-
-        return dumps(channel_details)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
 
 
 @APP.route('/channels/listall/v2', methods=['GET'])
 def channels_listall():
     token = request.args.get('token')
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    all_channels = channels_listall_v2(token)
 
-        all_channels = channels_listall_v2(token)
-
-        return dumps(all_channels)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
-
+    return dumps(all_channels)
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    dm = dm_details_v1(token, dm_id)
 
-        dm_id_element = check_valid_dmid(dm_id)
-        if dm_id_element == False:
-            raise InputError(description="Invalid dm_id")
+    return dumps(dm)
 
-        auth_user_id = decode_JWT(token)['u_id']
-        if check_valid_dm_token(auth_user_id, dm_id_element) == False:
-            raise AccessError(description="Login user has not right to access dm_details")
-
-        dm = dm_details_v1(token, dm_id)
-
-        return dumps(dm)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
 
 
 @APP.route('/dm/leave/v1', methods=['POST'])
@@ -301,24 +213,9 @@ def dm_leave():
     token = request_data['token']
     dm_id = request_data['dm_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    dm_leave_v1(token, dm_id)
 
-        dm_id_element = check_valid_dmid(dm_id)
-        if dm_id_element == False:
-            raise InputError(description="Invalid dm_id")
-
-        auth_user_id = decode_JWT(token)["u_id"]
-        if check_valid_dm_token(auth_user_id, dm_id_element) == False:
-            raise AccessError(description="Login user has not right to access this dm")
-
-        dm_leave_v1(token, dm_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps({})
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():

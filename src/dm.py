@@ -28,7 +28,7 @@ def check_valid_dmid(dm_id):
         dms_element += 1
 
     if dm_id not in all_dm_id :
-        return False
+        raise InputError(description="Invalid dm_id")
 
     dm_id_element = 0
     while dm_id_element < len(all_dm_id):
@@ -56,7 +56,7 @@ def check_valid_dm_token(auth_user_id, dm_id_element):
         each_member_element += 1
 
     if auth_user_id not in each_member_id:
-        return False
+        raise AccessError(description="Login user has not right to access dm_details")
 
     return each_member_id
 # Finish  authorised user member check
@@ -137,20 +137,16 @@ def dm_details_v1(token, dm_id):
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
+    check_valid_token(token)
 
     # Raise a InputError if authorised user type in invalid dm_id
     # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
     dm_id_element = check_valid_dmid(dm_id)
-    if dm_id_element == False:
-        raise InputError("Invalid dm_id")
 
     auth_user_id = decode_JWT(token)['u_id']
     # Raise an AccessError if authorised user type in a valid dm_id
     # but the authorised user is not a member of dm
-    if check_valid_dm_token(auth_user_id, dm_id_element) == False:
-        raise AccessError("Login user has not right to access dm_details")
+    check_valid_dm_token(auth_user_id, dm_id_element)
 
     # Pick out dm name and its members from data['dms_details'][dm_id_element]
     name = data['dms_details'][dm_id_element]['name']
@@ -183,22 +179,17 @@ def dm_leave_v1(token, dm_id):
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
+    check_valid_token(token)
 
     # Raise a InputError if authorised user type in invalid dm_id
     # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
     dm_id_element = check_valid_dmid(dm_id)
-    if dm_id_element == False:
-        raise InputError("Invalid dm_id")
 
     auth_user_id = decode_JWT(token)['u_id']
     # Raise an AccessError if authorised user type in a valid dm_id
     # but the authorised user is not a member of dm
     # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
     each_member_id = check_valid_dm_token(auth_user_id, dm_id_element)
-    if each_member_id == False:
-        raise AccessError("Login user has not right to access this dm")
 
     # Find out the index of auth_user within dm['members']
     member_id_element = 0

@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime
+from src.channel import check_valid_token, check_valid_channel_id, check_member
 import hashlib
 import jwt
 
@@ -15,26 +16,20 @@ def valid_dm_id(dm_id):
     dm_ids_list = []
     for i in range(len(dm_details)):
         dm_ids_list.append(dm_details[i]['dm_id'])
-    if dm_id not in dm_id_list:
-        return False
-
-# Returns false if the channel_id is invalid
-def valid_channel_id(channel_id):
-    data = data_store.get()
-    channels_details = data['channels_details']
-    channel_ids_list = []
-    for i in range(len(channels_details)):
-        channel_ids_list.append(channels_details[i]['channel_id'])
-    if channel_id not in channel_id_list:
-        return False
+    if dm_id not in dm_ids_list:
+        return
+    
+    raise InputError(description = "Invalid dm_id" )
 
 # Returns false if the message length is less than 1 or greater than 1000 characters
 def valid_message_length(message):
     if len(message) < 1 or len(message) > 1000:
-        return False
+        return 
+    
+    raise InputError(desctiption = "Invalid message length")
 
 # Returns false if the authorised user is not a member of the DM
-def member(token):
+def check_dm_member(token):
     data = data_store.get()
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
@@ -44,20 +39,7 @@ def member(token):
     for i in range(len(dm_members)):
         dm_members_list.append(dm_members[i]['u_id'])
     if auth_user_id not in dm_members_list:
-        return False
-
-# Returns false if the authorised user is not a member of the channel
-def channel_member(token):
-    data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
-    channel_members = data['channel_details']['channel_members']
-    channel_members_list = []
-    for i in range(len(channel_members)):
-        channel_members_list.append(channel_members[i]['u_id'])
-    if auth_user_id not in channel_members_list:
-        return False
+        return AccessError(description = "Authorised user is not a member of the DM")
 
 # Returns false if the message_id is invalid, or
 # Returns the channel/dm ID the message is in, with relevant information
@@ -67,12 +49,12 @@ def valid_message_id(message_id):
     dms = data['dms_details']
 
     for i in range(len(channels)):
-        channel_messages = (channels[i]['messages'])
+        channel_messages = channels[i]['messages']
         for j in range(len(channel_messages)):
             if channel_messages[j]['message_id'] == message_id:
                 return channels[i]['channel_id'], 'channel', channels[j]['u_id']
     for i in range(len(dms)):
-        dm_messages = (dms[i]['messages'])
+        dm_messages = dms[i]['messages']
         for j in range(len(dm_messages)):
             if dm_messages[j]['message_id'] == message_id:
                 return dms[i]['dm_id'], 'dm', dms[j]['u_id']
@@ -96,7 +78,7 @@ def owner_permissions(token):
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
                     owner_members_list.append(owner_members[j]['u_id'])
-    if auth_user_id not in owner_members_list:
+    if  auth_user_id not in owner_members_list:
         return False
     if b == 'dm':
         for i in range(len(dms)):
@@ -106,10 +88,9 @@ def owner_permissions(token):
                     return False
 
 # Returns false if none of the following conditions are true:
-# the message was sent by the authorised user
-# the authorised user has owner permisisons in the channel/DM
+# - the message was sent by the authorised user
+# - the authorised user has owner permisisons in the channel/DM
 def conditional_edit(token, message_id):
-    # so return false if the message wasnt sent by the auth user and also the auth user doesnt have owner permisisons
     data = data_store.get()
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
@@ -117,7 +98,9 @@ def conditional_edit(token, message_id):
 
     a, b, c = valid_message_id(message_id)
     if c != auth_user_id and owner_permissions(token) == False:
-        return False
+        return 
+    
+    raise AccessError(description = "User is not authorised to make this request")
 
 # ==================================
 # FUNCTIONS
@@ -141,23 +124,25 @@ def message_senddm_v1(token, dm_id, message):
     """
     #Obtaining data
     data = data_store.get()
+
+    # Check for invalid token
+    if check_valid_token(token) == False:
+        raise AccessError("Invalid token")
+    
     SECRET = 'COMP1531'
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
 
     # Check for valid dm_id
-    valid_dm_id = valid_dm_id(dm_id)
-    if valid_dm_id == False:
+    if valid_dm_id(dm_id) == False:
         raise InputError("Invalid DM")
     
     # Check for valid message length
-    valid_message_length = valid_message_length(message)
-    if valid_message_length == False:
+    if valid_message_length(message) == False:
         raise InputError("Invalid message length")
     
     # Raise an error if the authorised user is not a member of the DM
-    is_member = member(token)
-    if is_member == False:
+    if check_dm_member(token) == False:
         raise AccessError("Not a member of the DM")
     
     # Otherwise, send the message to the specified DM
@@ -170,7 +155,7 @@ def message_senddm_v1(token, dm_id, message):
         length_of_messages += len(dm_details[i]['messages'])
     for i in range(len(channel_details)):
         length_of_messages += len(channel_details[i]['messages'])
-
+ 
     # Assigning the message ID
     message_id = length_of_messages + 1
 
@@ -183,7 +168,7 @@ def message_senddm_v1(token, dm_id, message):
         'message_id': message_id,
         'u_id': auth_user_id,
         'message': message,
-        'time_created': time_created
+        'time_created': time_created,
     }
     
     return {message_id}
@@ -213,10 +198,11 @@ def message_send_v1(token, channel_id, message):
     decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decode_token['u_id']
 
-    # Check for valid dm_id
-    valid_channel_id = valid_channel_id(channel_id)
-    if valid_channel_id == False:
+    # Check for valid channel_id
+    if check_valid_channel_id(channel_id) == False:
         raise InputError("Invalid channel")
+    else:
+        channel_id_index = check_valid_channel_id(channel_id)
     
     # Check for valid message length
     valid_message_length = valid_message_length(message)
@@ -224,8 +210,7 @@ def message_send_v1(token, channel_id, message):
         raise InputError("Invalid message length")
     
     # Raise an error if the authorised user is not a member of the channel
-    is_channel_member = channel_member(token)
-    if is_channel_member == False:
+    if check_member(channel_id_index, auth_user_id) == False:
         raise AccessError("Not a member of the channel")
     
     # Otherwise, send the message to the specified DM

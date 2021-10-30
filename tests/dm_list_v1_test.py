@@ -1,3 +1,4 @@
+""" testing for dm list """
 import pytest
 import requests
 import json
@@ -7,21 +8,21 @@ from src.error import AccessError
 from src.dm import dm_create_v1, dm_list_v1
 BASE_URL = 'http://127.0.0.1:3178'
 # checking for invalid token, if a user is logged out that token is invalid
-# def test_valid_token():
-#     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
-#     login_return = auth_login_v2("login@gmail.com", "password454643")
-#     token = login_return['token']
-#     auth_logout_v1(token)
-#     with pytest.raises(AccessError):
-#         dm_list_v1(token) """
-
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "tom", "name_last": "liu"})
-#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
-#     token = json.loads(response.text)['token']
-#     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
-
-#     requests.get(f'{BASE_URL}/dm/list/v1', json={"token": token})
-#     assert (response.status_code) == 403
+def test_invalid_token_dm_list():
+    """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
+    login_return = auth_login_v2("login@gmail.com", "password454643")
+    token = login_return['token']
+    auth_logout_v1(token)
+    with pytest.raises(AccessError):
+        dm_list_v1(token) """
+    requests.delete(f'{BASE_URL}/clear/v1')
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "tom", "name_last": "liu"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
+    token = json.loads(response.text)['token']
+    response = requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
+    assert (response.status_code) == 200
+    response = requests.get(f'{BASE_URL}/dm/list/v1', params={"token": token})
+    assert (response.status_code) == 403
 
 # only the creator is in the dm
 def test_list_only_creator():

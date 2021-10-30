@@ -1,3 +1,4 @@
+""" testing for dm_create """
 import pytest
 from src.channels import channels_create_v2
 from src.auth import auth_register_v2, auth_login_v2, auth_logout_v1
@@ -7,22 +8,23 @@ BASE_URL = 'http://127.0.0.1:3178'
 import json
 import requests
 # checking for invalid token, if a user is logged out that token is invalid
-# def test_valid_token():
-#     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
-#     login_return = auth_login_v2("login@gmail.com", "password454643")
-#     token = login_return['token']
-#     auth_logout_v1(token)
-#     with pytest.raises(AccessError):
-#         dm_create_v1(token, []) """
-    
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "tom", "name_last": "liu"})
-#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
-#     token = json.loads(response.text)['token']
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"token": token})
+def test_invalid_token_dm_create():
+    """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
+    login_return = auth_login_v2("login@gmail.com", "password454643")
+    token = login_return['token']
+    auth_logout_v1(token)
+    with pytest.raises(AccessError):
+        dm_create_v1(token, []) """
+    requests.delete(f'{BASE_URL}/clear/v1')
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "tom", "name_last": "liu"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
+    token = json.loads(response.text)['token']
+    # requests.post(f'{BASE_URL}/auth/register/v2', json={"token": token})
 
-#     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
-#     response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
-#     assert (response.status_code) == 403
+    response = requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
+    assert (response.status_code) == 200
+    response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    assert (response.status_code) == 403
 # create a dm of 2 people    
 def test_dm_create():
     """ auth_register_v2("test@gmail.com", "password454643", "yicong", "lin")

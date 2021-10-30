@@ -1,3 +1,4 @@
+""" testing for channels list """
 import pytest
 import requests
 from src.channels import channels_create_v2, channels_list_v2
@@ -7,22 +8,22 @@ from src.dm import dm_create_v1, dm_list_v1
 import json
 BASE_URL = 'http://127.0.0.1:3178'
 # checking for invalid token, if a user is logged out that token is invalid
-# def test_valid_token():
-#     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
-#     login_return = auth_login_v2("login@gmail.com", "password454643")
-#     token = login_return['token']
-#     auth_logout_v1(token)
-#     with pytest.raises(AccessError):
-#         channels_list_v2(token) """
+def test_invalid_token_list():
+    """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
+    login_return = auth_login_v2("login@gmail.com", "password454643")
+    token = login_return['token']
+    auth_logout_v1(token)
+    with pytest.raises(AccessError):
+        channels_list_v2(token) """
     
-    
-#     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "yicong", "name_last": "lin"})
-#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
-#     token = json.loads(response.text)['token']
-#     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
-
-#     response = requests.get(f'{BASE_URL}/channels/list/v2', json={"token": token})
-#     assert (response.status_code) == 403
+    requests.delete(f'{BASE_URL}/clear/v1')
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "yicong", "name_last": "lin"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
+    token = json.loads(response.text)['token']
+    response = requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
+    assert (response.status_code) == 200
+    response = requests.get(f'{BASE_URL}/channels/list/v2', params={"token": token})
+    assert (response.status_code) == 403
 # test for a user that didn't join or create any channel
 def test_empty_list():
     """ auth_register_v2("test@gmail.com", "password454643", "yicong", "lin")

@@ -1,17 +1,32 @@
+""" testing for  """
 import pytest
 import requests
 import json
 
 BASE_URL = 'http://127.0.0.1:3178'
 # checking for invalid token, if a user is logged out that token is invalid
-# def test_valid_token():
-#     auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
-#     login_return = auth_login_v2("login@gmail.com", "password454643")
-#     token = login_return['token']
-#     dm_id = dm_create_v1(token, [])['dm_id']
-#     auth_logout_v1(token)
-#     with pytest.raises(AccessError):
-#         dm_remove_v1(token, dm_id)
+def test_invalid_token_remove():
+    """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
+    login_return = auth_login_v2("login@gmail.com", "password454643")
+    token = login_return['token']
+    dm_id = dm_create_v1(token, [])['dm_id']
+    auth_logout_v1(token)
+    with pytest.raises(AccessError):
+        dm_remove_v1(token, dm_id) """
+
+    requests.delete(f'{BASE_URL}/clear/v1')
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login@gmail.com", "password": "password454643", "name_first": "tom", "name_last": "liu"})
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login@gmail.com", "password": "password454643"})
+    token = json.loads(response.text)['token']
+    
+    store = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    dm_id = json.loads(store.text)['dm_id']
+    
+    response = requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
+    assert (response.status_code) == 200
+    
+    response = requests.delete(f'{BASE_URL}/dm/remove/v1', json={"token": token, "dm_id": dm_id})
+    assert (response.status_code) == 403
 
     
 

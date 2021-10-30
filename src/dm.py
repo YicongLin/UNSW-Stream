@@ -1,3 +1,4 @@
+""" this file contains important functions: dm create, remove, list, detail and leave as well as same helpers """
 from _pytest.python_api import raises
 from src.data_store import data_store
 from src.error import InputError, AccessError
@@ -18,6 +19,8 @@ secret = 'COMP1531'
 # If dm_id is invalid then return False
 # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
 def check_valid_dmid(dm_id):
+    """ Check dm_id valid or not """
+    
     data = data_store.get()
 
     dm_id = int(dm_id)
@@ -46,8 +49,9 @@ def check_valid_dmid(dm_id):
 # Serach information at data['dms_details'][dm_id_element]['dm_members']
 # If authorised user is a not member of dm then return False
 # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
-
-def check_valid_dm_token(auth_user_id, dm_id_element):
+def check_valid_dm_token(token, dm_id_element):
+    """ Check authorised user is an member of dm or not """
+    
     data = data_store.get()
 
     members_in_dm = data['dms_details'][dm_id_element]['members']
@@ -206,18 +210,30 @@ def dm_leave_v1(token, dm_id):
     return {}
 
 def dm_create_v1(token, u_ids):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-        
+    """An authorised user creates a dm with a list of u_ids 
+
+    Arguments:
+        token (string) - a token contains u_id, session_id and permission_id
+        u_ids (list) - a list of u_ids of valid users, exclude the creator
+
+    Exceptions:
+        AccessError - invalid token
+        InputError - one of more u_ids are invalid
+
+    Return Value:
+        {
+            dm_id(int)
+        }
+    """
+    
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     dm = data['dms_details']
     user_id = decode_token(token)
 
-    """ if (check_valid_token(token) == False):
-        raise AccessError("Invalid user") """
-    
-    if (check_user(u_ids) == 0):
-        raise InputError("There is 1 or more invalid ids, please check again")
+    # check if the u_ids passed in are all valid, if not it will raise an input error
+    check_user(u_ids)
     
     creator_detail = get_member_detail([user_id])
     
@@ -241,6 +257,8 @@ def dm_create_v1(token, u_ids):
 
 
 def is_valid_user(u_id):
+    """ check if the user is a valid user by looping through the users datastore """
+    
     data = data_store.get()
     user_dict = data['users']
     i = 0
@@ -251,14 +269,17 @@ def is_valid_user(u_id):
     return False
 
 def decode_token(token):
+    """ decode a token and get the u_id """
     secret = 'COMP1531'
     result = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     u_id = result
     return u_id
 
 
-# a function to check if the user in u_ids is a valid user
+ 
 def check_user(u_ids):
+    """ a function to check if the user in u_ids is a valid user """
+    
     data = data_store.get()
     users_dict = data['users']
     user_id_list = []
@@ -270,13 +291,15 @@ def check_user(u_ids):
         b = 0
         while b < len(u_ids):
             if (u_ids[b] not in user_id_list):
-                return 0
+                raise InputError(description="There is 1 or more invalid ids, please check again")
             b += 1
     
-    return 1 
+    return 
  
-# get the members details that on the list passed in
+
 def get_member_detail(id_list):
+    """ get the members details that on the list passed in """
+    
     data = data_store.get()
 
     users_dict = data['users']
@@ -292,8 +315,10 @@ def get_member_detail(id_list):
     return user_detail_list
 
 
-# get every users'handle_str and append them in a list
+ 
 def get_name(id_list):
+    """ get every users'handle_str and append them in a list """
+    
     data = data_store.get()
     users_dict = data['users']
     names_list = []
@@ -310,8 +335,25 @@ def get_name(id_list):
 
 
 def dm_remove_v1(token, dm_id):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    
+    """An authorised user removes an existing dm, it can only be done by the owner of this dm
+
+    Arguments:
+        token (string) - a token contains u_id, session_id and permission_id
+        dm_id (int) - the dm that will be removed
+
+    Exceptions:
+        AccessError - if the auth user is not the owner of the dm
+        InputError - if the dm_id is invalid
+        AcessError - if the auth user is not a valid user
+    Return Value:
+        {
+
+        }
+    """
+    
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     
     data = data_store.get()
     dm_detail_info = data['dms_details']
@@ -331,11 +373,11 @@ def dm_remove_v1(token, dm_id):
         i += 1
     # didn't find the dm id in datastore
     if (input == 0):
-        raise InputError("Invalid DM ID")
+        raise InputError(description="Invalid DM ID")
 
     # the user passed in is not the creator of this dm
     if (access == 0):
-        raise AccessError("Access denied, user is not a creator of this DM")
+        raise AccessError(description="Access denied, user is not a creator of this DM")
     
     j = 0
     while j < len(dm_detail_info):
@@ -353,8 +395,19 @@ def dm_remove_v1(token, dm_id):
     }
 
 def dm_list_v1(token):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    """An authorised user list out all the channels that he/she joined
+
+    Arguments:
+        token (string) - a token contains u_id, session_id and permission_id
+
+    Exceptions:
+        AccessError - Occurs when user type in an invalid id
+
+    Return Value:
+        list of dict: dms contains dict of channel_id and name
+    """
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     dm_detail = data['dms_details']
     user_id = decode_token(token)
@@ -407,6 +460,8 @@ def dm_list_v1(token):
 # #Finish authorised user valid token check
 
 def is_valid_token(token):
+    """ check if token is valid """
+    
     secret = 'COMP1531'
     u_id = jwt.decode(token, secret, algorithms=['HS256'])['u_id']
     session_id = jwt.decode(token, secret, algorithms=['HS256'])['session_id']
@@ -417,9 +472,9 @@ def is_valid_token(token):
     while i < len(emailpw):
         if (emailpw[i]['u_id'] == u_id):
             if (session_id in emailpw[i]['session_id']):
-                return True
+                return
         i += 1
-    return False
+    raise AccessError(description="Invalid token")
 
 # dm messages function ==========================================================================
 def dm_messages_v1(token, dm_id, start):
@@ -509,4 +564,3 @@ def dm_messages_v1(token, dm_id, start):
         }
 
     return False
-

@@ -1,11 +1,7 @@
 import pytest
 import requests
 import json
-from src.channels import channels_create_v2, channels_list_v2
-from src.auth import auth_register_v2, auth_login_v2, auth_logout_v1
-from src.error import InputError, AccessError
-from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1
-from src.other import clear_v1
+
 BASE_URL = 'http://127.0.0.1:3178'
 # checking for invalid token, if a user is logged out that token is invalid
 # def test_valid_token():
@@ -33,7 +29,7 @@ def test_not_creator():
 
     with pytest.raises(AccessError):
         dm_remove_v1(huang_token, dm_id) """
-
+    requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test35@gmail.com", "password": "password454643", "name_first": "darren", "name_last": "gao"})
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test21@gmail.com", "password": "password454643", "name_first": "anthony", "name_last": "huang"})
 
@@ -61,7 +57,7 @@ def test_invalid_dm():
         dm_remove_v1(token, -1)
         dm_remove_v1(token, 0)
         dm_remove_v1(token, -100) """
-
+    requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test53@gmail.com", "password": "password454643", "name_first": "amy", "name_last": "chen"})
     amy = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "test53@gmail.com", "password": "password454643"})
     token = json.loads(amy.text)['token']
@@ -90,7 +86,7 @@ def test_remove_dm():
         ]
     } """
 
-
+    requests.delete(f'{BASE_URL}/clear/v1')
     anna = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test99@gmail.com", "password": "password454643", "name_first": "anna", "name_last": "li"})
     anna_id = json.loads(anna.text)['auth_user_id']
     
@@ -104,8 +100,8 @@ def test_remove_dm():
 
     requests.delete(f'{BASE_URL}/dm/remove/v1', json={"token": token, "dm_id": dm_id})
 
-    resp = requests.get(f'{BASE_URL}/dm/list/v1', json={"token": token})
-    assert resp.json() == {
+    resp = requests.get(f'{BASE_URL}/dm/list/v1', params={"token": token})
+    assert json.loads(resp.text) == {
         'dms': [
 
         ]

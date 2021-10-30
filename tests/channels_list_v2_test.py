@@ -33,12 +33,12 @@ def test_empty_list():
 
         ]
     } """
-
+    requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test@gmail.com", "password": "password454643", "name_first": "yicong1", "name_last": "lin1"})
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "test@gmail.com", "password": "password454643"})
     token = json.loads(response.text)['token']
-    resp = requests.get(f'{BASE_URL}/channels/list/v2', json={"token": token})
-    assert resp.json() == {
+    resp = requests.get(f'{BASE_URL}/channels/list/v2', params={"token": token})
+    assert json.loads(resp.text) == {
         'channels': [
 
         ]
@@ -57,15 +57,15 @@ def test_list():
             }
         ]
     } """
-
+    requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd", "name_first": "james", "name_last": "wang"})
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd"})
     token = json.loads(response.text)['token']
     
     create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
     channel_id = json.loads(create_return.text)['channel_id']
-    resp = requests.get(f'{BASE_URL}/channels/list/v2', json={"token": token})
-    assert resp.json() == {
+    resp = requests.get(f'{BASE_URL}/channels/list/v2', params={"token": token})
+    assert json.loads(resp.text) == {
         'channels': [
             {
                 'channel_id': channel_id,

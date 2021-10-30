@@ -78,12 +78,12 @@ def test_dm_leave():
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # User with invalid token to implement function (AccessError 403)
-     # token_1 is invalid already (same token formation)
+    # token_1 is invalid already (same token formation)
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
     assert (resp.status_code == 403)
 
     # User with invalid token and invalid dm_id to implement function (AccessError 403)
-     # token_1 is invalid already (same token formation)
+    # token_1 is invalid already (same token formation)
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": 123123})
     assert (resp.status_code == 403)
 
@@ -161,6 +161,10 @@ def test_dm_leave():
             ],
         'name': ['testfourpersonfour', 'testperson', 'testtwopersontwo'],
     })
+
+    # user_four leave dm(only member) -----> successful implement
+    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_4, "dm_id": dm_id})
+    assert (resp.status_code == 200)
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')

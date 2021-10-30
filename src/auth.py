@@ -1,9 +1,10 @@
+
 from src.data_store import data_store
 from src.error import InputError, AccessError
 import re 
 import hashlib
 from src.token_helpers import generate_new_session_id, generate_JWT, decode_JWT
-from src.users import token_check, check_name_length, check_valid_email, check_duplicate_email, check_password_length
+from src.users import token_check, check_name_length, check_valid_email, check_duplicate_email, check_password_length, u_id_check
 
 def auth_login_v2(email, password): 
     """The auth_login_v1 function allows users who have registered with emails to login to their 

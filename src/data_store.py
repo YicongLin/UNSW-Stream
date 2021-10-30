@@ -27,47 +27,50 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'users': [
-        {
-            'u_id': 1,
-            'email':'1@email.com', 
-            'name_first': 'a', 
-            'name_last':'1last', 
-            'handle_str': 'ahandle1'   
-        },
+        
+        # {
+        #     'u_id': 1,
+        #     'email':'1@email.com', 
+        #     'name_first': 'a', 
+        #     'name_last':'1last', 
+        #     'handle_str': 'ahandle1'   
+        # },
 
-        {
-            'u_id': 2,
-            'email':'2@email.com', 
-            'name_first': 'b', 
-            'name_last':'2last', 
-            'handle_str': 'bhandle2' 
-        },
+        # {
+        #     'u_id': 2,
+        #     'email':'2@email.com', 
+        #     'name_first': 'b', 
+        #     'name_last':'2last', 
+        #     'handle_str': 'bhandle2' 
+        # },
 
-        {
-            'u_id': 3,
-            'email':'3@email.com', 
-            'name_first': 'c', 
-            'name_last':'3last', 
-            'handle_str': 'chandle3' 
-        },
+        # {
+        #     'u_id': 3,
+        #     'email':'3@email.com', 
+        #     'name_first': 'c', 
+        #     'name_last':'3last', 
+        #     'handle_str': 'chandle3' 
+        # },
 
-        {
-            'u_id': 4,
-            'email':'4@email.com', 
-            'name_first': 'd', 
-            'name_last':'4last', 
-            'handle_str': 'dhandle3' 
-        }
+        # {
+        #     'u_id': 4,
+        #     'email':'4@email.com', 
+        #     'name_first': 'd', 
+        #     'name_last':'4last', 
+        #     'handle_str': 'dhandle3' 
+        # }
+        
     ],
     
     'emailpw' : [
-        {
-            'email' : 'email',
-            'password' : 'password',
-            'u_id' : 'new_id',
-            'permissions_id' : 'permissions_id',
-            'session_id' : ['session_id']
-        }, 
+        
+        # {
+        #     'email' : 'email',
+        #     'password' : 'password',
+        #     'u_id' : 'new_id',
+        #     'permissions_id' : 'permissions_id',
+        #     'session_id' : ['session_id']
+        # }, 
         
        
     ],
@@ -99,7 +102,16 @@ initial_object = {
                     'handle_str': 'chandle3'
                 },
             ],
-
+            'messages': [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789
+                },
+            ],
+            'start': 0,
+            'end': 50,  
             'creator': [
                 {
                     'u_id': 3,

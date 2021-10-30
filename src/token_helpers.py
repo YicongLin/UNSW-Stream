@@ -11,7 +11,7 @@ def generate_new_session_id():
     return SESSION_TRACKER
 
 def hash(input_string):    
-    return hashlib.sha256(input_string.encode()).hexidigest()
+    return hashlib.sha256(input_string.encode()).hexdigest()
 
 def generate_JWT(u_id, permissions_id, session_id = None):
     if session_id is None:
@@ -20,3 +20,4 @@ def generate_JWT(u_id, permissions_id, session_id = None):
 
 def decode_JWT(encoded_jwt):
     return jwt.decode(encoded_jwt, SECRET, algorithms=['HS256'])
+

@@ -32,6 +32,17 @@ def test_listall():
 
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
+
+    # # Implement listall function -----> successful implement
+    # response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_1})
+    # assert (response.status_code == 200)
+    # assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}]})
+
+    # User with invalid token to implement function (AccessError 403)
+    # token_1 is invalid already (same token formation)
+    resp = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_1})
+    assert (resp.status_code == 403)
+
     # ===================================
     # Switch user
     # ===================================  
@@ -53,11 +64,6 @@ def test_listall():
     # Login user_three
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr"})
     token_3 = json.loads(response.text)['token']
-
-    # User with invalid token to implement function (AccessError 403)
-    # token_1 is invalid already (same token formation)
-    resp = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_1})
-    assert (resp.status_code == 403)
 
     # Implement listall function -----> successful implement
     response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_3})

@@ -185,5 +185,3 @@ def auth_logout_v1(token):
         i += 1 
 
     raise InputError("Invalid session id")
-
-    return {}

@@ -207,8 +207,7 @@ def dm_details():
         return dumps(dm)
 
     except (InvalidSignatureError, DecodeError, InvalidTokenError):
-            raise AccessError
-
+            raise AccessError from src.error
 
 
 @APP.route('/dm/leave/v1', methods=['POST'])
@@ -217,9 +216,13 @@ def dm_leave():
     token = request_data['token']
     dm_id = request_data['dm_id']
 
-    dm_leave_v1(token, dm_id)
+    try:
+        dm_leave_v1(token, dm_id)
 
-    return dumps({})
+        return dumps({})
+    
+    except (InvalidSignatureError, DecodeError, InvalidTokenError):
+            raise AccessError from src.error
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():
@@ -314,7 +317,7 @@ def admin_user_remove_http():
         return dumps({})
 
     except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+        raise AccessError 
 
 @APP.route('/admin/userpermission/change/v1', methods=['POST'])
 def admin_userpermission_change_http():

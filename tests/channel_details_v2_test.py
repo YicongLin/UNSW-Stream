@@ -50,7 +50,7 @@ def test_channel_details():
         'owner_members': [{
             'email': 'testperson@email.com',
             'handle_str': 'testperson',
-            # 'name_first': 'Test',
+            'name_first': 'Test',
             'name_last': 'Person',
             'u_id': uid_1
         }],

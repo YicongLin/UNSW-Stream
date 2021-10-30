@@ -30,6 +30,7 @@ def check_valid_dmid(dm_id):
     if dm_id not in all_dm_id :
         raise InputError(description="Invalid dm_id")
 
+
     dm_id_element = 0
     while dm_id_element < len(all_dm_id):
         if dm_id == all_dm_id[dm_id_element]:
@@ -45,6 +46,7 @@ def check_valid_dmid(dm_id):
 # Serach information at data['dms_details'][dm_id_element]['dm_members']
 # If authorised user is a not member of dm then return False
 # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
+
 def check_valid_dm_token(auth_user_id, dm_id_element):
     data = data_store.get()
 
@@ -197,7 +199,6 @@ def dm_leave_v1(token, dm_id):
         if data['dms_details'][dm_id_element]['members'][member_id_element]['u_id'] == auth_user_id:
             break
         member_id_element += 1
-
     # Pick out dict from dm's members and then delete it 
     leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
     data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
@@ -238,6 +239,7 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id
     }
 
+
 def is_valid_user(u_id):
     data = data_store.get()
     user_dict = data['users']
@@ -276,7 +278,7 @@ def check_user(u_ids):
 # get the members details that on the list passed in
 def get_member_detail(id_list):
     data = data_store.get()
-  
+
     users_dict = data['users']
     user_detail_list = []
     i = 0
@@ -417,6 +419,7 @@ def is_valid_token(token):
             if (session_id in emailpw[i]['session_id']):
                 return True
         i += 1
+<<<<<<< HEAD
     return False
 
 # dm messages function ==========================================================================
@@ -505,3 +508,6 @@ def dm_messages_v1(token, dm_id, start):
             'start': start,
             'end': end 
         }
+
+    return False
+

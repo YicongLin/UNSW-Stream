@@ -3,7 +3,7 @@ from src.error import InputError, AccessError
 import re 
 import hashlib
 from src.token_helpers import generate_new_session_id, generate_JWT, decode_JWT
-from src.users import token_check, check_name_length, check_valid_email, check_duplicate_email, check_password_length
+from src.users import token_check, check_name_length, check_valid_email, check_duplicate_email, check_password_length, u_id_check
 
 def auth_login_v2(email, password): 
     """The auth_login_v1 function allows users who have registered with emails to login to their 
@@ -32,7 +32,7 @@ def auth_login_v2(email, password):
         if user['email'] == email:
             # if password is not correct, raise error 
             if user['password'] != hashlib.sha256(password.encode()).hexdigest():
-                raise InputError('Incorrect password')
+                raise InputError('auth_login: Incorrect password')
             # if password is correct 
             else:    
                 u_id = user['u_id']
@@ -40,6 +40,7 @@ def auth_login_v2(email, password):
         
                 # create session id + store into session id list 
                 new_session_id = generate_new_session_id()
+
                 # append new session id into list of session id's 
                 user['session_id'].append(new_session_id)
 
@@ -48,12 +49,12 @@ def auth_login_v2(email, password):
                 data_store.set(store)
 
                 return { 
-                        'token' : token,
-                        'auth_user_id': u_id
-                    }     
+                    'token' : token,
+                    'auth_user_id': u_id
+                }     
         i += 1      
     
-    raise InputError("No matching email")
+    raise InputError(description = "auth_login: No matching email")
 
 def auth_register_v2(email, password, name_first, name_last):
     """The auth_register_v1 function takes in a valid email, password, user's first name, and 
@@ -81,8 +82,6 @@ def auth_register_v2(email, password, name_first, name_last):
     check_name_length(name_first)
     check_name_length(name_last)
     check_password_length(password)
-    
-    # if len(store['users']) > 1:
     check_duplicate_email(email)
     
     # auth user id is the number of users + 1 
@@ -161,13 +160,12 @@ def auth_register_v2(email, password, name_first, name_last):
     return { 
         'token' : token,
         'auth_user_id': new_id 
-        }
+    }
 
 def auth_logout_v1(token):
     store = data_store.get()
 
-    if token_check(token) == False:
-        raise AccessError
+    token_check(token)
 
     decoded_token = decode_JWT(token)
     session_id = decoded_token['session_id']
@@ -184,4 +182,4 @@ def auth_logout_v1(token):
             return { }
         i += 1 
 
-    raise InputError("Invalid session id")
+    raise InputError(description = "auth_logout: Invalid session id")

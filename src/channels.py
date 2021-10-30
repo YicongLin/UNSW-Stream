@@ -1,6 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
-# from src.dm import decode_token, is_valid_token
+from src.dm import decode_token, is_valid_token
 from src.channel import check_valid_token
 def check_duplicate(list, channel):
 
@@ -62,8 +62,7 @@ def channels_listall_v2(token):
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
+    check_valid_token(token)
 
     # Obatin all channels' information
     chan_data = data['channels']

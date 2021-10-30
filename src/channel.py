@@ -54,7 +54,7 @@ def check_valid_uid(u_id):
         users_element += 1     
         
     if u_id not in users_id:
-        return False
+        raise InputError(description="check_valid_uid, Invalid user")
 
     pass
 # Finish valid u_id check
@@ -106,41 +106,35 @@ def channel_owners_ids(channel_id_element):
 # If authorised user with invalid token then return False
 # If authorised user with valid token then return True
 def check_valid_token(token):
-    # data = data_store.get()
-
-    # decoded_token = decode_JWT(token)
-    # auth_user_id = decoded_token["u_id"]
-    # user_session = decoded_token["session_id"]
-
-    # user_element = 0
-    # while user_element < len(data['emailpw']):
-    #     if data['emailpw'][user_element]['u_id'] == auth_user_id:
-    #         break
-    #     user_element += 1
-    
-    # session_list = data['emailpw'][user_element]['session_id']
-
-    # if user_session in session_list:
-    #     return True
-
-    # return False
     store = data_store.get()
     decoded_token = decode_JWT(token)
-    
     found = False 
-    i = 1
-    while i < len(store['emailpw']):
-        user = store['emailpw'][i]
+    index = 1
+    while index < len(store['emailpw']):
+        user = store['emailpw'][index]
         # check if session id matches any current session id’s 
         if decoded_token['session_id'] in user['session_id']:
             found = True
 
-        i += 1 
+        index += 1 
 
     if found == False:
-        return False
+        raise AccessError(description="Invalid token")
+
+    # found = False 
+    # i = 1
+    # while i < len(store['emailpw']):
+    #     user = store['emailpw'][i]
+    #     # check if session id matches any current session id’s 
+    #     if decoded_token['session_id'] in user['session_id']:
+    #         found = True
+
+    #     i += 1 
+
+    # if found == False:
+    #     return False
     
-    pass
+    # pass
 
 #Finish authorised user valid token check
 # ==================================

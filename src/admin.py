@@ -11,13 +11,22 @@ from src.channel import check_valid_uid, check_valid_token
 # ==================================
 
 # Returns true if u_id is a user who is the only global owner
-def only_global_owner(token, u_id):
+def remove_only_global_owner(token, u_id):
     data = data_store.get()
     emailpw = data['emailpw']
     decoded_token = decode_JWT(token)
     auth_id = decoded_token['u_id']
-    if auth_id == u_id:
-        return True
+    permission_id_count = 0
+    is_global_owner = False
+    for i in range(len(emailpw)):
+        if emailpw[i]['permissions_id'] == 1:
+            permission_id_count += 1
+        if emailpw[i]['u_id'] == u_id:
+            if emailpw[i]['permissions_id'] == 1:
+                is_global_owner = True 
+    
+    if permission_id_count == 1 and is_global_owner == True:
+        raise InputError(description="Cannot remove the only global owner")
     # is_global_owner = False
     # global_owners = 0
     # for i in range(len(emailpw)):
@@ -29,6 +38,22 @@ def only_global_owner(token, u_id):
     # if is_global_owner == True:
     #     if len(global_owner_list) == 1:
     #         return True
+def demote_only_global_owner(token, u_id):
+    data = data_store.get()
+    emailpw = data['emailpw']
+    decoded_token = decode_JWT(token)
+    auth_id = decoded_token['u_id']
+    permission_id_count = 0
+    is_global_owner = False
+    for i in range(len(emailpw)):
+        if emailpw[i]['permissions_id'] == 1:
+            permission_id_count += 1
+        if emailpw[i]['u_id'] == u_id:
+            if emailpw[i]['permissions_id'] == 1:
+                is_global_owner = True 
+    
+    if permission_id_count == 1 and is_global_owner == True:
+        raise InputError(description="Cannot demote the only global owner")
 
 # Returns true if the authorised user is not a global owner
 def not_a_global_owner(token):
@@ -40,7 +65,7 @@ def not_a_global_owner(token):
     for i in range(len(emailpw)):
         if emailpw[i]['u_id'] == auth_user_id:
             if emailpw[i]['permissions_id'] != 1:
-                return True
+                raise AccessError(description="You are not a global owner")
 
 # ==================================
 # FUNCTIONS
@@ -53,20 +78,16 @@ def admin_user_remove_v1(token, u_id):
     auth_user_id = decoded_token['u_id']
 
     # Check for valid u_id
-    if check_valid_uid(u_id) == False:
-        raise InputError("Invalid user")
+    check_valid_uid(u_id) 
     
     # Check for invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
-    
+    check_valid_token(token)
+
     # Raise an error if u_id refers to a user who is the only global owner
-    if only_global_owner(token, u_id) == True:
-        raise InputError("Cannot remove the only global owner")
+    remove_only_global_owner(token, u_id)
         
     # Raise an error if the authorised user is not a global owner
-    if not_a_global_owner(token) == True:
-        raise AccessError("You are not a global owner")
+    not_a_global_owner(token)
     
     # Otherise, remove the user from the Streams
 
@@ -126,29 +147,27 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     # print('_________________')
     #Obtaining data
     data = data_store.get()
-
-    # Check for invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
-    
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
 
+    # Check for invalid token
+    check_valid_token(token)
+    
     # Check for valid u_id
-    if check_valid_uid(u_id) == False:
-        raise InputError("Invalid user")
+    check_valid_uid(u_id)
     
     # Raising an error if u_id is the only global owner and they are being demoted to a user
-    if only_global_owner(token, u_id) == True and permission_id == 2:
-        raise InputError("Cannot demote the only global owner")
+    if permission_id == 2:
+        demote_only_global_owner(token, u_id)
+    # if only_global_owner(token, u_id) == True and permission_id == 2:
+    #     raise InputError("Cannot demote the only global owner")
     
     # Check for valid permission_id
     if permission_id not in [1,2]:
-        raise InputError("Invalid permission ID")
+        raise InputError(description="Invalid permission ID")
     
     # Raising an error if the authorised user is not a global owner
-    if not_a_global_owner(token) == True:
-        raise AccessError("You are not a global owner")
+    not_a_global_owner(token)
     
     # Otherise, change the user's permissions
     emailpw = data['emailpw']

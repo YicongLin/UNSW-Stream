@@ -80,8 +80,7 @@ def channels_listall_v2(token):
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
+    check_valid_token(token)
 
     # Obatin all channels' information
     chan_data = data['channels']

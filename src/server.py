@@ -15,7 +15,7 @@ from src.error import InputError
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError
-
+from src.other import clear_v1
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -171,6 +171,7 @@ def dm_leave():
 
     return dumps({})
 
+
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():
     request_data = request.get_json()
@@ -180,23 +181,7 @@ def auth_register_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
-    if check_name_length(name_first) == False:
-        raise InputError(description="Invalid name length")
-
-    if check_name_length(name_last) == False:
-        raise InputError(description="Invalid name length")
-    
-    if check_password_length(password) == False:
-        raise InputError(description="Invalid password length")
-    
-    if check_duplicate_email(email) == False:
-        raise InputError(description="Duplicate email")
-    
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
-    
     result = auth_register_v2(email, password, name_first, name_last)
-
     return dumps(result)
 
 @APP.route('/auth/login/v2', methods=['POST'])
@@ -205,26 +190,16 @@ def auth_login_http():
 
     email = request_data['email']
     password = request_data['password']
-
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
     
     result = auth_login_v2(email, password)
-
     return dumps(result)
+
 
 @APP.route('/dm/remove/v1', methods=['DELETE'])
 def dm_remove():
     data = request.get_json()
     token = data['token']
     dm_id = data['dm_id']
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    """ if (is_creator(token, dm_id) == False):
-        raise AccessError("Access denied, user is not a creator of this DM")
-
-    if (is_valid_dm(dm_id) == False):
-        raise InputError("Invalid DM ID") """
     
     dm_remove_v1(token, dm_id)
 
@@ -235,14 +210,7 @@ def dm_create():
     data = request.get_json()
     token = data['token']
     u_ids = data['u_ids']
-    #user_id = decode_token(token)
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    if (check_user(u_ids) == 0):
-        raise InputError(description="There is 1 or more invalid ids, please check again")
     
-    """ if (check_valid_token(token) == False):
-        raise AccessError(description="Invalid user") """
 
     result = dm_create_v1(token, u_ids)
     return dumps(result)
@@ -349,15 +317,6 @@ def channels_create():
     token = data['token']
     name = data['name']
     is_public = data['is_public']
-    """ if (check_valid_token(token) == False):
-        raise AccessError("Invalid user") """
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    # check for invalid name
-    if len(name) > 20:
-        raise InputError(description="Invalid name: Too long")
-    elif len(name) == 0:
-        raise InputError(description="Invalid name: Too short")
     
     result = channels_create_v2(token, name, is_public)
     return dumps(result)
@@ -365,22 +324,27 @@ def channels_create():
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():
     data = request.get_json()
-    token = data['token']
-    if (is_valid_token(token) == False):
-        raise AccessError(description="Invalid token")
+    # token = data['token']
+    token = request.args.get('token')
+
+
     
     result = channels_list_v2(token)
     return dumps(result)
 
 @APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
-    data = request.get_json()
-    token = data['token']
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    
+    
+    token = request.args.get('token')
     result = dm_list_v1(token)
     return dumps(result)
 
+@APP.route('/clear/v1', methods=['DELETE'])
+def clear():
+    clear_v1()
+
+    return dumps({})
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

@@ -118,17 +118,14 @@ def dm_leave_v1(token, dm_id):
 
 
 def dm_create_v1(token, u_ids):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     dm = data['dms_details']
     user_id = decode_token(token)
 
-    """ if (check_valid_token(token) == False):
-        raise AccessError("Invalid user") """
-    
-    if (check_user(u_ids) == 0):
-        raise InputError("There is 1 or more invalid ids, please check again")
+    # check if the u_ids passed in are all valid, if not it will raise an input error
+    check_user(u_ids)
     
     
     creator_detail = get_member_detail([user_id])
@@ -181,10 +178,10 @@ def check_user(u_ids):
         b = 0
         while b < len(u_ids):
             if (u_ids[b] not in user_id_list):
-                return 0
+                raise InputError(description="There is 1 or more invalid ids, please check again")
             b += 1
     
-    return 1 
+    return 
  
 # get the members details that on the list passed in
 def get_member_detail(id_list):
@@ -220,8 +217,8 @@ def get_name(id_list):
 
 
 def dm_remove_v1(token, dm_id):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     
     data = data_store.get()
     dm_detail_info = data['dms_details']
@@ -241,11 +238,11 @@ def dm_remove_v1(token, dm_id):
         i += 1
     # didn't find the dm id in datastore
     if (input == 0):
-        raise InputError("Invalid DM ID")
+        raise InputError(description="Invalid DM ID")
 
     # the user passed in is not the creator of this dm
     if (access == 0):
-        raise AccessError("Access denied, user is not a creator of this DM")
+        raise AccessError(description="Access denied, user is not a creator of this DM")
     
     j = 0
     while j < len(dm_detail_info):
@@ -263,8 +260,10 @@ def dm_remove_v1(token, dm_id):
     }
 
 def dm_list_v1(token):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    """ if (is_valid_token(token) == False):
+        raise AccessError("Invalid token") """
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     dm_detail = data['dms_details']
     user_id = decode_token(token)
@@ -327,6 +326,6 @@ def is_valid_token(token):
     while i < len(emailpw):
         if (emailpw[i]['u_id'] == u_id):
             if (session_id in emailpw[i]['session_id']):
-                return True
+                return
         i += 1
-    return False
+    raise AccessError(description="Invalid token")

@@ -12,8 +12,8 @@ def check_duplicate(list, channel):
     return 0
     
 def channels_list_v2(token):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     channel_detail = data['channels_details']
     user_id = decode_token(token)
@@ -77,8 +77,8 @@ def channels_create_v2(token, name, is_public):
         channel_id(integer) is channels id
     """
 
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
 
     # get data from datastore
     data = data_store.get()
@@ -92,9 +92,9 @@ def channels_create_v2(token, name, is_public):
 
     # check for invalid name
     if len(name) > 20:
-        raise InputError("Invalid name: Too long")
+        raise InputError(description="Invalid name: Too long")
     elif len(name) == 0:
-        raise InputError("Invalid name: Too short")
+        raise InputError(description="Invalid name: Too short")
     
     new_channel_id = len(channels_detail) + 1
     

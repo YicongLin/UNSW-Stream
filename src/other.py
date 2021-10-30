@@ -9,6 +9,7 @@ def clear_v1():
     store['channels'] = []
     store['channels_details'] = []
     store['emailpw'] = []
+    store['dms_details'] = []
     
     data_store.set(store)
     

@@ -97,6 +97,10 @@ def add_owner():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
+
+    channel_id_element = check_valid_channel_id(channel_id)
+    if channel_id_element == False:
+        raise InputError("Invalid channel_id")
     try:
         channel_id_element = check_valid_channel_id(channel_id)
         if channel_id_element == False:
@@ -270,22 +274,6 @@ def auth_register_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
-
-    if check_name_length(name_first) == False:
-        raise InputError(description="Invalid name length")
-
-    if check_name_length(name_last) == False:
-        raise InputError(description="Invalid name length")
-    
-    if check_password_length(password) == False:
-        raise InputError(description="Invalid password length")
-    
-    if check_duplicate_email(email) == False:
-        raise InputError(description="Duplicate email")
-    
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
-    
     result = auth_register_v2(email, password, name_first, name_last)
     return dumps(result)
 
@@ -295,9 +283,6 @@ def auth_login_http():
 
     email = request_data['email']
     password = request_data['password']
-
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
     
     result = auth_login_v2(email, password)
     return dumps(result)
@@ -426,9 +411,6 @@ def dm_create():
 def auth_logout_http():
     request_data = request.get_json()
     token = request_data['token']
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
 
     result = auth_logout_v1(token)
     return dumps(result)
@@ -437,9 +419,6 @@ def auth_logout_http():
 def users_all_http():
     token = request.args.get('token')
 
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-
     result = users_all_v1(token)
     return dumps(result)
 
@@ -447,12 +426,6 @@ def users_all_http():
 def user_profile_http():
     token = request.args.get('token')
     u_id = request.args.get('u_id')
-
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
-    if u_id_check(token) == False:
-        raise InputError(description="Invalid u_id")
     
     result = user_profile_v1(token, u_id)
     return dumps(result)
@@ -465,16 +438,6 @@ def user_profile_setname_http():
     name_first = request_data['name_first']
     name_last = request_data['name_last']
 
-
-    if check_name_length(name_first) == False:
-        raise InputError(description='Invalid first name')
-    
-    if check_name_length(name_last) == False:
-        raise InputError(description='Invalid last name')
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
     result = user_profile_setname_v1(token, name_first, name_last)
     return dumps(result)
 
@@ -485,15 +448,6 @@ def user_profile_setemail_http():
     token = request_data['token']
     email = request_data['email']
 
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
-    
-    if check_duplicate_email == False:
-        raise InputError(description='Duplicate email')
-    
-    if check_valid_email(email) == False:
-        raise InputError(description="Invalid email")
-
     result = user_profile_setemail_v1(token, email)
     return dumps(result)
 
@@ -503,18 +457,6 @@ def user_profile_sethandle_http():
 
     token = request_data['token']
     handle_str = request_data['handle_str']
-
-    if check_handle == False: 
-        raise InputError(description='Invalid handle')
-    
-    if check_alpha_num(handle_str) == False:
-        raise InputError(description='Invalid handle length')
-    
-    if check_duplicate_handle == False:
-        raise InputError(description='Duplicate handle')
-    
-    if token_check(token) == False:
-        raise AccessError(description="Invalid token")
 
     result = user_profile_sethandle_v1(token, handle_str)
     return dumps(result)

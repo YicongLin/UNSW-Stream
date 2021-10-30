@@ -60,7 +60,6 @@ def check_valid_dm_token(token, dm_id_element):
 
     if auth_user_id not in all_members_id:
         return False
-
     pass
 
 # Finish  authorised user member check

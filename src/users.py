@@ -11,44 +11,40 @@ def token_check(token):
     store = data_store.get()
     decoded_token = decode_JWT(token)
     
-    found = False 
     i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         # check if session id matches any current session id’s 
         if decoded_token['session_id'] in user['session_id']:
-            found = True
+            return 
 
         i += 1 
 
-    if found == False:
-        return False
-    
-    pass
+    raise AccessError(description = 'token_check: Invalid token')
 
 def u_id_check(u_id):
     store = data_store.get()
     
+    users_length = len(store['users'])
+
     found = False 
     i = 0
-    while i < len(store['emailpw']):
-        user = store['emailpw'][i]
+    while i < users_length:
+        user = store['users'][i]
         # check if uid matches any uid
-        if user["u_id"] == u_id:
+        if int(user["u_id"]) == int(u_id):
             found = True
 
         i += 1 
-
-    if found == False:
-        return False
     
-    pass
+    if found == False:
+        raise InputError(description = 'u_id_check: Invalid u_id')
 
 def check_handle(handle_str):
     if len(handle_str) < 3 or len(handle_str) > 20:
-        return False
-
-    pass
+        raise InputError(description = 'check_handle: Invalid handle_str')
+     
+    return
 
 def check_duplicate_handle(handle_str):
     store = data_store.get()
@@ -57,56 +53,49 @@ def check_duplicate_handle(handle_str):
     while i < len(store['users']):
         user = store['users'][i]
         if user['handle_str'] == handle_str:
-            return False 
+            raise InputError(description = 'check_duplicate_handle: Duplicate handle') 
         i += 1
     
-    pass 
+    return 
 
 def check_alpha_num(string):
     if string.isalnum() == False:
-        return False
+        raise InputError(description = 'check_alpha_num: Handle_str not all alphanumeric')  
     
-    pass 
-
-def input_error(error):
-    if error == False:    
-        return False
- 
-    pass 
+    return
 
 # HELPER FUNCTIONS 
 def check_valid_email(email):
     # check whether it is valid email 
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if not (re.fullmatch(regex, email)):
-        return False 
-
-    pass
+        raise InputError(description = 'check_valid_email: Invalid email') 
+    
+    return 
 
 def check_name_length(name):
     if len(name) < 1 or len(name) > 50:
-        return False
+        raise InputError(description = 'check_name_length: Invalid name length') 
 
-    pass
+    return 
 
 def check_password_length(password):
     if len(password) < 6:
-        return False
+        raise InputError(description = 'check_password_length: Password too short') 
     
-    pass
+    return 
 
 def check_duplicate_email(email):
     store = data_store.get()
 
-    if len(store['emailpw']) == 0:
-        pass
-    else: 
-        i = 0
-        while i < len(store['emailpw']):
-            user = store['emailpw'][i]
-            if user['email'] == email:
-                return False 
-            i += 1 
+    i = 1
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
+        if user['email'] == email:
+            raise InputError(description = 'check_duplicate_email: Duplicate email') 
+        i += 1
+    
+    return  
 
 # USERS FUNCTIONS
 def users_all_v1(token):
@@ -115,8 +104,7 @@ def users_all_v1(token):
     """
     store = data_store.get()
 
-    if token_check(token) == False:
-        raise AccessError
+    token_check(token)
      
     return { 'users': store['users'] } 
 
@@ -126,25 +114,27 @@ def user_profile_v1(token, u_id):
     """
 
     store = data_store.get()
-    
-    if token_check(token) == False:
-        raise AccessError
-    
-    if u_id_check(u_id) == False:
-        raise InputError
- 
+    token_check(token)
+    u_id_check(u_id)
+
     decoded_token = decode_JWT(token)
-    
+
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 
-        if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == u_id):
+        if int(user['u_id']) == int(decoded_token['u_id']) == int(u_id):
             return {'user' : user}
-        else:
-            i += 1 
+        i += 1 
+
+    # i = 0
+    # while i < len(store['deleted_users']):
+    #     user = store['users'][i] 
+    #     if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == u_id):
+    #         return {'user' : user}
+    #     i += 1 
 
     # if no match 
-    raise InputError("Invalid u_id")
+    raise InputError(description = "user_profile: Invalid u_id")
 
 def user_profile_setname_v1(token, name_first, name_last):
     """
@@ -152,13 +142,10 @@ def user_profile_setname_v1(token, name_first, name_last):
     """
     store = data_store.get()
 
-    if check_name_length(name_first) == False:
-        raise InputError
-
-    if check_name_length(name_last) == False:
-        raise InputError
-
+    check_name_length(name_first)
+    check_name_length(name_last)
     token_check(token)
+
     decoded_token = decode_JWT(token)
 
     # update users dict 
@@ -174,7 +161,7 @@ def user_profile_setname_v1(token, name_first, name_last):
         i += 1 
     
     # if user does not exist
-    raise InputError("Invalid user") 
+    raise InputError(description = "user_profile_setname: Invalid user") 
 
 def user_profile_setemail_v1(token, email):
     """
@@ -182,17 +169,12 @@ def user_profile_setemail_v1(token, email):
     """
     store = data_store.get()
 
-    if check_duplicate_email(email) == False:
-        raise InputError
-
-    if check_valid_email(email) == False:
-        raise InputError
- 
-    if token_check(token) == False:
-        raise AccessError
+    check_duplicate_email(email)
+    check_valid_email(email)
+    token_check(token)
 
     decoded_token = decode_JWT(token)
-    
+
     # update users dict 
     i = 0
     while i < len(store['users']):
@@ -205,22 +187,15 @@ def user_profile_setemail_v1(token, email):
         i += 1 
     
     # if user does not exist
-    raise InputError("Invalid user")
+    raise InputError(description = "user_profile_setemail: Invalid user")
 
 def user_profile_sethandle_v1(token, handle_str):
 
     store = data_store.get()
-    if check_handle(handle_str) == False:
-        raise InputError
-
-    if check_duplicate_handle(handle_str) == False:
-        raise InputError
-
-    if check_alpha_num(handle_str) == False:
-        raise InputError
-
-    if token_check(token) == False:
-        raise AccessError
+    check_handle(handle_str)
+    check_duplicate_handle(handle_str)
+    check_alpha_num(handle_str)
+    token_check(token)
 
     decoded_token = decode_JWT(token)
 
@@ -235,4 +210,4 @@ def user_profile_sethandle_v1(token, handle_str):
         i += 1 
     
     # if user does not exist
-    raise InputError("Invalid user")
+    raise InputError(description = "user_profile_sethandle: Invalid user")

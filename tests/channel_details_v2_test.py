@@ -5,7 +5,7 @@ from src import config
 
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:1231'
+BASE_URL = 'http://127.0.0.1:3178'
  
 # ==================================
 # Test channel_details function

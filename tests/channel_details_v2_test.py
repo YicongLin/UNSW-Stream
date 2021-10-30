@@ -65,7 +65,6 @@ def test_channel_details():
     assert (resp.status_code == 403)
 
     # User with invalid token and channel_id to implement function (AccessError 403)
-    # token_1 is invalid already (same token formation)
     resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": token_1, "channel_id": 123123})
     assert (resp.status_code == 403)
     

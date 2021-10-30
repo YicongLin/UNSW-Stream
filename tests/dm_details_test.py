@@ -60,12 +60,11 @@ def test_dm_details():
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # User with invalid token to implement function (AccessError 403)
-     # token_1 is invalid already (same token formation)
+    # token_1 is invalid already (same token formation)
     resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
     assert (resp.status_code == 403)
 
     # User with invalid token and invalid dm_id to implement function (AccessError 403)
-     # token_1 is invalid already (same token formation)
     resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123123})
     assert (resp.status_code == 403)
     

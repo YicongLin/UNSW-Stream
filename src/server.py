@@ -6,7 +6,7 @@ from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_invite_v2, channel_messages_v2, channel_join_v2, channel_leave_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, check_valid_token
+from src.channel import check_valid_channel_id, check_valid_uid, check_valid_token, check_member, channel_owners_ids, check_channel_owner_permissions, check_global_owner, start_greater_than_total, channel_status, check_channel
 from src.channels import channels_listall_v2, channels_create_v2
 from src.dm import dm_details_v1, dm_leave_v1
 from src.dm import check_valid_dmid, check_valid_dm_token, check_user, dm_create_v1
@@ -49,27 +49,10 @@ def channel_invite_http():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-    
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError(description="Invalid channel_id")
-    
-    if is_valid_token(token) == False:
-        raise AccessError(description="Invalid token")
-        
-    if check_valid_uid(u_id) == False:
-        raise InputError(description="Invalid user ID")
-        
-    each_member_id = check_member(channel_id_element, u_id)
-    if each_member_id  != False:
-        raise InputError(description="User is already a member of this channel")
 
-    if check_member(channel_id_element, token) == False:
-        raise AccessError(description="Not an member of channel") 
-    
-    channel_invite_v2(token, channel_id, u_id)
+    result = channel_invite_v2(token, channel_id, u_id)
             
-    return dumps({})
+    return dumps(result)
         
 @APP.route("/channel/join/v2", methods=['POST'])
 def channel_join_http():
@@ -77,79 +60,31 @@ def channel_join_http():
     token = request_data['token']
     channel_id = request_data['channel_id']
 
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError(description="Invalid channel_id")
-
-    if is_valid_token(token) == False:
-        raise AccessError(description="Invalid token")
-        
-    each_member_id = check_member(channel_id_element, token)
-    channel_status = channel_status(channel_id)
-    channel_owner_permissions = check_channel_owner_permissions(token, each_owner_id)
-    if each_member_id != False:
-        raise InputError(description="Already a member of this channel")
-    elif channel_owner_permissions == False and channel_status == False:
-        raise AccessError(description="Channel is private and you are not a global owner")
-
-    channel_join_v2(token, channel_id)
+    result = channel_join_v2(token, channel_id)
             
-    return dumps({})
+    return dumps(result)
+
 
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages_http():
     request_data = request.get_json()
     token = request_data['token']
     channel_id = request_data['channel_id']
-    u_id = request_data['u_id']
-    try:
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError(description="Invalid channel_id")
-        
-        if is_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
-            
-        is_greater = start_greater_than_total(channel_id, start)
-        if is_greater == True:
-            raise InputError(description="Exceeded total number of messages in this channel")
-            
-        each_member_id = check_member(channel_id, u_id)
-        if each_member_id  == False:
-            raise InputError(description="User is not a member of this channel")
-        
-        messages = channel_messages_v2(token, channel_id, start)
-            
-        return dumps(messages)
+    start = request_data['start']
     
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    result = channel_messages_v2(token, channel_id, start)
+            
+    return dumps(result)
 
 @APP.route("/channel/leave/v1", methods=['POST'])
 def channel_leave_http():
     request_data = request.get_json()
     token = request_data['token']
     channel_id = request_data['channel_id']
-    print("new")
 
-    try:
-        is_valid_channel = check_valid_channel_id(channel_id)
-        if is_valid_channel == False:
-            raise InputError(description="Invalid channel_id")
-        
-        if is_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
-        
-        already_a_member = check_member(channel_id, token)
-        if already_a_member == False:
-            raise AccessError(description="You are not a member of the channel")
-
-        channel_leave_v1(token, channel_id)
+    result = channel_leave_v1(token, channel_id)
             
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps(result)
 
 @APP.route('/channel/addowner/v1', methods=['POST'])
 def add_owner():
@@ -160,10 +95,9 @@ def add_owner():
     u_id = request_data['u_id']
 
 
-    channel_removeowner_v1(token, channel_id, u_id)
+    channel_addowner_v1(token, channel_id, u_id)
 
     return dumps({})
-
 
 @APP.route('/channel/removeowner/v1', methods=['POST'])
 def remove_owner():
@@ -179,7 +113,6 @@ def remove_owner():
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
-
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
 

@@ -8,11 +8,11 @@ from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1
 from src.channel import check_valid_channel_id, check_valid_uid, check_member, channel_owners_ids, check_channel_owner_permissions, start_greater_than_total, already_a_member
 from src.channels import channels_listall_v2, channels_create_v2
-# from src.dm import dm_details_v1, dm_leave_v1
-# from src.dm import check_valid_dmid, check_valid_dm_token
+from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1
+from src.dm import check_valid_dmid, check_valid_dm_token
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-# from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
-# from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
+from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
+from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.error import InputError, AccessError

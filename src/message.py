@@ -1,15 +1,19 @@
 from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
-from datetime import datetime
-from src.channel import check_valid_token, check_valid_channel_id, check_member
+from datetime import datetime, timezone
+from src.users import token_check
+from src.channel import check_channel, not_a_member
 import hashlib
 import jwt
+from src.token_helpers import decode_JWT
 
-# HELPER FUNCTIONS
-# ==================================
+# ================================================
+# ================== HELPERS =====================
+# ================================================
 
-# Returns false if the dm_id is invalid
+
+# Raises an error if the dm_id is invalid
 def valid_dm_id(dm_id):
     data = data_store.get()
     dm_details = data['dms_details']
@@ -17,29 +21,29 @@ def valid_dm_id(dm_id):
     for i in range(len(dm_details)):
         dm_ids_list.append(dm_details[i]['dm_id'])
     if dm_id not in dm_ids_list:
-        return False
+        raise InputError(description="Invalid DM")
 
-# Returns false if the message length is less than 1 or greater than 1000 characters
+# Raises an error if the message length is less than 1 or greater than 1000 characters
 def valid_message_length(message):
     if len(message) < 1 or len(message) > 1000:
-        return False
+        raise InputError("Invalid message length")
 
-# Returns false if the authorised user is not a member of the DM
-def check_dm_member(token):
+# Raises an error if the authorised user is not a member of the DM
+def check_dm_member(token, dm_id):
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
-    dm_members = data['dms_details']['dm_members']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
+    dm_details = data['dms_details']
     dm_members_list = []
-    for i in range(len(dm_members)):
-        dm_members_list.append(dm_members[i]['u_id'])
+    for i in range(len(dm_details)):
+        if dm_details[i]['dm_id'] == dm_id:
+            dm_members = dm_details[i]['members']
+            dm_members_list.append(dm_members[i]['u_id'])
     if auth_user_id not in dm_members_list:
-        return False
+        raise AccessError("Not a member of the DM")
 
-# Returns false if the message_id is invalid, or
-# Returns the channel/dm ID the message is in, with relevant information
-def valid_message_id(message_id):
+# Obtain and return channel/dm ID that the message is in, along with relevant information
+def return_info(message_id):
     data = data_store.get()
     channels = data['channels_details']
     dms = data['dms_details']
@@ -54,19 +58,37 @@ def valid_message_id(message_id):
         for j in range(len(dm_messages)):
             if dm_messages[j]['message_id'] == message_id:
                 return dms[i]['dm_id'], 'dm', dms[j]['u_id']
-    return False, False, False
+
+# Raises an error if the message_id is invalid, or
+def valid_message_id(message_id):
+    data = data_store.get()
+    channels = data['channels_details']
+    dms = data['dms_details']
+    valid = False
+
+    for i in range(len(channels)):
+        channel_messages = channels[i]['messages']
+        for j in range(len(channel_messages)):
+            if channel_messages[j]['message_id'] == message_id:
+                valid = True
+    for i in range(len(dms)):
+        dm_messages = dms[i]['messages']
+        for j in range(len(dm_messages)):
+            if dm_messages[j]['message_id'] == message_id:
+                valid = True
+    if valid == False:
+        raise InputError("Invalid message ID")
 
 # Returns false if the authorised user doesn't have owner permissions 
 # in the channel/DM that a given message is in
 def owner_permissions(token):
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
     channels = data['channels_details']
     dms = data['dms_details']
 
-    a, b, c = valid_message_id(message_id)
+    a, b, c = return_info(message_id)
     owner_members_list1 = []
     if b == 'channel':
         for i in range(len(channels)):
@@ -83,24 +105,24 @@ def owner_permissions(token):
                 if creator['u_id'] != auth_user_id:
                     return False
 
-# Returns false if none of the following conditions are true:
+# Raises an error if none of the following conditions are true:
 # - the message was sent by the authorised user
 # - the authorised user has owner permisisons in the channel/DM
 def conditional_edit(token, message_id):
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
-    a, b, c = valid_message_id(message_id)
+    a, b, c = return_info(message_id)
     if c != auth_user_id and owner_permissions(token) == False:
-        return False
+        raise AccessError(description="You do not have access to edit the message")
 
-# ==================================
-# FUNCTIONS
+# ================================================
+# ================= FUNCTIONS ====================
+# ================================================
+
 
 def message_senddm_v1(token, dm_id, message):
-
     """Send a message from the authorised user to the specified DM.
    
     Arguments:
@@ -118,26 +140,20 @@ def message_senddm_v1(token, dm_id, message):
     """
     #Obtaining data
     data = data_store.get()
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
     # Check for invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
-    
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    token_check(token)    
 
     # Check for valid dm_id
-    if valid_dm_id(dm_id) == False:
-        raise InputError("Invalid DM")
+    valid_dm_id(dm_id) 
     
     # Check for valid message length
-    if valid_message_length(message) == False:
-        raise InputError("Invalid message length")
+    valid_message_length(message)
     
     # Raise an error if the authorised user is not a member of the DM
-    if check_dm_member(token) == False:
-        raise AccessError("Not a member of the DM")
+    check_dm_member(token, dm_id)
     
     # Otherwise, send the message to the specified DM
 
@@ -164,8 +180,12 @@ def message_senddm_v1(token, dm_id, message):
         'message': message,
         'time_created': time_created,
     }
-    
-    return {message_id}
+    # Finding the DM with given dm_id
+    for i in range(len(dm_details)):
+        if dm_details[i]['dm_id'] == dm_id:
+            data['dm_details'][i]['messages'].append(message_dict)
+
+    return {"message_id": message_id}
 
 # function for sending messages
 def message_send_v1(token, channel_id, message):
@@ -186,36 +206,31 @@ def message_send_v1(token, channel_id, message):
         Returns message_id on all valid conditions
     """
  
-    #Obtaining data
+    # Obtaining data
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
     # Check for valid channel_id
-    if check_valid_channel_id(channel_id) == False:
-        raise InputError("Invalid channel")
-    else:
-        channel_id_index = check_valid_channel_id(channel_id)
+    check_channel(channel_id)
     
     # Check for valid message length
-    valid_message_length = valid_message_length(message)
-    if valid_message_length == False:
-        raise InputError("Invalid message length")
-    
+    valid_message_length(message)
+
     # Raise an error if the authorised user is not a member of the channel
-    if check_member(channel_id_index, auth_user_id) == False:
-        raise AccessError("Not a member of the channel")
+    not_a_member(auth_user_id, channel_id)
     
-    # Otherwise, send the message to the specified DM
+    # Otherwise, send the message to the specified channel
 
     # Obtain the total number of messages existing in order to assign a message ID
     length_of_messages = 0
     dm_details = data['dms_details']
     channel_details = data['channels_details']
-    length_of_messages += len(channels_details['messages'])
-    length_of_messages += len(channels_details['messages'])
-
+    for i in range(len(dm_details)):
+        length_of_messages += len(dm_details[i]['messages'])
+    for i in range(len(channel_details)):
+        length_of_messages += len(channel_details[i]['messages'])
+ 
     # Assigning the message ID
     message_id = length_of_messages + 1
 
@@ -230,10 +245,14 @@ def message_send_v1(token, channel_id, message):
         'message': message,
         'time_created': time_created
     }
-    
-    return {message_id}
+    # Finding the channel with given channel_id
+    for i in range(len(channel_details)):
+        if channel_details[i]['channel_id'] == channel_id:
+            data['channels_details'][i]['messages'].append(message_dict)
 
-# function for editing messages
+    return {"message_id": message_id}
+
+# Function for editing messages
 def message_edit_v1(token, message_id, message):
     """
     Given a message, update its text with new text.
@@ -252,27 +271,20 @@ def message_edit_v1(token, message_id, message):
     Return Value:
         Returns an empty dictionary on all valid conditions. 
     """
-# Obtaining data
+    # Obtaining data
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
-# Checking that length of messages are over 1 and under 1000 characters 
-    valid_message_length = valid_message_length(message)
-    if valid_message_length == False:
-        raise InputError("Invalid message length")
+    # Checking that length of messages are over 1 and under 1000 characters 
+    valid_message_length(message)
 
-# Checking that message_id refers to a valid message
-    valid_message_id = valid_message_id(message_id)
-    if valid_message_id == False:
-        raise InputError("Invalid message")
+    # Checking that message_id refers to a valid message
+    valid_message_id(message_id)
 
-# Checking that the message was sent by the authorised user making the request 
-# and that the authorised user has owner permissions 
-    conditional_edit = conditional_edit(token, message_id)
-    if conditional_edit == False:
-        raise AccessError("Do not have access to edit message")
+    # Checking that the message was sent by the authorised user making the request 
+    # and that the authorised user has owner permissions 
+    conditional_edit(token, message_id)
 
 # Editing the message in a dm
     dm_details = data['dms_details']
@@ -310,20 +322,15 @@ def message_remove_v1(token, message_id):
     """
 # Obtaining data
     data = data_store.get()
-    SECRET = 'COMP1531'
-    decode_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    auth_user_id = decode_token['u_id']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
 # Checking that message_id refers to a valid message
-    valid_message_id = valid_message_id(message_id)
-    if valid_message_id == False:
-        raise InputError("Invalid message")
+    valid_message_id(message_id)
 
 # Checking that the message was sent by the authorised user making the request 
 # and that the authorised user has owner permissions 
-    conditional_edit = conditional_edit(token, message_id)
-    if conditional_edit == False:
-        raise AccessError("Do not have access to edit message")
+    conditional_edit(token, message_id)
 
 # Removing the message from DMS
     dm_details = data['dms_details']

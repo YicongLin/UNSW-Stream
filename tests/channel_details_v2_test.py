@@ -59,14 +59,6 @@ def test_channel_details():
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
-    # ===================================
-    # Switch user
-    # ===================================  
-
-    # Login user_two 
-    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
-    token_2 = json.loads(response.text)['token']
-
     # User with invalid token to implement function (AccessError 403)
     # token_1 is invalid already (same token formation)
     resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": token_1, "channel_id": channel_id})
@@ -76,6 +68,14 @@ def test_channel_details():
     # token_1 is invalid already (same token formation)
     resp = requests.get(f'{BASE_URL}/channel/details/v2', params={"token": token_1, "channel_id": 123123})
     assert (resp.status_code == 403)
+    
+    # ===================================
+    # Switch user
+    # ===================================  
+
+    # Login user_two 
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+    token_2 = json.loads(response.text)['token']
 
     # Implement details function (not a member of channel) (AccessError 403)
     resp = requests.get(f"{BASE_URL}/channel/details/v2", params={"token": token_2, "channel_id": channel_id})

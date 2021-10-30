@@ -59,6 +59,16 @@ def test_dm_details():
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
+    # User with invalid token to implement function (AccessError 403)
+     # token_1 is invalid already (same token formation)
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
+    assert (resp.status_code == 403)
+
+    # User with invalid token and invalid dm_id to implement function (AccessError 403)
+     # token_1 is invalid already (same token formation)
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": 123123})
+    assert (resp.status_code == 403)
+    
     # ===================================
     # Switch user
     # ===================================
@@ -66,14 +76,6 @@ def test_dm_details():
     # Login user_two
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
     token_2 = json.loads(response.text)['token']
-
-    # User with invalid token to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": dm_id})
-    assert (resp.status_code == 403)
-
-    # User with invalid token and invalid dm_id to implement function (AccessError 403)
-    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": "asdfgh", "dm_id": 123123})
-    assert (resp.status_code == 403)
 
     # Show details of dm -----> successful implement (same as previous output)
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_2, "dm_id": dm_id})

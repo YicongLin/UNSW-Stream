@@ -30,13 +30,13 @@ def test_listall():
     response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_1 , "name": "channel1", "is_public": True})
     channel_id1 = json.loads(response.text)['channel_id']
 
+    # Implement listall function -----> successful implement
+    response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_1})
+    assert (response.status_code == 200)
+    assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}]})
+
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
-
-    # # Implement listall function -----> successful implement
-    # response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_1})
-    # assert (response.status_code == 200)
-    # assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}]})
 
     # User with invalid token to implement function (AccessError 403)
     # token_1 is invalid already (same token formation)
@@ -53,6 +53,11 @@ def test_listall():
 
     response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel2", "is_public": False})
     channel_id2 = json.loads(response.text)['channel_id']
+
+    # Implement listall function -----> successful implement
+    response = requests.get(f'{BASE_URL}/channels/listall/v2', params={"token": token_2})
+    assert (response.status_code == 200)
+    assert (json.loads(response.text) == {'channels': [{'channel_id': channel_id1, 'name': 'channel1'}, {'channel_id': channel_id2, 'name': 'channel2'}]}) 
 
     # Logout user_two
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_2})

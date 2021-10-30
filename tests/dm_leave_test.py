@@ -37,17 +37,9 @@ def test_dm_leave():
     response = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_1, "u_ids": [uid_2, uid_4]})
     dm_id = json.loads(response.text)['dm_id']
 
-    # User with invalid token to implement function (AccessError 403)
-    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "asdfgh", "dm_id": dm_id})
-    assert (resp.status_code == 403)
-
     # Implement dm_leave with invalid dm_id (InputError 400)
     resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": 123123})
     assert (resp.status_code == 400)
-
-    # User with invalid token and invalid dm_id to implement function (AccessError 403)
-    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": "asdfgh", "dm_id": 123123})
-    assert (resp.status_code == 403)
 
     # Check dm_details(user_one, user_two, user_four)
     response = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token_1, "dm_id": dm_id})
@@ -84,6 +76,16 @@ def test_dm_leave():
 
     # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
+
+    # User with invalid token to implement function (AccessError 403)
+     # token_1 is invalid already (same token formation)
+    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": dm_id})
+    assert (resp.status_code == 403)
+
+    # User with invalid token and invalid dm_id to implement function (AccessError 403)
+     # token_1 is invalid already (same token formation)
+    resp = requests.post(f'{BASE_URL}/dm/leave/v1', json={"token": token_1, "dm_id": 123123})
+    assert (resp.status_code == 403)
 
     # ===================================
     # Switch user

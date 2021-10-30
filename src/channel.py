@@ -133,20 +133,17 @@ def check_valid_token(token):
     store = data_store.get()
     decoded_token = decode_JWT(token)
     
-    found = False 
-    index = 1
-    while index < len(store['emailpw']):
-        user = store['emailpw'][index]
+    i = 0
+    while i < len(store['emailpw']):
+        user = store['emailpw'][i]
         # check if session id matches any current session id’s 
         if decoded_token['session_id'] in user['session_id']:
-            found = True
+            return 
 
-        index += 1 
+        i += 1 
 
-    if found == False:
-        raise AccessError(description="Invalid token")
-    
-    pass
+    raise AccessError(description = 'token_check: Invalid token')
+
 #Finish authorised user valid token check
 # ==================================
 
@@ -312,7 +309,7 @@ def channel_details_v2(token, channel_id):
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
     auth_user_id = decode_JWT(token)['u_id']
-    check_member_authorised_user(channel_id_element, u_id)
+    check_member_authorised_user(channel_id_element, auth_user_id)
 
 
     # For return

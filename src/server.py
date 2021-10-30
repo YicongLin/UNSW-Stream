@@ -187,8 +187,6 @@ def channel_details():
 
     return dumps(channel_details)
 
-
-
 @APP.route('/channels/listall/v2', methods=['GET'])
 def channels_listall():
     token = request.args.get('token')
@@ -202,14 +200,9 @@ def dm_details():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
 
-    try:
-        dm = dm_details_v1(token, dm_id)
+    dm = dm_details_v1(token, dm_id)
 
-        return dumps(dm)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-            raise AccessError from src.error
-
+    return dumps(dm)
 
 @APP.route('/dm/leave/v1', methods=['POST'])
 def dm_leave():
@@ -217,13 +210,9 @@ def dm_leave():
     token = request_data['token']
     dm_id = request_data['dm_id']
 
-    try:
-        dm_leave_v1(token, dm_id)
+    dm_leave_v1(token, dm_id)
 
-        return dumps({})
-    
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-            raise AccessError from src.error
+    return dumps({})
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():

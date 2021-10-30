@@ -382,29 +382,29 @@ def dm_list_v1(token):
     }
 
 
-# Check token of authorised user is valid or not
-# Search information at data['emailpw']
-# If authorised user with invalid token then return False
-# If authorised user with valid token then return True
-def check_valid_token(token):
-    data = data_store.get()
-    emailpw = data['emailpw']
+# # Check token of authorised user is valid or not
+# # Search information at data['emailpw']
+# # If authorised user with invalid token then return False
+# # If authorised user with valid token then return True
+# def check_valid_token(token):
+#     data = data_store.get()
+#     emailpw = data['emailpw']
     
-    auth_user_id = jwt.decode(token, secret, algorithms=['HS256'])["u_id"]
-    user_session = jwt.decode(token, secret, algorithms=['HS256'])["session_id"]
+#     auth_user_id = jwt.decode(token, secret, algorithms=['HS256'])["u_id"]
+#     user_session = jwt.decode(token, secret, algorithms=['HS256'])["session_id"]
 
-    user_element = 0
-    while user_element < len(emailpw):
-        if emailpw[user_element]['u_id'] == auth_user_id:
-            break
-        user_element += 1
+#     user_element = 0
+#     while user_element < len(emailpw):
+#         if emailpw[user_element]['u_id'] == auth_user_id:
+#             break
+#         user_element += 1
     
-    session_id = emailpw[user_element]['session_id']
-    if user_session in session_id:
-        return True
+#     session_id = emailpw[user_element]['session_id']
+#     if user_session in session_id:
+#         return True
 
-    return False
-#Finish authorised user valid token check
+#     return False
+# #Finish authorised user valid token check
 
 def is_valid_token(token):
     secret = 'COMP1531'
@@ -419,7 +419,6 @@ def is_valid_token(token):
             if (session_id in emailpw[i]['session_id']):
                 return True
         i += 1
-<<<<<<< HEAD
     return False
 
 # dm messages function ==========================================================================

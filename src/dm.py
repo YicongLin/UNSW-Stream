@@ -474,7 +474,7 @@ def is_valid_token(token):
             if (session_id in emailpw[i]['session_id']):
                 return
         i += 1
-    return False
+    raise AccessError(description="Invalid token")
 
 # dm messages function ==========================================================================
 def dm_messages_v1(token, dm_id, start):

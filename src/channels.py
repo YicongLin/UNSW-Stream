@@ -1,10 +1,11 @@
+""" this file contains important functions: channels list, create and listalls """
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.dm import decode_token, is_valid_token
 from src.channel import check_valid_token
 def check_duplicate(list, channel):
 
-    # check for the element passed in is in the list or not
+    """ check for the element passed in is in the list or not """
     i = 0
     while i < len(list):
         if (channel == list[i]):
@@ -13,6 +14,23 @@ def check_duplicate(list, channel):
     return 0
     
 def channels_list_v2(token):
+    
+    
+    """ An authorised user to all the channels that they joined
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+
+    Return Value:
+        {channels}
+            channels(a list of dict): [{channel_id, name}]
+
+            channel_id (integer) - ID of the channel
+            name (string) - name of the channel.
+    """
     # check is the token passed in is valid, if not it will raise an access error
     is_valid_token(token)
     data = data_store.get()
@@ -74,7 +92,7 @@ def channels_create_v2(token, name, is_public):
     """An authorised user with auth_user_id, type the name of this channel and whether this channel is public. Return that channel’s id when it s created.
 
     Arguments:
-        auth_user_id (integer) - the ID of an authorised user
+        token (string) - a token contains u_id, session_id and permission_id
         name(string)- channel’s name authorised user deign
         is_public(boolean) - channel’s status (public or private)
 

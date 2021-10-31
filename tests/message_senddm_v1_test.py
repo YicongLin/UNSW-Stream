@@ -10,7 +10,7 @@ from src.other import clear_v1
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:6000'
+BASE_URL = 'http://127.0.0.1:3178'
 
 
 # ================================================
@@ -199,11 +199,11 @@ def test_sent_messages(clear_setup, register_first, register_second, create_dm):
         "dm_id": dm_id,
         "start": 0
     }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', json = payload)
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
     message = {
         "message_id": 1,
         "u_id": u_id_1,
-        "message": "Hello world",
+        "message": "Hello World",
         "time_created": time_created
     }
     response = r.json()

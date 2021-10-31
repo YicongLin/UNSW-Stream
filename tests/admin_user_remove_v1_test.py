@@ -2,16 +2,10 @@ import pytest
 import requests
 import json
 from src import config
-from src.auth import auth_register_v2
-from src.token_helpers import decode_JWT
-from src.channels import channels_create_v2
-from src.channel import channel_details_v2, channel_join_v2, channel_messages_v2
-from src.dm import dm_create_v1
-from src.other import clear_v1
 from datetime import datetime, timezone
 import math
 
-BASE_URL = 'http://127.0.0.1:6000'
+BASE_URL = 'http://127.0.0.1:3178'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -235,7 +229,7 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
     assert response == {"messages": [message], "start": 0, "end": -1}
 
 # Test user removal from dm members list, as well as removal of messages
-def test_all_removed_from_channel(clear_setup, register_first, register_second, register_third, create_dm):
+def test_all_removed_from_dm(clear_setup, register_first, register_second, register_third, create_dm):
     # first user registers; obtain token
     token_1 = register_first['token']
     # second user registers; obtain token and u_id
@@ -278,24 +272,24 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
         "handle_str": "thirduser"
     }
     response = r.json()
-    assert response == {"name": "1", "is_public": True, "owner_members": [], "all_members": [user]}
+    assert response == {"name": ["thirduser"], "members": [user]}
 
     # assert the sent message is removed;
     # id_3 requests dm messages - the message will be replaced with "Removed user"
     payload4 = {
         "token": token_3,
-        "dm_id": dm,
+        "dm_id": dm_id,
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload4)
     message = {
         "message_id": 1,
-        "u_id": id_2,
-        "message": "Removed",
+        "u_id": u_id_2,
+        "message": "Removed user",
         "time_created": time_created
     }
     response = r.json()
-    assert response == {"messages": [message], "start": 0, "end": 50}
+    assert response == {"messages": [message], "start": 0, "end": -1}
 
 # Test user removal from user list, but still also retrievable with user/profile
 def test_user_list_and_profile(clear_setup, register_first, register_second):

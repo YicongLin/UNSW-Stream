@@ -459,7 +459,7 @@ def channel_join_v2(token, channel_id):
     auth_user_id = decoded_token['u_id']
 
     # checks for exceptions 
-    channel_id_element = check_valid_channel_id(channel_id)
+    check_valid_channel_id(channel_id)
     token_check(token) 
     already_a_member(auth_user_id, channel_id)
     if decoded_token['permissions_id'] != 1:

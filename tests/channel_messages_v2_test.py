@@ -41,7 +41,7 @@ def register_second():
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     resp = r.json()
     return resp
-    
+
 # First user creates a public channel
 @pytest.fixture
 def channel_one(register_first):
@@ -95,7 +95,7 @@ def test_start_greater(clear_setup, register_first, channel_one):
     # first user requests channel messages with an invalid start number
     payload2 = {
         "token": token,
-        "channel_id": 5,
+        "channel_id": channel_id,
         "start": 2
     }
     r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload2)

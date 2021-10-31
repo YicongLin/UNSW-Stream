@@ -121,8 +121,6 @@ def user_profile_v1(token, u_id):
     token_check(token)
     u_id_check(u_id)
 
-    decoded_token = decode_JWT(token)
-
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 

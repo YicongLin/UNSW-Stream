@@ -135,8 +135,7 @@ def test_valid(clear_setup, register_first, register_second, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     id_1 = register_first['auth_user_id']
-    # second user registers; obtain token and u_id
-    token_2 = register_second['token']
+    # second user registers; obtain u_id
     id_2 = register_second['auth_user_id']
     # second user creates channel; obtain channel_id
     channel_id = channel_two['channel_id']

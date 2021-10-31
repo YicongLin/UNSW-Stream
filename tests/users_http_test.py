@@ -85,7 +85,7 @@ def test_user_profile_valid():
 
 # USER PROFILE 
 def test_user_profile():
-    clear_v1() 
+    requests.delete(f'{BASE_URL}/clear/v1')
     # valid user 1
     payload = {
         "email" : "hjqbwsx@email.com",
@@ -145,7 +145,8 @@ def test_user_profile():
 
 # USER PROFILE SETNAME 
 def test_user_profile_setname():
-    clear_v1()
+    requests.delete(f'{BASE_URL}/clear/v1')
+
 
     # valid user 1
     payload = {

@@ -224,7 +224,7 @@ def test_user_profile_setname():
 
 # USER PROFILE SETEMAIL
 def test_user_profile_set_email():
-    clear_v1()
+    requests.delete(f'{BASE_URL}/clear/v1')
     # valid user 1
     payload = {
         "email" : "2893ry7gyedjkap@email.com",
@@ -274,7 +274,7 @@ def test_user_profile_set_email():
 
 # USER PROFILE SET HANDLE 
 def test_user_profile_set_handle():
-    clear_v1()
+    requests.delete(f'{BASE_URL}/clear/v1')
     # valid user 1
     payload = {
         "email" : "zxcvbnm@email.com",

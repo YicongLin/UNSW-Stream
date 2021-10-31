@@ -1,6 +1,6 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
-# from src.dm import decode_token, is_valid_token
+from src.dm import decode_token, is_valid_token
 from src.channel import check_valid_token
 def check_duplicate(list, channel):
 
@@ -13,8 +13,8 @@ def check_duplicate(list, channel):
     return 0
     
 def channels_list_v2(token):
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
     data = data_store.get()
     channel_detail = data['channels_details']
     user_id = decode_token(token)
@@ -86,8 +86,8 @@ def channels_create_v2(token, name, is_public):
         channel_id(integer) is channels id
     """
 
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    # check is the token passed in is valid, if not it will raise an access error
+    is_valid_token(token)
 
     # get data from datastore
     data = data_store.get()
@@ -101,9 +101,9 @@ def channels_create_v2(token, name, is_public):
 
     # check for invalid name
     if len(name) > 20:
-        raise InputError("Invalid name: Too long")
+        raise InputError(description="Invalid name: Too long")
     elif len(name) == 0:
-        raise InputError("Invalid name: Too short")
+        raise InputError(description="Invalid name: Too short")
     
     new_channel_id = len(channels_detail) + 1
     
@@ -122,7 +122,8 @@ def channels_create_v2(token, name, is_public):
         ],
         'channel_members': [
             users_info[user_id - 1]
-        ]
+        ],
+        'messages': []
     }
     
     # append all data and return
@@ -130,5 +131,3 @@ def channels_create_v2(token, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-
-

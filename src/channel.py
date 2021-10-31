@@ -4,7 +4,7 @@ from src.error import AccessError
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
-from users import token_check
+from src.users import token_check
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -55,7 +55,7 @@ def check_valid_uid(u_id):
         users_element += 1     
         
     if u_id not in users_id:
-        raise InputError(description="Invalid u_id")
+        raise InputError(description="Invalid uid")
 
     pass
 # Finish valid u_id check
@@ -124,12 +124,13 @@ def channel_owners_ids(channel_id_element):
 # Finish function
 # ==================================
 
-# ==================================
-# Check token of authorised user is valid or not
-# Search information at data['emailpw']
-# If authorised user with invalid token then return False
-# If authorised user with valid token then return True
+# # ==================================
+# # Check token of authorised user is valid or not
+# # Search information at data['emailpw']
+# # If authorised user with invalid token then return False
+# # If authorised user with valid token then return True
 def check_valid_token(token):
+
     store = data_store.get()
     decoded_token = decode_JWT(token)
     
@@ -142,10 +143,10 @@ def check_valid_token(token):
 
         i += 1 
 
-    raise AccessError(description = 'token_check: Invalid token')
+    raise AccessError(description = 'Invalid token')
 
-#Finish authorised user valid token check
-# ==================================
+# #Finish authorised user valid token check
+# # ==================================
 
 # ==================================
 # Check authorised user has channel owner permissions or not
@@ -168,42 +169,42 @@ def check_channel_owner_permissions(token, each_owner_id):
 # ==================================
 # Check for a valid channel ID
 # Raise error if invalid
-def check_channel(channel_id)
+def check_channel(channel_id):
     data = data_store.get()
     channels = data["channels_details"]
     channel_id_list = []
     for i in range(len(channels)):
         channel_id_list.append(channels[i]['channel_id'])
-    if channel_id not in channel_id_list:
+    if int(channel_id) not in channel_id_list:
         raise InputError(description="Invalid channel")
 # Finish channel ID check
 # ==================================
 
 # ==================================
 # Raising an error if a user is already a member of the channel
-def already_a_member(u_id, channel_id)
+def already_a_member(u_id, channel_id):
     data = data_store.get()
     channels = data["channels_details"]
     for i in range(len(channels)):
-        if channels[i]['channel_id'] == channel_id:
+        if int(channels[i]['channel_id']) == int(channel_id):
             members = channels[i]['channel_members']
             for j in range(len(members)):
-                if members[j]['u_id'] == u_id:
+                if int(members[j]['u_id']) == int(u_id):
                     raise InputError(description="Already a member of the channel")
 # Finish already a member check
 # ==================================
 
 # ==================================
 # Raising an error if a user is not a member of the channel
-def not_a_member(u_id, channel_id)
+def not_a_member(u_id, channel_id):
     data = data_store.get()
     channels = data["channels_details"]
     is_member = False
     for i in range(len(channels)):
-        if channels[i]['channel_id'] == channel_id:
+        if int(channels[i]['channel_id']) == int(channel_id):
             members = channels[i]['channel_members']
             for j in range(len(members)):
-                if members[j]['u_id'] == u_id:
+                if int(members[j]['u_id']) == int(u_id):
                     is_member = True
     if is_member == False:
         raise AccessError("You are not a member of the channel")
@@ -215,7 +216,7 @@ def not_a_member(u_id, channel_id)
 # Returns true if global owner
 def check_global_owner(token):
     decoded_token = decode_JWT(token)
-    if decoded_token['permissions_id'] == 1:
+    if int(decoded_token['permissions_id']) == 1:
         return True
 
     return False
@@ -231,13 +232,12 @@ def start_greater_than_total(channel_id, start):
     channels = data["channels_details"]
     
     for i in range(len(channels)):
-        if channel_id == channels[i]["channel_id"]:
+        if int(channel_id) == int(channels[i]["channel_id"]):
             x = channels[i]
             messages = x["messages"]
-            if start > len(messages):
+            if int(start) > len(messages):
                 raise InputError(description="Exceeded total number of messages in this channel") 
 # Finish messages check
-# ==================================
 
 # ==================================
 # Checking channel status
@@ -247,7 +247,7 @@ def channel_status(channel_id):
     channels = data["channels_details"]
     for i in range(len(channels)):
         if channel_id == channels[i]["channel_id"]:
-            if channels[i]["channel_status"] = False:
+            if channels[i]["channel_status"] == False:
                 raise AccessError(description="Channel is private and you are not a global owner")
 # Finish channel status check
 # ==================================
@@ -409,54 +409,43 @@ def channel_messages_v2(token, channel_id, start):
 
     # Decoding token to access authorised user's ID
     decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token('u_id')
+    auth_user_id = decoded_token['u_id']
 
-    # create the dictionary messages 
-    messages = [ {
-        'message_id': '',
-        'u_id': '',
-        'message': '',
-        'time_created': '',
-    } ]
-    
-    # for each channel in channels details 
-    for i in range(len(channels)):
-        # add messages dictionary into it 
-        data['channels_details'][i]['messages'].append(messages)
-        # channels[i]['messages'] = messages
-        
     # Defining the end index
-        end = start + 50
+    end = int(start) + 50
     
     # Raising an error if the given channel ID is not 
     # a valid channel in the created list
-    check_channel(channel_id)
-    
+    channel_id_element = check_valid_channel_id(channel_id)
     # Check for invalid token
     token_check(token)        
-
     # Raising an error if start is greater than
     # the total number of messages in the given channel
     start_greater_than_total(channel_id, start)
-        
     # Raising an error if the authorised user 
     # is not a member of the valid channel
-    not_a_member(auth_user_id, channel_id)
+    check_member(channel_id_element, auth_user_id)
+    for i in range(len(channels)):
+        if int(channels[i]['channel_id']) == int(channel_id):
+            channel_messages = channels[i]['messages']
 
     # Append all messages in a list
     message_list = []
-    for message in messages:
-        message_list.append(message["message"])
-   
-    if len(messages) < 50:
+    for i in range(len(channels)):
+        if int(channels[i]['channel_id']) == int(channel_id):
+            channel_messages = channels[i]['messages']
+            for i in range(len(channel_messages)):
+                message_list.append(channel_messages[i])
+
+    if len(message_list) < 50:
         return { 
-            'messages': tuple(message_list)[start:end], 
-            'start': start,
+            'messages': message_list[int(start):int(end)], 
+            'start': int(start),
             'end': -1 
         }
     else:
         return { 
-            'messages': tuple(message_list)[start:end], 
+            'messages': message_list[int(start):int(end)], 
             'start': start,
             'end': end 
         }
@@ -485,10 +474,10 @@ def channel_join_v2(token, channel_id):
 
     # Decoding token to access authorised user's ID
     decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token('u_id')
+    auth_user_id = decoded_token['u_id']
 
     # Raising an error if the given channel ID is not a valid channel 
-    check_channel(channel_id)
+    channel_id_element = check_valid_channel_id(channel_id)
     
     # Check for invalid token
     token_check(token) 

@@ -1,11 +1,13 @@
 from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
-from src.channel import check_valid_uid, check_valid_token
+from src.channel import check_valid_uid
+from src.users import token_check
+from src.channel import check_valid_uid
 
 # HELPER FUNCTIONS
 # ==================================
@@ -27,17 +29,7 @@ def remove_only_global_owner(token, u_id):
     
     if permission_id_count == 1 and is_global_owner == True:
         raise InputError(description="Cannot remove the only global owner")
-    # is_global_owner = False
-    # global_owners = 0
-    # for i in range(len(emailpw)):
-    #     if emailpw[i]['permissions_id'] == 1:
-    #         global_owners += 0
-    #     if emailpw[i]['u_id'] == u_id:
-    #         if emailpw[i]['permissions_id'] == 1:
-    #             is_global_owner = True
-    # if is_global_owner == True:
-    #     if len(global_owner_list) == 1:
-    #         return True
+
 def demote_only_global_owner(token, u_id):
     data = data_store.get()
     emailpw = data['emailpw']
@@ -81,7 +73,7 @@ def admin_user_remove_v1(token, u_id):
     check_valid_uid(u_id) 
     
     # Check for invalid token
-    check_valid_token(token)
+    token_check(token)
 
     # Raise an error if u_id refers to a user who is the only global owner
     remove_only_global_owner(token, u_id)
@@ -114,16 +106,22 @@ def admin_user_remove_v1(token, u_id):
         for j in range(len(channel_members)):
             if channel_members[j]['u_id'] == u_id:
                 channel_members.remove(channel_members[j])
+                break
         for j in range(len(channel_owner_members)):
             if channel_owner_members[j]['u_id'] == u_id:
-                remove(channel_owner_members[j])
+                channel_owner_members.remove(channel_owner_members[j])
+                break
     
     # Removing the user's message/s from channel/s
     for i in range(len(channel_details)):
         channel_messages = channel_details[i]['messages']
         for j in range(len(channel_messages)): 
-            if channel_messages[j]['u_id'] == u_id:
-                channel_messages[j]['message'] == 'Removed user'
+            if int(channel_messages[j]['u_id']) == int(u_id):
+                channel_messages[j]['message'] = 'Removed user'
+                data_store.set(data)
+
+                # channel_messages[j]['message'] == 'Removed user'
+                break
     
     # Removing the user information from the list of users in the store
     # and placing them in a new store for deleted users
@@ -138,20 +136,17 @@ def admin_user_remove_v1(token, u_id):
                 'handle_str': ''
             }
             data['deleted_users'].append(deleted_user_dict)
-            remove(users[i])
+            users.remove(users[i])
+            break
     return {}
 
 def admin_userpermission_change_v1(token, u_id, permission_id):
-    # print('_________________')
-    # print(permission_id)
-    # print('_________________')
-    #Obtaining data
     data = data_store.get()
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
 
     # Check for invalid token
-    check_valid_token(token)
+    token_check(token)
     
     # Check for valid u_id
     check_valid_uid(u_id)

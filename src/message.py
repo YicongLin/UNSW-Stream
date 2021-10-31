@@ -7,6 +7,7 @@ from src.channel import check_channel, not_a_member
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
+import math
 
 # ================================================
 # ================== HELPERS =====================
@@ -20,7 +21,7 @@ def valid_dm_id(dm_id):
     dm_ids_list = []
     for i in range(len(dm_details)):
         dm_ids_list.append(dm_details[i]['dm_id'])
-    if dm_id not in dm_ids_list:
+    if int(dm_id) not in dm_ids_list:
         raise InputError(description="Invalid DM")
 
 # Raises an error if the message length is less than 1 or greater than 1000 characters
@@ -36,9 +37,10 @@ def check_dm_member(token, dm_id):
     dm_details = data['dms_details']
     dm_members_list = []
     for i in range(len(dm_details)):
-        if dm_details[i]['dm_id'] == dm_id:
+        if dm_details[i]['dm_id'] == int(dm_id):
             dm_members = dm_details[i]['members']
-            dm_members_list.append(dm_members[i]['u_id'])
+            for j in range(len(dm_members)):
+                dm_members_list.append(dm_members[j]['u_id'])
     if auth_user_id not in dm_members_list:
         raise AccessError("Not a member of the DM")
 
@@ -51,12 +53,12 @@ def return_info(message_id):
     for i in range(len(channels)):
         channel_messages = channels[i]['messages']
         for j in range(len(channel_messages)):
-            if channel_messages[j]['message_id'] == message_id:
+            if int(channel_messages[j]['message_id']) == int(message_id):
                 return channels[i]['channel_id'], 'channel', channels[j]['u_id']
     for i in range(len(dms)):
         dm_messages = dms[i]['messages']
         for j in range(len(dm_messages)):
-            if dm_messages[j]['message_id'] == message_id:
+            if int(dm_messages[j]['message_id']) == int(message_id):
                 return dms[i]['dm_id'], 'dm', dms[j]['u_id']
 
 # Raises an error if the message_id is invalid, or
@@ -69,12 +71,12 @@ def valid_message_id(message_id):
     for i in range(len(channels)):
         channel_messages = channels[i]['messages']
         for j in range(len(channel_messages)):
-            if channel_messages[j]['message_id'] == message_id:
+            if int(channel_messages[j]['message_id']) == int(message_id):
                 valid = True
     for i in range(len(dms)):
         dm_messages = dms[i]['messages']
         for j in range(len(dm_messages)):
-            if dm_messages[j]['message_id'] == message_id:
+            if int(dm_messages[j]['message_id']) == int(message_id):
                 valid = True
     if valid == False:
         raise InputError("Invalid message ID")
@@ -92,7 +94,7 @@ def owner_permissions(token):
     owner_members_list1 = []
     if b == 'channel':
         for i in range(len(channels)):
-            if channels[i]['channel_id'] == a:
+            if channels[i]['channel_id'] == int(a):
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
                     owner_members_list.append(owner_members[j]['u_id'])
@@ -100,7 +102,7 @@ def owner_permissions(token):
         return False
     if b == 'dm':
         for i in range(len(dms)):
-            if dms[i]['dm_id'] == a:
+            if dms[i]['dm_id'] == int(a):
                 creator = dms[i]['creator']
                 if creator['u_id'] != auth_user_id:
                     return False
@@ -114,7 +116,7 @@ def conditional_edit(token, message_id):
     auth_user_id = decoded_token['u_id']
 
     a, b, c = return_info(message_id)
-    if c != auth_user_id and owner_permissions(token) == False:
+    if int(c) != auth_user_id and owner_permissions(token) == False:
         raise AccessError(description="You do not have access to edit the message")
 
 # ================================================
@@ -183,7 +185,7 @@ def message_senddm_v1(token, dm_id, message):
     # Finding the DM with given dm_id
     for i in range(len(dm_details)):
         if dm_details[i]['dm_id'] == dm_id:
-            data['dm_details'][i]['messages'].append(message_dict)
+            data['dms_details'][i]['messages'].append(message_dict)
 
     return {"message_id": message_id}
 
@@ -236,7 +238,7 @@ def message_send_v1(token, channel_id, message):
 
     # Obtaining time created
     time = datetime.now()
-    time_created = time.replace(tzinfo=timezone.utc).timestamp()
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
 
     # Creating a dictionary with the message and corresponding information
     message_dict = {
@@ -247,9 +249,9 @@ def message_send_v1(token, channel_id, message):
     }
     # Finding the channel with given channel_id
     for i in range(len(channel_details)):
-        if channel_details[i]['channel_id'] == channel_id:
+        if int(channel_details[i]['channel_id']) == int(channel_id):
             data['channels_details'][i]['messages'].append(message_dict)
-
+    
     return {"message_id": message_id}
 
 # Function for editing messages

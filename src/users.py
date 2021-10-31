@@ -36,6 +36,10 @@ def u_id_check(u_id):
             found = True
 
         i += 1 
+    deleted_users = store['deleted_users']
+    for i in range(len(deleted_users)):
+        if int(deleted_users[i]['u_id']) == int(u_id):
+            found = True
     
     if found == False:
         raise InputError(description = 'u_id_check: Invalid u_id')
@@ -126,14 +130,13 @@ def user_profile_v1(token, u_id):
             return {'user' : user}
         i += 1 
 
-    # i = 0
-    # while i < len(store['deleted_users']):
-    #     user = store['users'][i] 
-    #     if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == u_id):
-    #         return {'user' : user}
-    #     i += 1 
+    i = 0
+    while i < len(store['deleted_users']):
+        user = store['deleted_users'][i] 
+        if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == int(u_id)):
+            return {'user' : user}
+        i += 1 
 
-    # if no match 
     raise InputError(description = "user_profile: Invalid u_id")
 
 def user_profile_setname_v1(token, name_first, name_last):

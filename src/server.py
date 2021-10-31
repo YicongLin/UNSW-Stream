@@ -48,7 +48,7 @@ def clear():
     clear_v1()
     return dumps({})
     
-@APP.route("/channel/invite/v2", methods=['POST'])
+@APP.route('/channel/invite/v2', methods=['POST'])
 def channel_invite_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -59,7 +59,7 @@ def channel_invite_http():
             
     return dumps(result)
         
-@APP.route("/channel/join/v2", methods=['POST'])
+@APP.route('/channel/join/v2', methods=['POST'])
 def channel_join_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -69,18 +69,17 @@ def channel_join_http():
             
     return dumps(result)
 
-@APP.route("/channel/messages/v2", methods=['GET'])
+@APP.route('/channel/messages/v2', methods=['GET'])
 def channel_messages_http():
-    request_data = request.get_json()
-    token = request_data['token']
-    channel_id = request_data['channel_id']
-    start = request_data['start']
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    start = request.args.get('start')
     
     result = channel_messages_v2(token, channel_id, start)
             
     return dumps(result)
 
-@APP.route("/channel/leave/v1", methods=['POST'])
+@APP.route('/channel/leave/v1', methods=['POST'])
 def channel_leave_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -172,34 +171,12 @@ def remove_owner():
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
-
     token = request.args.get('token')
     channel_id = request.args.get('channel_id')
 
+    channel_details = channel_details_v2(token, channel_id)
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
-
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError(description="Invalid channel_id")
-
-        auth_user_id = decode_JWT(token)['u_id']
-        if check_member(channel_id_element, auth_user_id) == False:
-            raise AccessError(description="Not an member of channel")
-
-        auth_user_id = decode_JWT(token)['u_id']
-        if check_member(channel_id_element, auth_user_id) == False:
-            raise AccessError("Authorised user is not an member of channel")
-
-        channel_details = channel_details_v2(token, channel_id)
-
-        return dumps(channel_details)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
-
+    return dumps(channel_details)
 
 @APP.route('/channels/listall/v2', methods=['GET'])
 def channels_listall():
@@ -216,29 +193,14 @@ def channels_listall():
     except (InvalidSignatureError, DecodeError, InvalidTokenError):
         raise AccessError
 
-
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
     token = request.args.get('token')
     dm_id = request.args.get('dm_id')
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    dm = dm_details_v1(token, dm_id)
 
-        dm_id_element = check_valid_dmid(dm_id)
-        if dm_id_element == False:
-            raise InputError(description="Invalid dm_id")
-
-        if check_valid_dm_token(token, dm_id_element) == False:
-            raise AccessError(description="Login user has not right to access dm_details")
-
-        dm = dm_details_v1(token, dm_id)
-
-        return dumps(dm)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps(dm)
 
 
 @APP.route('/dm/leave/v1', methods=['POST'])
@@ -299,7 +261,7 @@ def message_senddm_http():
 
     return dumps(result)
 
-APP.route("/message/send/v1", methods = ['POST'])
+@APP.route("/message/send/v1", methods = ['POST'])
 def send_message():
     request_data = request.get_json()
     token = request_data['token']
@@ -374,38 +336,24 @@ def dm_remove():
 
 @APP.route('/dm/messages/v1', methods=['GET'])
 def dm_messages_http():
-    data = request.get_json()
-    token = data['token']
-    dm_id = data['dm_id']
-    start = data['start']
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    """ if (is_creator(token, dm_id) == False):
-        raise AccessError("Access denied, user is not a creator of this DM")
+    token = request.args.get('token')
+    dm_id = request.args.get('dm_id')
+    start = request.args.get('start')
 
-    if (is_valid_dm(dm_id) == False):
-        raise InputError("Invalid DM ID") """
-    
-    dm_remove_v1(token, dm_id)
+    result = dm_messages_v1(token, dm_id, start)
 
-    return dumps({})
+    return dumps(result)
 
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create():
     data = request.get_json()
     token = data['token']
     u_ids = data['u_ids']
-    #user_id = decode_token(token)
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    if (check_user(u_ids) == 0):
-        raise InputError(description="There is 1 or more invalid ids, please check again")
     
-    """ if (check_valid_token(token) == False):
-        raise AccessError(description="Invalid user") """
 
     result = dm_create_v1(token, u_ids)
     return dumps(result)
+
 
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
@@ -467,18 +415,10 @@ def channels_create():
     token = data['token']
     name = data['name']
     is_public = data['is_public']
-    """ if (check_valid_token(token) == False):
-        raise AccessError("Invalid user") """
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    # check for invalid name
-    if len(name) > 20:
-        raise InputError(description="Invalid name: Too long")
-    elif len(name) == 0:
-        raise InputError(description="Invalid name: Too short")
     
     result = channels_create_v2(token, name, is_public)
     return dumps(result)
+
 
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():

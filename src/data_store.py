@@ -76,152 +76,151 @@ initial_object = {
     ],
 
     'dms_details': [
-     {
-            'dm_id': 1,
-            'name': ["ahandle1", "bhandle2", "chandle3"],
-            'members': [
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first': 'a', 
-                    'name_last':'1last', 
-                    'handle_str': 'ahandle1'
-                },
-                 {
-                    'u_id': 2,
-                    'email':'2@email.com', 
-                    'name_first': 'b', 
-                    'name_last':'2last', 
-                    'handle_str': 'bhandle2'
-                },
-                {
-                    'u_id': 3,
-                    'email':'3@email.com', 
-                    'name_first': 'c', 
-                    'name_last':'3last', 
-                    'handle_str': 'chandle3'
-                },
-            ],
-            'messages': [
-                {
-                    'message_id': 1,
-                    'u_id': 1,
-                    'message': 'Hello world',
-                    'time_created': 1582426789
-                },
-            ],
-            'creator': [
-                {
-                    'u_id': 3,
-                    'email':'3@email.com', 
-                    'name_first': 'c', 
-                    'name_last':'3last', 
-                    'handle_str': 'chandle3'
-                },
-            ]
-        },
-           
+    #  {
+    #         'dm_id': 1,
+    #         'name': ["ahandle1", "bhandle2", "chandle3"],
+    #         'members': [
+    #             {
+    #                 'u_id': 1,
+    #                 'email':'1@email.com', 
+    #                 'name_first': 'a', 
+    #                 'name_last':'1last', 
+    #                 'handle_str': 'ahandle1'
+    #             },
+    #              {
+    #                 'u_id': 2,
+    #                 'email':'2@email.com', 
+    #                 'name_first': 'b', 
+    #                 'name_last':'2last', 
+    #                 'handle_str': 'bhandle2'
+    #             },
+    #             {
+    #                 'u_id': 3,
+    #                 'email':'3@email.com', 
+    #                 'name_first': 'c', 
+    #                 'name_last':'3last', 
+    #                 'handle_str': 'chandle3'
+    #             },
+    #         ],
+    #         'messages': [
+    #             {
+    #                 'message_id': 1,
+    #                 'u_id': 1,
+    #                 'message': 'Hello world',
+    #                 'time_created': 1582426789
+    #             },
+    #         ],
+    #         'creator': [
+    #             {
+    #                 'u_id': 3,
+    #                 'email':'3@email.com', 
+    #                 'name_first': 'c', 
+    #                 'name_last':'3last', 
+    #                 'handle_str': 'chandle3'
+    #             },
+    #         ]
+    #     },
     ],
 
     'channels': [
-        """ {
-            'channel_id': 1,
-            'name': 'channel1'
-        },
+        # {
+        #     'channel_id': 1,
+        #     'name': 'channel1'
+        # },
 
-        {
-            'channel_id': 2,
-            'name': 'channel2'
-        },
+        # {
+        #     'channel_id': 2,
+        #     'name': 'channel2'
+        # },
 
-        {
-            'channel_id': 3,
-            'name': 'channel3'
-        } """
+        # {
+        #     'channel_id': 3,
+        #     'name': 'channel3'
+        # } 
     ],
 
     'channels_details': [     
             #Input channel_id to track
-        {
-            'name': 'channel1',
-            'channel_id': 1, 
-            'channel_status': True,
-            'owner_members': [
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first':'1first', 
-                    'name_last':'1last', 
-                    'handle_str': '1str'
-                },
-            ],
-            'channel_members': [ 
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first':'1first', 
-                    'name_last':'1last', 
-                    'handle_str': '1str'
-                },
+        # {
+        #     'name': 'channel1',
+        #     'channel_id': 1, 
+        #     'channel_status': True,
+        #     'owner_members': [
+        #         {
+        #             'u_id': 1,
+        #             'email':'1@email.com', 
+        #             'name_first':'1first', 
+        #             'name_last':'1last', 
+        #             'handle_str': '1str'
+        #         },
+        #     ],
+        #     'channel_members': [ 
+        #         {
+        #             'u_id': 1,
+        #             'email':'1@email.com', 
+        #             'name_first':'1first', 
+        #             'name_last':'1last', 
+        #             'handle_str': '1str'
+        #         },
                 
-                {
-                    'u_id': 2,
-                    'email':'2@email.com', 
-                    'name_first':'2first', 
-                    'name_last':'2last', 
-                    'handle_str': '2str'
-                },
-            ],
-            'messages': [
-                {
-                    'message_id': 1,
-                    'u_id': 1,
-                    'message': 'Hello world',
-                    'time_created': 1582426789,
-                }
-            ]             
-        },
+        #         {
+        #             'u_id': 2,
+        #             'email':'2@email.com', 
+        #             'name_first':'2first', 
+        #             'name_last':'2last', 
+        #             'handle_str': '2str'
+        #         },
+        #     ],
+        #     'messages': [
+        #         {
+        #             'message_id': 1,
+        #             'u_id': 1,
+        #             'message': 'Hello world',
+        #             'time_created': 1582426789,
+        #         }
+        #     ]             
+        # },
 
-        {
-            'channel_id': 2, 
-            'name': 'channel2',
-            'channel_status': True,
-            'channel_members': [ 
-                {
-                    'u_id': 1,
-                    'email':'1@email.com', 
-                    'name_first':'1first', 
-                    'name_last':'1last', 
-                    'handle_str': '1str'
-                },
+        # {
+        #     'channel_id': 2, 
+        #     'name': 'channel2',
+        #     'channel_status': True,
+        #     'channel_members': [ 
+        #         {
+        #             'u_id': 1,
+        #             'email':'1@email.com', 
+        #             'name_first':'1first', 
+        #             'name_last':'1last', 
+        #             'handle_str': '1str'
+        #         },
                 
-                {
-                    'u_id': 4,
-                    'email':'2@email.com', 
-                    'name_first':'2first', 
-                    'name_last':'2last', 
-                    'handle_str': '2str'
-                },
+        #         {
+        #             'u_id': 4,
+        #             'email':'2@email.com', 
+        #             'name_first':'2first', 
+        #             'name_last':'2last', 
+        #             'handle_str': '2str'
+        #         },
 
-                {
-                    'u_id': 2,
-                    'email':'2@email.com', 
-                    'name_first':'2first', 
-                    'name_last':'2last', 
-                    'handle_str': '2str'
-                },
-            ]
-        },
+        #         {
+        #             'u_id': 2,
+        #             'email':'2@email.com', 
+        #             'name_first':'2first', 
+        #             'name_last':'2last', 
+        #             'handle_str': '2str'
+        #         },
+        #     ]
+        # },
                        
     ], 
     'deleted_users': [
-        {
-            'u_id': 1,
-            'email': '',
-            'name_first': 'Removed',
-            'name_last': 'user',
-            'handle_str': ''
-        }
+        # {
+        #     'u_id': 1,
+        #     'email': '',
+        #     'name_first': 'Removed',
+        #     'name_last': 'user',
+        #     'handle_str': ''
+        # }
     ]
  
 

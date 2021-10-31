@@ -91,8 +91,6 @@ def test_auth_register():
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "test1@email.com", "password" : "password1"})
     assert (r.status_code == 200)
     
-    resp = r.json()
-
     # valid user 2
     payload = {
         "email" : "test2@email.com",

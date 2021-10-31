@@ -15,7 +15,6 @@ def check_duplicate(list, channel):
     
 def channels_list_v2(token):
     
-    
     """ An authorised user to all the channels that they joined
     
     Arguments:
@@ -139,7 +138,8 @@ def channels_create_v2(token, name, is_public):
         ],
         'channel_members': [
             users_info[user_id - 1]
-        ]
+        ],
+        'messages': []
     }
     
     # append all data and return
@@ -147,5 +147,3 @@ def channels_create_v2(token, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-
-

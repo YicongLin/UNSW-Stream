@@ -5,17 +5,14 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
-from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_invite_v2, channel_messages_v2, channel_join_v2, channel_leave_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_valid_token, check_member, channel_owners_ids, check_channel_owner_permissions, check_global_owner, start_greater_than_total, channel_status, check_channel
+from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_join_v2, channel_invite_v2, channel_messages_v2, channel_leave_v1
 from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
-from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1
-from src.dm import check_valid_dmid, check_valid_dm_token
+from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.message import valid_dm_id, valid_message_length, member, message_senddm_v1
-from src.admin import valid_uid, only_global_owner, not_a_global_owner, is_valid_token, admin_userpermission_change_v1, admin_user_remove_v1
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length, u_id_check
+from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1
+from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.error import InputError, AccessError
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1
@@ -43,6 +40,7 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
+
 @APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite_http():
     request_data = request.get_json()
@@ -54,7 +52,7 @@ def channel_invite_http():
             
     return dumps(result)
         
-@APP.route("/channel/join/v2", methods=['POST'])
+@APP.route('/channel/join/v2', methods=['POST'])
 def channel_join_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -64,19 +62,17 @@ def channel_join_http():
             
     return dumps(result)
 
-
-@APP.route("/channel/messages/v2", methods=['GET'])
+@APP.route('/channel/messages/v2', methods=['GET'])
 def channel_messages_http():
-    request_data = request.get_json()
-    token = request_data['token']
-    channel_id = request_data['channel_id']
-    start = request_data['start']
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    start = request.args.get('start')
     
     result = channel_messages_v2(token, channel_id, start)
             
     return dumps(result)
 
-@APP.route("/channel/leave/v1", methods=['POST'])
+@APP.route('/channel/leave/v1', methods=['POST'])
 def channel_leave_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -93,7 +89,6 @@ def add_owner():
     token = request_data['token']
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
-
 
     channel_addowner_v1(token, channel_id, u_id)
 
@@ -177,25 +172,43 @@ def message_senddm_http():
     token = request_data['token']
     dm_id = request_data['dm_id']
     message = request_data['message']
-    try: 
-        if valid_dm_id == False:
-            raise InputError(description="Invalid DM")
-        
-        if is_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
 
-        if valid_message_length == False:
-            raise InputError(description="Invalid message length")
+    result = message_senddm_v1(token, dm_id, message)
 
-        if member == False:
-            raise AccessError(description="Not a member of the DM")
+    return dumps(result)
 
-        result = message_senddm_v1(token, dm_id, message)
+@APP.route("/message/send/v1", methods = ['POST'])
+def send_message():
+    request_data = request.get_json()
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    message = request_data['message']
 
-        return dumps(result)
+    result = message_send_v1(token, channel_id, message)
 
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps(result)
+
+@APP.route("/message/edit/v1", methods = ['PUT'])
+def edit_message():  
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['message_id']
+    message = request_data['message']
+
+    result = message_edit_v1(token, message_id, message)
+
+    return dumps(result)
+
+@APP.route("/message/remove/v1", methods = ['DELETE'])
+def remove_message(): 
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['messages']
+    
+    result = message_remove_v1(token, message_id)
+
+    return dumps(result)
+
 
 @APP.route('/admin/user/remove/v1', methods=['DELETE'])
 def admin_user_remove_http():
@@ -203,26 +216,11 @@ def admin_user_remove_http():
 
     token = request_data['token']
     u_id = request_data['u_id']
-    try:
 
-        if valid_uid(u_id) == False:
-            raise InputError(description="Invalid user")
+    admin_user_remove_v1(token, u_id)
 
-        if is_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    return dumps({})
 
-        if only_global_owner(token, u_id) == True:
-            raise InputError(description="Cannot remove the only global owner")
-        
-        if not_a_global_owner(token) == True:
-            raise AccessError(description="You are not a global owner")
-
-        admin_user_remove_v1(token, u_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError 
 
 @APP.route('/admin/userpermission/change/v1', methods=['POST'])
 def admin_userpermission_change_http():
@@ -231,33 +229,10 @@ def admin_userpermission_change_http():
     token = request_data['token']
     u_id = request_data['u_id']
     permission_id = request_data['permission_id']
-
-    try:
-        if valid_uid(u_id) == False:
-            raise InputError(description="Invalid user")
         
-        if is_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    result = admin_userpermission_change_v1(token, u_id, permission_id)
 
-        if only_global_owner(token, u_id) == True and permission_id == 2:
-            raise InputError(description="Cannot demote the only global owner")
-        print('____________')
-        print('permission id is')
-        print(permission_id)
-        print('____________')
-
-        if permission_id not in [1,2]:
-            raise InputError("Invalid permission ID")
-        
-        if not_a_global_owner(token) == True:
-            raise InputError(description="You are not a global owner")
-        
-        admin_userpermission_change_v1(token, u_id, permission_id)
-
-        return dumps([])
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps(result)
 
 @APP.route('/dm/remove/v1', methods=['DELETE'])
 def dm_remove():
@@ -269,6 +244,16 @@ def dm_remove():
 
     return dumps({})
 
+@APP.route('/dm/messages/v1', methods=['GET'])
+def dm_messages_http():
+    token = request.args.get('token')
+    dm_id = request.args.get('dm_id')
+    start = request.args.get('start')
+
+    result = dm_messages_v1(token, dm_id, start)
+
+    return dumps(result)
+
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create():
     data = request.get_json()
@@ -278,6 +263,7 @@ def dm_create():
 
     result = dm_create_v1(token, u_ids)
     return dumps(result)
+
 
 @APP.route('/auth/logout/v1', methods=['POST'])
 def auth_logout_http():
@@ -342,6 +328,7 @@ def channels_create():
     
     result = channels_create_v2(token, name, is_public)
     return dumps(result)
+
 
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():

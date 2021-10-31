@@ -49,9 +49,7 @@ def check_valid_dmid(dm_id):
 # Serach information at data['dms_details'][dm_id_element]['dm_members']
 # If authorised user is a not member of dm then return False
 # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
-def check_valid_dm_token(token, dm_id_element):
-    """ Check authorised user is an member of dm or not """
-    
+def check_valid_dm_token(auth_user_id, dm_id_element):    
     data = data_store.get()
 
     members_in_dm = data['dms_details'][dm_id_element]['members']
@@ -77,11 +75,11 @@ def start_greater(dm_id, start):
     dms = data["dms_details"]
     
     for i in range(len(dms)):
-        if dm_id == dms[i]["dms_id"]:
+        if dm_id == dms[i]["dm_id"]:
             x = dms[i]
             messages = x["messages"]
-            if start > len(messages):
-                return True
+            if int(start) > len(messages):
+                raise InputError("Exceeded total number of messages in this dm") 
 # Finish messages check
 # ==================================
 
@@ -95,7 +93,7 @@ def check_dm_member(dm_id, u_id):
     # Extracting the given DM's index
     dm_count = 0
     for i in range(len(dms)):
-        if dms[i]["dm_id"] == dm_id:
+        if dms[i]["dm_id"] == int(dm_id):
             break
         dm_count += 1
 
@@ -105,15 +103,15 @@ def check_dm_member(dm_id, u_id):
         member_list.append(members[i]['u_id'])
 
     if u_id not in member_list:
-        return False
+        raise AccessError("You are not a member of the dm")  
 
-    return each_member_id
 # Finish DM member check
 # ==================================
 
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
+
 
 def dm_details_v1(token, dm_id):
     """An authorised user to check a dm’s detailed information which user is a member of it
@@ -246,7 +244,8 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id,
         'name': handle_str,
         'members': member_detail,
-        'creator': creator_detail
+        'creator': creator_detail,
+        'messages': []
     }
     
     data['dms_details'].append(dm_detail_dict)
@@ -254,7 +253,6 @@ def dm_create_v1(token, u_ids):
     return {
         'dm_id': new_dm_id
     }
-
 
 def is_valid_user(u_id):
     """ check if the user is a valid user by looping through the users datastore """
@@ -474,6 +472,7 @@ def is_valid_token(token):
             if (session_id in emailpw[i]['session_id']):
                 return
         i += 1
+
     raise AccessError(description="Invalid token")
 
 # dm messages function ==========================================================================
@@ -504,63 +503,39 @@ def dm_messages_v1(token, dm_id, start):
 
     # Extracting the authorised user's ID from the token
     decoded_token = decode_JWT(token)
-    auth_user_id = decode_token['u_id']
-
-    # create the dictionary messages 
-    messages = [ {
-        'message_id': '',
-        'u_id': '',
-        'message': '',
-        'time_created': '',
-    } ]
-    
-    # for each dm in dms details 
-    for i in range(len(dms)):
-        # add messages dictionary into it 
-        dms[i]['messages'] = messages
-        dms[i]['start'] = 0
-        dms[i]['end'] = 50
+    auth_user_id = decoded_token['u_id']
         
     # Defining the end index
-        end = start + 50
+    end = int(start) + 50
     
-    # Raising an error if the given dm ID is not a valid dm
-    if check_valid_dmid(dm_id) == False:
-        raise InputError("Invalid dm_id")
-       
-    # Finding the specific dm
-    dm_count = 0
-    for i in range(len(dms)):
-        if dm_id == dms[i]["dm_id"]:
-            break
-        dm_count += 1
+    # Raising an error if the given dm ID is not a valid DM
+    check_valid_dmid(dm_id)
        
     # Raising an error if start is greater than
-    # the total number of messages in the given dm
-    if start_greater != True:
-        raise InputError("Exceeded total number of messages in this dm") 
+    # the total number of messages in the given DM
+    start_greater(dm_id, start)
         
     # Raising an error if the authorised user 
-    # is not a member of the valid dm
-    if check_dm_member(dm_id, auth_user_id) == False:
-        raise AccessError("You are not a member of the dm")  
+    # is not a member of the valid DM
+    check_dm_member(dm_id, auth_user_id)
 
     # Append all messages in a list
     message_list = []
-    for message in messages:
-        message_list.append(message["message"])
+    for i in range(len(dms)):
+        if int(dms[i]['dm_id']) == int(dm_id):
+            dm_messages = dms[i]['messages']
+            for i in range(len(dm_messages)):
+                message_list.append(dm_messages[i])
    
-    if len(messages) < 50:
+    if len(message_list) < 50:
         return { 
-            'messages': tuple(message_list)[start:end], 
-            'start': start,
+            'messages': message_list[int(start):int(end)], 
+            'start': int(start),
             'end': -1 
         }
     else:
         return { 
-            'messages': tuple(message_list)[start:end], 
+            'messages': message_list[int(start):int(end)], 
             'start': start,
             'end': end 
         }
-
-    return False

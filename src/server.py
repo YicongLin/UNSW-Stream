@@ -6,15 +6,12 @@ from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
 from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_join_v2, channel_invite_v2, channel_messages_v2, channel_leave_v1
-from src.channel import check_valid_channel_id, check_valid_uid, check_valid_token, check_member, channel_owners_ids, check_channel_owner_permissions, check_global_owner, start_greater_than_total, channel_status
-from src.channels import channels_listall_v2, channels_create_v2
+from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
 from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
-from src.dm import check_valid_dmid, check_valid_dm_token, start_greater, check_dm_member
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.message import valid_dm_id, valid_message_length, check_dm_member, valid_message_id, owner_permissions, conditional_edit
 from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1
-from src.admin import remove_only_global_owner, demote_only_global_owner, not_a_global_owner, admin_userpermission_change_v1, admin_user_remove_v1
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, check_alpha_num, check_duplicate_handle, check_duplicate_email, check_handle, check_valid_email, check_name_length, token_check, check_password_length
+from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
@@ -43,12 +40,8 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-@APP.route('/clear/v1', methods=['DELETE'])
-def clear():
-    clear_v1()
-    return dumps({})
-    
-@APP.route('/channel/invite/v2', methods=['POST'])
+
+@APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite_http():
     request_data = request.get_json()
     token = request_data['token']
@@ -97,40 +90,9 @@ def add_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    channel_id_element = check_valid_channel_id(channel_id)
-    if channel_id_element == False:
-        raise InputError("Invalid channel_id")
-    try:
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError("Invalid channel_id")
+    channel_addowner_v1(token, channel_id, u_id)
 
-
-            channel_id_element = check_valid_channel_id(channel_id)
-            if channel_id_element == False:
-                raise InputError(description="Invalid channel_id")
-
-            if check_valid_uid(u_id) == False:
-                raise InputError(description="Invalid user ID")
-
-            each_member_id = check_member(channel_id_element, u_id)
-            if each_member_id  == False:
-                raise InputError(description="User is not a member of this channel")
-            
-            each_owner_id = channel_owners_ids(channel_id_element)
-
-            if u_id in each_owner_id:
-                raise InputError(description="User already is an owner of channel")
-            
-            if check_channel_owner_permissions(token, each_owner_id) == False:
-                raise AccessError(description="No permissions to add user")
-
-            channel_addowner_v1(token, channel_id, u_id)
-
-            return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps({})
 
 @APP.route('/channel/removeowner/v1', methods=['POST'])
 def remove_owner():
@@ -140,34 +102,9 @@ def remove_owner():
     channel_id = request_data['channel_id']
     u_id = request_data['u_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    channel_removeowner_v1(token, channel_id, u_id)
 
-        channel_id_element = check_valid_channel_id(channel_id)
-        if channel_id_element == False:
-            raise InputError("Invalid channel_id")
-
-        if check_valid_uid(u_id) == False:
-            raise InputError("Invalid user ID")
-
-        each_owner_id = channel_owners_ids(channel_id_element)
-
-        if u_id not in each_owner_id:
-            raise InputError("User is not an owner of channel")
-
-        if u_id in each_owner_id and len(each_owner_id) == 1:
-            raise InputError("User is the only owner of channel")
-
-        if check_channel_owner_permissions(token, each_owner_id) == False:
-            raise AccessError("No permissions to remove user")
-
-        channel_removeowner_v1(token, channel_id, u_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps({})
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details():
@@ -182,16 +119,9 @@ def channel_details():
 def channels_listall():
     token = request.args.get('token')
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    all_channels = channels_listall_v2(token)
 
-        all_channels = channels_listall_v2(token)
-
-        return dumps(all_channels)
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
+    return dumps(all_channels)
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details():
@@ -202,30 +132,16 @@ def dm_details():
 
     return dumps(dm)
 
-
 @APP.route('/dm/leave/v1', methods=['POST'])
 def dm_leave():
     request_data = request.get_json()
     token = request_data['token']
     dm_id = request_data['dm_id']
 
-    try:
-        if check_valid_token(token) == False:
-            raise AccessError(description="Invalid token")
+    dm_leave_v1(token, dm_id)
 
-        dm_id_element = check_valid_dmid(dm_id)
-        if dm_id_element == False:
-            raise InputError(description="Invalid dm_id")
+    return dumps({})
 
-        if check_valid_dm_token(token, dm_id_element) == False:
-            raise AccessError(description="Login user has not right to access this dm")
-
-        dm_leave_v1(token, dm_id)
-
-        return dumps({})
-
-    except (InvalidSignatureError, DecodeError, InvalidTokenError):
-        raise AccessError
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():
@@ -305,6 +221,7 @@ def admin_user_remove_http():
 
     return dumps({})
 
+
 @APP.route('/admin/userpermission/change/v1', methods=['POST'])
 def admin_userpermission_change_http():
     request_data = request.get_json()
@@ -322,13 +239,6 @@ def dm_remove():
     data = request.get_json()
     token = data['token']
     dm_id = data['dm_id']
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
-    """ if (is_creator(token, dm_id) == False):
-        raise AccessError("Access denied, user is not a creator of this DM")
-
-    if (is_valid_dm(dm_id) == False):
-        raise InputError("Invalid DM ID") """
     
     dm_remove_v1(token, dm_id)
 
@@ -422,22 +332,27 @@ def channels_create():
 
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():
-    data = request.get_json()
-    token = data['token']
-    if (is_valid_token(token) == False):
-        raise AccessError(description="Invalid token")
+    
+    # token = data['token']
+    token = request.args.get('token')
+
+
     
     result = channels_list_v2(token)
     return dumps(result)
 
 @APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
-    data = request.get_json()
-    token = data['token']
-    if (is_valid_token(token) == False):
-        raise AccessError("Invalid token")
+    
+    
+    token = request.args.get('token')
     result = dm_list_v1(token)
     return dumps(result)
+
+@APP.route('/clear/v1', methods=['DELETE'])
+def clear():
+    clear_v1()
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

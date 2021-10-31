@@ -126,14 +126,14 @@ def user_profile_v1(token, u_id):
     i = 0
     while i < len(store['users']):
         user = store['users'][i] 
-        if int(user['u_id']) == int(decoded_token['u_id']) == int(u_id):
+        if int(user['u_id']) == int(u_id):
             return {'user' : user}
         i += 1 
 
     i = 0
     while i < len(store['deleted_users']):
         user = store['deleted_users'][i] 
-        if (user['u_id'] == decoded_token['u_id'] and decoded_token['u_id'] == int(u_id)):
+        if (user['u_id'] == int(u_id)):
             return {'user' : user}
         i += 1 
 

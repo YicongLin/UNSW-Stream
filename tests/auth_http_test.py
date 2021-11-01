@@ -7,7 +7,7 @@ from src.other import clear_v1
 from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 from src.users import token_check
 
-BASE_URL = 'http://127.0.0.1:7224'
+BASE_URL = 'http://127.0.0.1:3178'
 
 # AUTH REGISTER 
 def test_auth_register():
@@ -91,8 +91,6 @@ def test_auth_register():
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "test1@email.com", "password" : "password1"})
     assert (r.status_code == 200)
     
-    resp = r.json()
-
     # valid user 2
     payload = {
         "email" : "test2@email.com",

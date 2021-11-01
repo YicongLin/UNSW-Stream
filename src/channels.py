@@ -15,7 +15,6 @@ def check_duplicate(list, channel):
     
 def channels_list_v2(token):
     
-    
     """ An authorised user to all the channels that they joined
     
     Arguments:
@@ -80,8 +79,7 @@ def channels_listall_v2(token):
     data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
-    if check_valid_token(token) == False:
-        raise AccessError("Invalid token")
+    check_valid_token(token)
 
     # Obatin all channels' information
     chan_data = data['channels']
@@ -140,7 +138,8 @@ def channels_create_v2(token, name, is_public):
         ],
         'channel_members': [
             users_info[user_id - 1]
-        ]
+        ],
+        'messages': []
     }
     
     # append all data and return
@@ -148,5 +147,3 @@ def channels_create_v2(token, name, is_public):
     data['channels_details'].append(channels_detail_dict)
     data_store.set(data)
     return { "channel_id": new_channel_id }
-
-

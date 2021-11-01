@@ -110,8 +110,6 @@ initial_object = {
                     'time_created': 1582426789
                 },
             ],
-            'start': 0,
-            'end': 50,  
             'creator': [
                 {
                     'u_id': 3,
@@ -181,9 +179,7 @@ initial_object = {
                     'message': 'Hello world',
                     'time_created': 1582426789,
                 }
-            ],
-            'start': 0,
-            'end': 50,                
+            ]             
         },
 
         {
@@ -217,7 +213,17 @@ initial_object = {
             ]
         },
                        
-    ],  
+    ], 
+    'deleted_users': [
+        {
+            'u_id': 1,
+            'email': '',
+            'name_first': 'Removed',
+            'name_last': 'user',
+            'handle_str': ''
+        }
+    ]
+ 
 
     
 

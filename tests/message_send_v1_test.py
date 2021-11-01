@@ -94,7 +94,7 @@ def test_invalid_dm_id(setup_clear, registered_first):
 # Testing for invalid token_id
 def test_invalid_token_id(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
-    token = register_first['token']
+    token = registered_first['token']
     # second user creates channel with first user; obtain channel_id
     channel_id = create_channel['channel_id']
     # first user logs out; this invalidates the token
@@ -111,7 +111,7 @@ def test_invalid_token_id(setup_clear, registered_first, create_channel):
 # Testing for invalid message length
 def test_invalid_message_length(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
-    token = register_first['token']
+    token = registered_first['token']
     # second user creates channel with first user; obtain channel_id
     channel_id = create_channel['channel_id']
     payload1 = {
@@ -160,7 +160,7 @@ def test_not_a_member(setup_clear, registered_third, create_channel):
 # Testing all valid cases
 def test_valid(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
-    token = register_first['token']
+    token = registered_first['token']
     # second user creates channel with first user; obtain channel_id
     channel_id = create_channel['channel_id']
     payload = {

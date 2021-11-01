@@ -80,7 +80,7 @@ def dm_two(registered_second):
 # Testing for invalid dm ID
 def test_invalid_dm(setup_clear, registered_first):
     # first user registers; obtain token
-    token = register_first['token']
+    token = registered_first['token']
     # first user request messages of a dm with invalid ID 
     payload2 = {
         "token": token,

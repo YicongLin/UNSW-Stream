@@ -92,7 +92,7 @@ def check_password_length(password):
 def check_duplicate_email(email):
     store = data_store.get()
 
-    i = 1
+    i = 0
     while i < len(store['emailpw']):
         user = store['emailpw'][i]
         if user['email'] == email:

@@ -3,6 +3,11 @@ import requests
 import json
 from src import config
 import math
+from src.auth import auth_register_v2
+from src.dm import dm_create_v1
+from src.token_helpers import decode_JWT
+from src.other import clear_v1
+import math
 from datetime import datetime, timezone
 
 BASE_URL = 'http://127.0.0.1:3178'
@@ -109,7 +114,7 @@ def test_invalid_token(setup_clear, registered_first, dm_one):
     dm_id = dm_one['dm_id']
     # first user logs out; this invalidates the token
     requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token})
-    # first user attempts to request channel messages
+    # first user attempts to request dm messages
     payload = {
         "token": token,
         "dm_id": int(dm_id),

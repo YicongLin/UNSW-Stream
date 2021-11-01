@@ -263,8 +263,7 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     # second user registers; obtain token and u_id
     token_2 = register_second['token']
     u_id_2 = register_second['auth_user_id']
-    # third user registers; obtain token
-    token_3 = register_third['token']
+    # third user registers; obtain u_id
     u_id_3 = register_third['auth_user_id']
     # second user creates DM with first and third user; obtain dm_id
     dm_id = create_dm['dm_id']

@@ -136,7 +136,7 @@ def test_not_a_member(setup_clear, registered_first, dm_two):
 def test_valid(setup_clear, registered_first, dm_one):
     # first user registers; obtain token and u_id
     token = registered_first['token']
-    u_id = registeedr_first['auth_user_id']
+    u_id = registered_first['auth_user_id']
     # first user creates dm; obtain dm_id
     dm_id = dm_one['dm_id']
     # first user sends message to dm

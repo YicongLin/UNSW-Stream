@@ -109,15 +109,22 @@ def test_remove_dm():
 
     anne = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "test89@gmail.com", "password": "password454643"})
     token = json.loads(anne.text)['token']
-
+    first_dm = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    dm_id_1 = json.loads(first_dm.text)['dm_id']
+    
+    resp = requests.get(f"{BASE_URL}/dm/details/v1", params={"token": token, "dm_id": dm_id_1})
+    dm_name_1 = json.loads(resp.text)['name']
     create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": [anna_id]})
-    dm_id = json.loads(create_return.text)['dm_id']
+    dm_id_2 = json.loads(create_return.text)['dm_id']
 
-    requests.delete(f'{BASE_URL}/dm/remove/v1', json={"token": token, "dm_id": dm_id})
+    requests.delete(f'{BASE_URL}/dm/remove/v1', json={"token": token, "dm_id": dm_id_2})
 
     resp = requests.get(f'{BASE_URL}/dm/list/v1', params={"token": token})
     assert json.loads(resp.text) == {
         'dms': [
-
+            {
+                'dm_id': dm_id_1,
+                'name': dm_name_1
+            }
         ]
     }

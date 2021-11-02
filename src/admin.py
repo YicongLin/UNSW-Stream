@@ -106,24 +106,33 @@ def admin_user_remove_v1(token, u_id):
     for i in range(len(dm_details)):
         dm_members = dm_details[i]['members']
         dm_creator = dm_details[i]['creator']
-        dm_name = dm_details[i]['name']
+        dm_name_list = dm_details[i]['name'].split()
         # removal from members list
         for j in range(len(dm_members)):
             if dm_members[j]['u_id'] == int(u_id):
                 handle_str = dm_members[j]['handle_str']
-                dm_members.remove(dm_members[j])
-                data_store.set(data)
-                break
+                print("-------------")
+                print(handle_str)
+                print("-------------")
+                member_index = j
+        del dm_members[member_index]
+        data_store.set(data)
         # removal from creator list
         if dm_creator[0]['u_id'] == int(u_id):
             dm_creator == []
             data_store.set(data)
-        # removal from name list
-        for j in range(len(dm_name)):
-            if dm_name[j] == handle_str:
-                dm_name.remove(dm_name[j])
-                data_store.set(data)
-                break
+        # removal from name string
+        for j in range(len(dm_name_list)):
+            if dm_name_list[j] == handle_str:
+                name_index = j
+            elif dm_name_list[j] == handle_str + ',':
+                name_index = j
+        del dm_name_list[name_index]
+        if len(dm_name_list) == 1:
+            dm_name_list[i] = dm_name_list[i].replace(',', '')
+        dm_name = ' '.join(dm_name_list)
+        dm_details[i]['name'] = dm_name
+        data_store.set(data)
         
     # removing the user's message/s from DM/s
     for i in range(len(dm_details)):
@@ -140,16 +149,15 @@ def admin_user_remove_v1(token, u_id):
         # removal from channel members list
         for j in range(len(channel_members)):
             if channel_members[j]['u_id'] == u_id:
-                channel_members.remove(channel_members[j])
-                data_store.set(data)
-                break
+                member_index = j
         # removal from owner members list
         for j in range(len(channel_owner_members)):
             if channel_owner_members[j]['u_id'] == u_id:
-                channel_owner_members.remove(channel_owner_members[j])
-                data_store.set(data)
-                break
-    
+                owner_index = j
+        del channel_members[member_index]
+        del channel_owner_members[owner_index]
+        data_store.set(data)
+
     # removing the user's message/s from channel/s
     for i in range(len(channel_details)):
         channel_messages = channel_details[i]['messages']
@@ -169,9 +177,10 @@ def admin_user_remove_v1(token, u_id):
                 'name_last': 'user',
                 'handle_str': ''
             }
+            user_index = i
             data['deleted_users'].append(deleted_user_dict)
-            users.remove(users[i])
-            break
+    del users[user_index]
+    data_store.set(data)
     return {}
 
 def admin_userpermission_change_v1(token, u_id, permission_id):

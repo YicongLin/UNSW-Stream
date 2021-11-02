@@ -3,15 +3,7 @@ from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.dm import decode_token, is_valid_token
 from src.channel import check_valid_token
-def check_duplicate(list, channel):
 
-    """ check for the element passed in is in the list or not """
-    i = 0
-    while i < len(list):
-        if (channel == list[i]):
-            return 1
-        i += 1
-    return 0
     
 def channels_list_v2(token):
     
@@ -104,22 +96,20 @@ def channels_create_v2(token, name, is_public):
 
     # check is the token passed in is valid, if not it will raise an access error
     is_valid_token(token)
-
-    # get data from datastore
-    data = data_store.get()
-    users_info = data['users']
-    channels_detail = data['channels_details']
-    user_id = decode_token(token)
     
-    # check for invalid user
-    """ if (is_valid_user(user_id) == False):
-        raise AccessError("Invalid user") """
-
     # check for invalid name
     if len(name) > 20:
         raise InputError(description="Invalid name: Too long")
     elif len(name) == 0:
         raise InputError(description="Invalid name: Too short")
+    
+    # get data from datastore
+    data = data_store.get()
+    users_info = data['users']
+    channels_detail = data['channels_details']
+    user_id = decode_token(token)
+
+    
     
     new_channel_id = len(channels_detail) + 1
     

@@ -254,17 +254,6 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id
     }
 
-def is_valid_user(u_id):
-    """ check if the user is a valid user by looping through the users datastore """
-    
-    data = data_store.get()
-    user_dict = data['users']
-    i = 0
-    while i < len(user_dict):
-        if (u_id == user_dict[i]):
-            return True
-        i += 1
-    return False
 
 def decode_token(token):
     """ decode a token and get the u_id """
@@ -329,7 +318,7 @@ def get_name(id_list):
             j += 1
         i += 1
     names_list = sorted(names_list)
-    return names_list
+    return ', '.join(names_list)
 
 
 def dm_remove_v1(token, dm_id):
@@ -380,10 +369,8 @@ def dm_remove_v1(token, dm_id):
     j = 0
     while j < len(dm_detail_info):
         if (dm_detail_info[j]['dm_id'] == dm_id):
-            # check if the user is the creator of this dm
-            creator = dm_detail_info[j]['creator']
-            if (user_id == creator[0]['u_id']):
-                data['dms_details'].remove(dm_detail_info[j])
+            # remove the dm
+            data['dms_details'].remove(dm_detail_info[j])
         j += 1
     
     data_store.set(data)

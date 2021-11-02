@@ -315,7 +315,7 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
         "handle_str": "firstuser"
     }
     response = r.json()
-    assert response == {"name": ["firstuser"], "members": [user]}
+    assert response == {"name": "firstuser", "members": [user]}
     # assert the sent message is removed;
     # the first user requests dm messages - the message will be replaced with "Removed user"
     payload4 = {

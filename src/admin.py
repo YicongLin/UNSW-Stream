@@ -106,22 +106,32 @@ def admin_user_remove_v1(token, u_id):
     for i in range(len(dm_details)):
         dm_members = dm_details[i]['members']
         dm_creator = dm_details[i]['creator']
-        dm_name = dm_details[i]['name']
+        dm_name_list = dm_details[i]['name'].split()
         # removal from members list
         for j in range(len(dm_members)):
             if dm_members[j]['u_id'] == int(u_id):
                 handle_str = dm_members[j]['handle_str']
+                print("-------------")
+                print(handle_str)
+                print("-------------")
                 member_index = j
+        del dm_members[member_index]
+        data_store.set(data)
         # removal from creator list
         if dm_creator[0]['u_id'] == int(u_id):
             dm_creator == []
             data_store.set(data)
-        # removal from name list
-        for j in range(len(dm_name)):
-            if dm_name[j] == handle_str:
+        # removal from name string
+        for j in range(len(dm_name_list)):
+            if dm_name_list[j] == handle_str:
                 name_index = j
-        del dm_members[member_index]
-        del dm_name[name_index]
+            elif dm_name_list[j] == handle_str + ',':
+                name_index = j
+        del dm_name_list[name_index]
+        if len(dm_name_list) == 1:
+            dm_name_list[i] = dm_name_list[i].replace(',', '')
+        dm_name = ' '.join(dm_name_list)
+        dm_details[i]['name'] = dm_name
         data_store.set(data)
         
     # removing the user's message/s from DM/s

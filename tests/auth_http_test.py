@@ -83,8 +83,8 @@ def test_auth_register():
     payload = {
         "email" : "test1@email.com",
         "password" : "password1",
-        "name_first" : "1",
-        "name_last" : "1"
+        "name_first" : "first1",
+        "name_last" : "first1"
     }
 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
@@ -95,8 +95,8 @@ def test_auth_register():
     payload = {
         "email" : "test2@email.com",
         "password" : "password2",
-        "name_first" : "first2",
-        "name_last" : "last2"
+        "name_first" : "first1",
+        "name_last" : "last1"
     }
 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
@@ -106,8 +106,8 @@ def test_auth_register():
     payload = {
         "email" : "test3@email.com",
         "password" : "password3",
-        "name_first" : "first3",
-        "name_last" : "last3"
+        "name_first" : "first1",
+        "name_last" : "last1"
     }
 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
@@ -148,7 +148,7 @@ def test_auth_register():
 
 # AUTH LOGIN 
 def test_auth_login():
-    clear_v1()
+    requests.delete(f'{BASE_URL}/clear/v1')
     payload = {
         "email" : "testahudisjak@email.com",
         "password" : "password1",
@@ -157,7 +157,7 @@ def test_auth_login():
     }
 
     # test unregistered email
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "testahudisjak", "password" : "password1"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "testahudisjak@gmail.com", "password" : "password1"})
     assert (r.status_code == 400)
 
     # test invalid email 
@@ -195,12 +195,12 @@ def test_auth_login():
     assert (r.status_code == 200)
 
     # incorrect password 
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "test2@email.com", "password" : "wrongpassword"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "thisisanothertest2@email.com", "password" : "wrongpassword"})
     assert (r.status_code == 400)
 
 # AUTH LOGOUT  
 def test_auth_logout():
-    clear_v1()
+    requests.delete(f'{BASE_URL}/clear/v1')
 
     # valid user 1
     payload = {
@@ -269,6 +269,47 @@ def test_auth_logout():
     r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
     assert (r.status_code == 403) 
 
+# AUTH DUPLICATE HANDLES
+def test_duplicate_handles():
+    requests.delete(f'{BASE_URL}/clear/v1')
+
+    # valid user 1
+    payload = {
+        "email" : "randomemail@email.com",
+        "password" : "password",
+        "name_first" : "first2",
+        "name_last" : "last2"
+    }
+
+    # register and login valid user 
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)
+
+    # valid user 2
+    payload = {
+        "email" : "randomemailpt2@email.com",
+        "password" : "password",
+        "name_first" : "first2",
+        "name_last" : "last2"
+    }
+
+    # register and login valid user 
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)
+
+    # valid user 3
+    payload = {
+        "email" : "randomemailpt3@email.com",
+        "password" : "password",
+        "name_first" : "first2",
+        "name_last" : "last2"
+    }
+
+    # register and login valid user 
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)
+
+    
 
 
 

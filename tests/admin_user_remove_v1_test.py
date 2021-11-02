@@ -340,18 +340,25 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     assert response == {"messages": [message1, message2], "start": 0, "end": -1}
 
 # Test user removal from user list, but still also retrievable with user/profile
-def test_user_list_and_profile(clear_setup, register_first, register_second):
+def test_user_list_and_profile(clear_setup, register_first, register_second, register_third):
      # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id_1 = register_first['auth_user_id']
     # second user registers; obtain u_id
     u_id_2 = register_second['auth_user_id']
+    # third user registers; obtain u_id
+    u_id_3 = register_third['auth_user_id']
     # first user removes second and third users 
     payload1 = {
         "token": token_1,
         "u_id": u_id_2
     }
     requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload1)
+    payload2 = {
+        "token": token_1,
+        "u_id": u_id_3
+    }
+    requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload2)
     # test that the second user is removed from users list;
     # first user requests user list
     r = requests.get(f'{BASE_URL}/users/all/v1', params = {"token": token_1})
@@ -364,11 +371,11 @@ def test_user_list_and_profile(clear_setup, register_first, register_second):
     }
     response = r.json()
     assert response == {"users": [user]}
-    # test that the second user should still be retrievable with user/profile;
-    # first user requests second user's profile
-    r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload1)
+    # test that the third user should still be retrievable with user/profile;
+    # first user requests third user's profile
+    r = requests.get(f'{BASE_URL}/user/profile/v1', params = payload2)
     user = {
-        "u_id": u_id_2,
+        "u_id": u_id_3,
         "email": '',
         "name_first": 'Removed',
         "name_last": 'user',

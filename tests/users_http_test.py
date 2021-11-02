@@ -72,8 +72,6 @@ def test_user_profile_valid():
 
     assert resp['auth_user_id'] == 2
 
-    # invalid token?????
-
     # valid token + valid id 
     payload = {
         "token" : resp['token'],
@@ -147,7 +145,6 @@ def test_user_profile():
 def test_user_profile_setname():
     requests.delete(f'{BASE_URL}/clear/v1')
 
-
     # valid user 1
     payload = {
         "email" : "qwertyuiop@email.com",
@@ -159,6 +156,17 @@ def test_user_profile_setname():
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     assert (r.status_code == 200) 
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "qwertyuiop@email.com", "password" : "password"})
+    assert (r.status_code == 200) 
+
+    # valid user 2
+    payload = {
+        "email" : "yayanotheruser@email.com",
+        "password" : "password",
+        "name_first" : "ehwjjskoo",
+        "name_last" : "aishdufibjn"
+    }
+
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     assert (r.status_code == 200) 
     
     resp = r.json()
@@ -238,12 +246,23 @@ def test_user_profile_set_email():
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "2893ry7gyedjkap@email.com", "password" : "password"})
     assert (r.status_code == 200) 
 
+    # valid user 2
+    payload = {
+        "email" : "anoooootheremail@email.com",
+        "password" : "password",
+        "name_first" : "sjdnksand",
+        "name_last" : "asjbdaknda"
+    }
+
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200) 
+
     resp = r.json()
 
     # valid email + token 
     payload = {
         "token" : resp['token'],
-        "email" : "iajsdiofjsao@email.com"
+        "email" : "yetanotheremail@email.com"
     } 
 
     r = requests.put(f'{BASE_URL}/user/profile/setemail/v1', json = payload)
@@ -287,6 +306,7 @@ def test_user_profile_set_handle():
     assert (r.status_code == 200) 
     r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zxcvbnm@email.com", "password" : "password"})
     assert (r.status_code == 200) 
+
     resp = r.json()
 
     # valid user 2
@@ -310,6 +330,14 @@ def test_user_profile_set_handle():
 
     r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
     assert (r.status_code == 400) 
+
+    # valid handle 
+    payload = {
+        "token" : resp['token'],
+        "handle_str" : "yaynewhandle"
+    }
+    r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
+    assert (r.status_code == 200)
 
     # invalid handle - too short
     payload = {
@@ -347,12 +375,11 @@ def test_user_profile_set_handle():
     r = requests.put(f'{BASE_URL}/user/profile/sethandle/v1', json = payload)
     assert (r.status_code == 200) 
 
-
     # valid user 3
     payload = {
         "email" : "by7guhjGVC0@email.com",
         "password" : "password",
-        "name_first" : "hu8hjno",
+        "name_first" : "hhhhheeeellloooooo",
         "name_last" : "world"
     }
 

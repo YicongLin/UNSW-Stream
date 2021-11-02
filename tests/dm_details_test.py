@@ -53,7 +53,7 @@ def test_dm_details():
             'name_last': 'Person',
             'u_id': uid_1}
             ],
-        'name': ['testperson', 'testtwopersontwo'],
+        'name': 'testperson, testtwopersontwo',
     })
 
     # Logout user_one
@@ -93,7 +93,7 @@ def test_dm_details():
             'name_last': 'Person',
             'u_id': uid_1}
             ],
-        'name': ['testperson', 'testtwopersontwo'],
+        'name': 'testperson, testtwopersontwo',
     })
 
     # Logout user_two

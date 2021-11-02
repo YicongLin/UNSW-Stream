@@ -329,7 +329,7 @@ def get_name(id_list):
             j += 1
         i += 1
     names_list = sorted(names_list)
-    return names_list
+    return ', '.join(names_list)
 
 
 def dm_remove_v1(token, dm_id):

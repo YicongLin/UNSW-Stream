@@ -55,7 +55,7 @@ def test_dm_create():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['kevinlin', 'yiconglin']
+                'name': 'kevinlin, yiconglin'
             }
         ]
     }

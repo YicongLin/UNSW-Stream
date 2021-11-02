@@ -194,4 +194,4 @@ def test_sent_messages(setup_clear, registered_first, registered_second, create_
         "time_created": time_created
     }
     response = r.json()
-    
+    assert response == {"messages": [message], "start": 0, "end": -1}

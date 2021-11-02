@@ -113,7 +113,7 @@ def auth_register_v2(email, password, name_first, name_last):
             number = 0
             user_handle = user_handle + str(number)
         # already has number  
-        elif len(user['handle_str']) > len(user_handle):
+        if len(user['handle_str']) > len(user_handle):
             diff = len(user['handle_str']) - len(user_handle)
             number = int(user['handle_str'][-diff:]) + 1
             user_handle = user_handle + str(number)
@@ -172,12 +172,13 @@ def auth_logout_v1(token):
 
     # remove session_id from user list of session id's
     i = 0
-    while i < len(store['emailpw']):
-        user = store['emailpw'][i]
-        # check if session id matches any current session id’s 
-        if session_id in user['session_id']:
-            # remove session_id
-            user['session_id'].remove(session_id)
-            data_store.set(store)
-            return { }
-        i += 1 
+    while True:
+        if i < len(store['emailpw']):
+            user = store['emailpw'][i]
+            # check if session id matches any current session id’s 
+            if session_id in user['session_id']:
+                # remove session_id
+                user['session_id'].remove(session_id)
+                data_store.set(store)
+                return { }
+            i += 1 

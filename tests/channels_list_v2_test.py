@@ -60,11 +60,16 @@ def test_list():
     } """
     requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd", "name_first": "james", "name_last": "wang"})
+    register_return = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test@gmail.com", "password": "password454643", "name_first": "yicong1", "name_last": "lin1"})
+    u_id = json.loads(register_return.text)['auth_user_id']
+
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd"})
     token = json.loads(response.text)['token']
     
     create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
     channel_id = json.loads(create_return.text)['channel_id']
+    
+    requests.post(f'{BASE_URL}/channel/invite/v2', json = {"token": token, "channel_id": channel_id, "u_id": u_id})
     resp = requests.get(f'{BASE_URL}/channels/list/v2', params={"token": token})
     assert json.loads(resp.text) == {
         'channels': [

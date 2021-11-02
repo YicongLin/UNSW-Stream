@@ -222,6 +222,7 @@ def message_senddm_v1(token, dm_id, message):
     for i in range(len(dm_details)):
         if dm_details[i]['dm_id'] == int(dm_id):
             data['dms_details'][i]['messages'].append(message_dict)
+            data_store.set(data)
 
     return {"message_id": message_id}
 
@@ -283,6 +284,7 @@ def message_send_v1(token, channel_id, message):
     for i in range(len(channel_details)):
         if int(channel_details[i]['channel_id']) == int(channel_id):
             data['channels_details'][i]['messages'].append(message_dict)
+            data_store.set(data)
     
     return {"message_id": message_id}
 

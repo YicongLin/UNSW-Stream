@@ -208,3 +208,5 @@ def test_sent_messages(clear_setup, register_first, register_second, create_dm):
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}
+
+

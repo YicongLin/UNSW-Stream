@@ -113,7 +113,7 @@ def auth_register_v2(email, password, name_first, name_last):
             number = 0
             user_handle = user_handle + str(number)
         # already has number  
-        else len(user['handle_str']) > len(user_handle):
+        elif len(user['handle_str']) > len(user_handle):
             diff = len(user['handle_str']) - len(user_handle)
             number = int(user['handle_str'][-diff:]) + 1
             user_handle = user_handle + str(number)

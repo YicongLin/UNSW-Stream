@@ -113,7 +113,7 @@ def auth_register_v2(email, password, name_first, name_last):
             number = 0
             user_handle = user_handle + str(number)
         # already has number  
-        elif len(user['handle_str']) > len(user_handle):
+        else len(user['handle_str']) > len(user_handle):
             diff = len(user['handle_str']) - len(user_handle)
             number = int(user['handle_str'][-diff:]) + 1
             user_handle = user_handle + str(number)
@@ -137,7 +137,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
     if number_users == 1:
         permissions_id = 1
-    elif number_users >= 2:
+    else:
         permissions_id = 2
 
     # generate token 
@@ -181,5 +181,3 @@ def auth_logout_v1(token):
             data_store.set(store)
             return { }
         i += 1 
-
-    raise InputError(description = "auth_logout: Invalid session id")

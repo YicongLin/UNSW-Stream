@@ -135,8 +135,6 @@ def user_profile_v1(token, u_id):
             return {'user' : user}
         i += 1 
 
-    raise InputError(description = "user_profile: Invalid u_id")
-
 def user_profile_setname_v1(token, name_first, name_last):
     """
     Update the authorised user's first and last name
@@ -161,9 +159,6 @@ def user_profile_setname_v1(token, name_first, name_last):
 
         i += 1 
     
-    # if user does not exist
-    raise InputError(description = "user_profile_setname: Invalid user") 
-
 def user_profile_setemail_v1(token, email):
     """
     Update the authorised user's email address 
@@ -186,9 +181,6 @@ def user_profile_setemail_v1(token, email):
             return { } 
 
         i += 1 
-    
-    # if user does not exist
-    raise InputError(description = "user_profile_setemail: Invalid user")
 
 def user_profile_sethandle_v1(token, handle_str):
 
@@ -209,6 +201,3 @@ def user_profile_sethandle_v1(token, handle_str):
             data_store.set(store)
             return { } 
         i += 1 
-    
-    # if user does not exist
-    raise InputError(description = "user_profile_sethandle: Invalid user")

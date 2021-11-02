@@ -6,7 +6,7 @@ from src.auth import auth_register_v2, auth_login_v2, auth_logout_v1
 from src.error import AccessError
 from src.dm import dm_create_v1, dm_list_v1
 import json
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:3210'
 # checking for invalid token, if a user is logged out that token is invalid
 def test_invalid_token_list():
     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
@@ -60,11 +60,16 @@ def test_list():
     } """
     requests.delete(f'{BASE_URL}/clear/v1')
     requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd", "name_first": "james", "name_last": "wang"})
+    register_return = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "test@gmail.com", "password": "password454643", "name_first": "yicong1", "name_last": "lin1"})
+    u_id = json.loads(register_return.text)['auth_user_id']
+
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testing@gmail.com", "password": "passwordsdhhfd"})
     token = json.loads(response.text)['token']
     
     create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
     channel_id = json.loads(create_return.text)['channel_id']
+    
+    requests.post(f'{BASE_URL}/channel/invite/v2', json = {"token": token, "channel_id": channel_id, "u_id": u_id})
     resp = requests.get(f'{BASE_URL}/channels/list/v2', params={"token": token})
     assert json.loads(resp.text) == {
         'channels': [

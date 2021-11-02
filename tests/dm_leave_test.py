@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:3210'
 
 # ==================================
 # Test dm_leave
@@ -63,7 +63,7 @@ def test_dm_leave():
             'name_last': 'Person',
             'u_id': uid_1}
             ],
-        'name': ['testfourpersonfour', 'testperson', 'testtwopersontwo'],
+        'name': 'testfourpersonfour, testperson, testtwopersontwo',
     })
 
     # user_one leave dm -----> successful implement (creator leave)
@@ -127,7 +127,7 @@ def test_dm_leave():
             'u_id': uid_4},
 
             ],
-        'name': ['testfourpersonfour', 'testperson', 'testtwopersontwo'],
+        'name': 'testfourpersonfour, testperson, testtwopersontwo',
     })
 
     # user_two leave dm -----> successful implement
@@ -159,7 +159,7 @@ def test_dm_leave():
             'name_last': 'Personfour',
             'u_id': uid_4},
             ],
-        'name': ['testfourpersonfour', 'testperson', 'testtwopersontwo'],
+        'name': 'testfourpersonfour, testperson, testtwopersontwo',
     })
 
     # user_four leave dm(only member) -----> successful implement

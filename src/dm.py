@@ -30,17 +30,16 @@ def check_valid_dmid(dm_id):
         all_dm_id.append(data['dms_details'][dms_element]['dm_id'])
         dms_element += 1
 
-    if dm_id not in all_dm_id :
-        raise InputError(description="Invalid dm_id")
-
-
     dm_id_element = 0
     while dm_id_element < len(all_dm_id):
         if dm_id == all_dm_id[dm_id_element]:
-            return dm_id_element
+            break
         dm_id_element += 1
             
-    pass
+    if dm_id not in all_dm_id :
+        raise InputError(description="Invalid dm_id")
+
+    return dm_id_element 
 # Finish valid dm_id check
 # ==================================
 
@@ -64,6 +63,20 @@ def check_valid_dm_token(auth_user_id, dm_id_element):
 
     return each_member_id
 # Finish  authorised user member check
+# ==================================
+
+# ==================================
+# Find out the index of auth_user within dm['members']
+# Return the index of auth_user within dm['members']
+def auth_user_dm_index(each_member_id, auth_user_id):
+    member_id_element = 0
+
+    while True:
+        if each_member_id[member_id_element] == auth_user_id:
+            return member_id_element
+        member_id_element += 1
+
+# Finish index finding
 # ==================================
 
 # ==================================
@@ -190,17 +203,19 @@ def dm_leave_v1(token, dm_id):
     dm_id_element = check_valid_dmid(dm_id)
 
     auth_user_id = decode_JWT(token)['u_id']
+
     # Raise an AccessError if authorised user type in a valid dm_id
     # but the authorised user is not a member of dm
     # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
     each_member_id = check_valid_dm_token(auth_user_id, dm_id_element)
 
     # Find out the index of auth_user within dm['members']
-    member_id_element = 0
-    while member_id_element < len(each_member_id):
-        if data['dms_details'][dm_id_element]['members'][member_id_element]['u_id'] == auth_user_id:
-            break
-        member_id_element += 1
+    # while member_id_element < len(each_member_id):
+    #     if data['dms_details'][dm_id_element]['members'][member_id_element]['u_id'] == auth_user_id:
+    #         break
+    #     member_id_element += 1
+    member_id_element = auth_user_dm_index(each_member_id, auth_user_id)
+
     # Pick out dict from dm's members and then delete it 
     leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
     data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
@@ -254,17 +269,6 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id
     }
 
-def is_valid_user(u_id):
-    """ check if the user is a valid user by looping through the users datastore """
-    
-    data = data_store.get()
-    user_dict = data['users']
-    i = 0
-    while i < len(user_dict):
-        if (u_id == user_dict[i]):
-            return True
-        i += 1
-    return False
 
 def decode_token(token):
     """ decode a token and get the u_id """
@@ -329,7 +333,7 @@ def get_name(id_list):
             j += 1
         i += 1
     names_list = sorted(names_list)
-    return names_list
+    return ', '.join(names_list)
 
 
 def dm_remove_v1(token, dm_id):
@@ -380,10 +384,8 @@ def dm_remove_v1(token, dm_id):
     j = 0
     while j < len(dm_detail_info):
         if (dm_detail_info[j]['dm_id'] == dm_id):
-            # check if the user is the creator of this dm
-            creator = dm_detail_info[j]['creator']
-            if (user_id == creator[0]['u_id']):
-                data['dms_details'].remove(dm_detail_info[j])
+            # remove the dm
+            data['dms_details'].remove(dm_detail_info[j])
         j += 1
     
     data_store.set(data)

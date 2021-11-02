@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:3210'
 
 # ==================================
 # Test both addowner and removeowner 

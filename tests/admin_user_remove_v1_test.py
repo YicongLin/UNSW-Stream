@@ -196,7 +196,7 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
     requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # second user sends a message to the channel
     payload3 = {
         "token": token_2,
@@ -206,7 +206,7 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
     requests.post(f'{BASE_URL}/message/send/v1', json = payload3)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created2 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created2 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # the second and third users are removed from Streams
     payload4 = {
         "token": token_1,
@@ -276,7 +276,7 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # second user sends a message to the dm
     payload1 = {
         "token": token_2,
@@ -286,7 +286,7 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created2 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created2 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # second user is removed from Streams
     payload2 = {
         "token": token_1,

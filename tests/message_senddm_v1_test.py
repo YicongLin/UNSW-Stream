@@ -191,7 +191,7 @@ def test_sent_messages(clear_setup, register_first, register_second, create_dm):
 
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
 
     # second user returns messages in the DM
     payload = {

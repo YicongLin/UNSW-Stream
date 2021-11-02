@@ -2,6 +2,7 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime, timezone
+import time
 from src.users import token_check
 from src.channel import check_channel, not_a_member
 import hashlib
@@ -208,7 +209,7 @@ def message_senddm_v1(token, dm_id, message):
 
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
 
     # creating a dictionary with the message and corresponding information
     message_dict = {
@@ -270,7 +271,7 @@ def message_send_v1(token, channel_id, message):
 
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
 
     # creating a dictionary with the message and corresponding information
     message_dict = {

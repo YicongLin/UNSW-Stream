@@ -73,7 +73,7 @@ def check_valid_dm_token(auth_user_id, dm_id_element):
 def start_greater(dm_id, start):
     data = data_store.get()
     dms = data["dms_details"]
-    
+
     for i in range(len(dms)):
         if dm_id == dms[i]["dm_id"]:
             x = dms[i]

@@ -269,7 +269,7 @@ def message_send_v1(token, channel_id, message):
 
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
 
     # creating a dictionary with the message and corresponding information
     message_dict = {
@@ -283,7 +283,7 @@ def message_send_v1(token, channel_id, message):
     for i in range(len(channel_details)):
         if int(channel_details[i]['channel_id']) == int(channel_id):
             data['channels_details'][i]['messages'].append(message_dict)
-    
+        data_store.set(data)
     return {"message_id": message_id}
 
 def message_edit_v1(token, message_id, message):

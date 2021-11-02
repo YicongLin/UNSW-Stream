@@ -170,7 +170,7 @@ def test_no_user_permission(setup_clear, registered_first, registered_second):
         "message": "Goodbye World"
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 400 
+    assert r.status_code == 200 
 
 # Testing for when the function fails to edit the message
 def test_unedited_message(setup_clear, registered_first, registered_second, registered_third):

@@ -165,8 +165,14 @@ def test_sent_messages(setup_clear, registered_first, registered_second, create_
     u_id_1 = registered_first['auth_user_id']
      # first user registers; obtain token
     token_2 = registered_second['token']
-    # second user creates channel with first user; obtain channel_id
+    # second user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
+    # first user joins channel
+    payload = {
+        "token": token_1,
+        "channel_id": channel_id
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
 
     # first user sends a message to the channel
     payload = {

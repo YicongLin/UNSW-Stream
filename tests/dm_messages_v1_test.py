@@ -4,6 +4,7 @@ import json
 from src import config
 import math
 from src.auth import auth_register_v2
+from src.data_store import data_store
 from src.dm import dm_create_v1
 from src.token_helpers import decode_JWT
 from src.other import clear_v1

@@ -5,7 +5,7 @@ from src import config
 from src.auth import auth_register_v2
 from src.other import clear_v1
 
-BASE_URL = 'http://127.0.0.1:3210'
+BASE_URL = 'http://127.0.0.1:3178'
 
 # ================================================
 # ================= FIXTURES =====================

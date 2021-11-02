@@ -111,9 +111,6 @@ def admin_user_remove_v1(token, u_id):
         for j in range(len(dm_members)):
             if dm_members[j]['u_id'] == int(u_id):
                 handle_str = dm_members[j]['handle_str']
-                print("-------------")
-                print(handle_str)
-                print("-------------")
                 member_index = j
         del dm_members[member_index]
         data_store.set(data)
@@ -182,6 +179,7 @@ def admin_user_remove_v1(token, u_id):
     del users[user_index]
     data_store.set(data)
     return {}
+
 
 def admin_userpermission_change_v1(token, u_id, permission_id):
     """Given a user by their u_id, set the user's permissions to new permissions described by permission_id.

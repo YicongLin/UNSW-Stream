@@ -51,7 +51,7 @@ def test_list_only_creator():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['johnsmith']
+                'name': 'johnsmith'
             }
         ]
     }
@@ -98,7 +98,7 @@ def test_list():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['kangliu', 'lilianpok', 'prasannaapandey', 'yiconglin', 'zamilee']
+                'name': 'kangliu, lilianpok, prasannaapandey, yiconglin, zamilee'
             }
         ]
     }
@@ -138,7 +138,7 @@ def test_list1():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['jikezhang', 'longma', 'xinxu']
+                'name': 'jikezhang, longma, xinxu'
             }
         ]
     }

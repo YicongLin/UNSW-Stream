@@ -143,21 +143,48 @@ def test_invalid_message_id(setup_clear, registered_first):
 # the message was sent by the authorised user making this request
 # and the authorised user has owner permissions in the channel/DM
 def test_no_user_permission():
-
+    # first user registers; obtain token and u_id
+    token_1 = registered_first['token']
+    u_id_1 = registered_first['auth_user_id']
+    # second user registers; obtain token and u_id
+    token_2 = registered_second['token']
+    u_id_2 = registered_second['auth_user_id']
+    # second user creates channel with first user
+    dm_id = create_dm['dm_id']
+    # first user sends a message to the dm
+    payload = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message_id": message_id,
+        "message": "Hello World"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    # second user attempts to edit the message
+    payload = {
+        "token": token_2,
+        "dm_id": dm_id,
+        "message_id": message_id
+        "message": "Goodbye World"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
+    assert r.status_code == 400 
 
 # Testing for when the function fails to edit the message
 def test_unedited_message(setup_clear, registered_first, registered_second, registered_third):
     # first user registers; obtain token and u_id
     token_1 = registered_first['token']
     u_id_1 = registered_first['auth_user_id']
- # second user registers; obtain token and u_id
+    # second user registers; obtain token and u_id
     token_2 = registered_second['token']
     u_id_2 = registered_second['auth_user_id']
     # third user registers; obtain u_id
     u_id_3 = registered_third['auth_user_id']
     # second user creates channel with first and third user; obtain channel_id
     channel_id = create_channel['channel_id']
-    # first user sends a message to the dm
+    # first user sends a message to the channel
     payload = {
         "token": token_1,
         "channel_id": channel_id,
@@ -168,12 +195,11 @@ def test_unedited_message(setup_clear, registered_first, registered_second, regi
     # obtaining the time the message is created
     time = datetime.now()
     time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
     payload = {
         "token": token,
         "channel_id": channel_id,
         "message_id": message_id
         "message": "Hello World"
     }
-    r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload)
     assert r.status_code == 400 

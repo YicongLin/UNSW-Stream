@@ -149,15 +149,16 @@ def user_profile_setname_v1(token, name_first, name_last):
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['name_first'] = name_first
-            user['name_last'] = name_last
-            data_store.set(store)
-            return { } 
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['name_first'] = name_first
+                user['name_last'] = name_last
+                data_store.set(store)
+                return { } 
 
-        i += 1 
+            i += 1 
     
 def user_profile_setemail_v1(token, email):
     """
@@ -173,14 +174,15 @@ def user_profile_setemail_v1(token, email):
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['email'] = email
-            data_store.set(store)
-            return { } 
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['email'] = email
+                data_store.set(store)
+                return { } 
 
-        i += 1 
+            i += 1 
 
 def user_profile_sethandle_v1(token, handle_str):
 
@@ -194,10 +196,11 @@ def user_profile_sethandle_v1(token, handle_str):
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['handle_str'] = handle_str
-            data_store.set(store)
-            return { } 
-        i += 1 
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['handle_str'] = handle_str
+                data_store.set(store)
+                return { } 
+            i += 1 

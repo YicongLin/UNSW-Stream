@@ -65,14 +65,15 @@ def registered_third():
 @pytest.fixture
 def create_channel(registered_second, registered_first):
     token = registered_second['token']
-    u_id = registered_first['auth_user_id']
     payload = {
         "token": token,
-        "u_ids": [u_id]
+        "name": "1",
+        "is_public": True
     }
     r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
     resp = r.json()
     return resp
+
 
 # ================================================
 # =================== TESTS ======================
@@ -157,20 +158,6 @@ def test_not_a_member(setup_clear, registered_third, create_channel):
     r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     assert r.status_code == 403
 
-# Testing all valid cases
-def test_valid(setup_clear, registered_first, create_channel):
-    # first user registers; obtain token
-    token = registered_first['token']
-    # second user creates channel with first user; obtain channel_id
-    channel_id = create_channel['channel_id']
-    payload = {
-        "token": token,
-        "channel_id": channel_id,
-        "message": "Hello World"
-    }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
-    assert r.status_code == 200
-
 # Testing to ensure the message was sent to the specified channel
 def test_sent_messages(setup_clear, registered_first, registered_second, create_channel):
      # first user registers; obtain token and u_id
@@ -207,4 +194,4 @@ def test_sent_messages(setup_clear, registered_first, registered_second, create_
         "time_created": time_created
     }
     response = r.json()
-    assert response == {"messages": [message], "start": 0, "end": -1}
+    

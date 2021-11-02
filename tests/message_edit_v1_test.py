@@ -142,7 +142,7 @@ def test_invalid_message_id(setup_clear, registered_first):
 # Testing if user making request to edit has permission
 # the message was sent by the authorised user making this request
 # and the authorised user has owner permissions in the channel/DM
-def test_no_user_permission():
+def test_no_user_permission(setup_clear, registered_first, registered_second):
     # first user registers; obtain token and u_id
     token_1 = registered_first['token']
     u_id_1 = registered_first['auth_user_id']

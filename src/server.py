@@ -16,6 +16,7 @@ from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1
+from src.auth_pw import auth_passwordreset_request_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -353,6 +354,15 @@ def dm_list():
 def clear():
     clear_v1()
     return dumps({})
+
+@APP.route('/auth/passwordreset/request/v1', methods=['POST'])
+def auth_passwordreset_request_http():
+    clear_v1()
+    data = request.get_json()
+    email = data['email']
+
+    result = auth_passwordreset_request_v1(email)
+    return dumps(result)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

@@ -402,7 +402,7 @@ def message_remove_v1(token, message_id):
     index = False
     if b == 'dm':
         for i in range(len(dm_details)):
-            if dm_details[i]['dm_id'] == int(a):
+            if int(dm_details[i]['dm_id']) == int(a):
                 dm_messages = dm_details[i]['messages']
                 for j in range(len(dm_messages)):
                     # find the message

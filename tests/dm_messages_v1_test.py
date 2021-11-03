@@ -11,7 +11,7 @@ from src.other import clear_v1
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -48,14 +48,13 @@ def registered_second():
     resp = r.json()
     return resp
 
-# First user creates a public dm
+# First user creates a dm
 @pytest.fixture
-def create_dm(registered_first, registered_second):
-    token = registered_second['token']
-    u_id_1 = registered_first['auth_user_id']
+def create_dm(registered_first):
+    token = registered_first['token']
     payload = {
         "token": token,
-        "u_ids": [u_id_1]
+        "u_ids": []
     }
     r = requests.post(f'{BASE_URL}/dm/create/v1', json = payload)
     resp = r.json()
@@ -99,29 +98,29 @@ def test_start_greater(setup_clear, registered_first, create_dm):
 def test_invalid_token(setup_clear, registered_first, create_dm):
     # first user registers; obtain token
     token = registered_first['token']
-    # first user creates dms; obtain dm_id
+    # first user creates dm; obtain dm_id
     dm_id = create_dm['dm_id']
     # first user logs out; this invalidates the token
     requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token})
-    # first user attempts to remove dm messages
+    # first user attempts to request dm messages
     payload = {
         "token": token,
-        "dm_id": int(dm_id),
+        "dm_id": dm_id,
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
     assert r.status_code == 403
 
 # Testing for a case where the user is not a member of the dm
-def test_not_a_member(setup_clear, registered_first, create_dm):
-    # first user registers; obtain token
-    token = registered_first['token']
-    # second user creates dm; obtain dm_id
+def test_not_a_member(setup_clear, registered_second, create_dm):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # first user creates dm; obtain dm_id
     dm_id = create_dm['dm_id']
-    # first user attempts to remove dm messages
+    # second user attempts to request dm messages
     payload = {
         "token": token,
-        "dm_id": int(dm_id),
+        "dm_id": dm_id,
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
@@ -136,17 +135,17 @@ def test_valid(setup_clear, registered_first, create_dm):
     # first user sends message to dm
     payload1 = {
         "token": token,
-        "dm_id": int(dm_id),
+        "dm_id": dm_id,
         "message": "Goodnight"
     }
-    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-    # first user removes dm messages
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user requests dm messages
     payload2 = {
         "token": token,
-        "dm_id": int(dm_id),
+        "dm_id": dm_id,
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload2)

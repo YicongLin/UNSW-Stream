@@ -73,9 +73,9 @@ def check_valid_dm_token(auth_user_id, dm_id_element):
 def start_greater(dm_id, start):
     data = data_store.get()
     dms = data["dms_details"]
-
+    
     for i in range(len(dms)):
-        if dm_id == dms[i]["dm_id"]:
+        if int(dm_id) == dms[i]["dm_id"]:
             x = dms[i]
             messages = x["messages"]
             if int(start) > len(messages):
@@ -254,17 +254,6 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id
     }
 
-def is_valid_user(u_id):
-    """ check if the user is a valid user by looping through the users datastore """
-    
-    data = data_store.get()
-    user_dict = data['users']
-    i = 0
-    while i < len(user_dict):
-        if (u_id == user_dict[i]):
-            return True
-        i += 1
-    return False
 
 def decode_token(token):
     """ decode a token and get the u_id """
@@ -329,7 +318,7 @@ def get_name(id_list):
             j += 1
         i += 1
     names_list = sorted(names_list)
-    return names_list
+    return ', '.join(names_list)
 
 
 def dm_remove_v1(token, dm_id):
@@ -380,10 +369,8 @@ def dm_remove_v1(token, dm_id):
     j = 0
     while j < len(dm_detail_info):
         if (dm_detail_info[j]['dm_id'] == dm_id):
-            # check if the user is the creator of this dm
-            creator = dm_detail_info[j]['creator']
-            if (user_id == creator[0]['u_id']):
-                data['dms_details'].remove(dm_detail_info[j])
+            # remove the dm
+            data['dms_details'].remove(dm_detail_info[j])
         j += 1
     
     data_store.set(data)
@@ -500,24 +487,19 @@ def dm_messages_v1(token, dm_id, start):
     # Accessing the data store
     data = data_store.get()
     dms = data["dms_details"]
-
-    # Extracting the authorised user's ID from the token
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
         
     # Defining the end index
     end = int(start) + 50
-    
-    # Raising an error if the given dm ID is not a valid DM
-    check_valid_dmid(dm_id)
-       
-    # Raising an error if start is greater than
-    # the total number of messages in the given DM
-    start_greater(dm_id, start)
         
-    # Raising an error if the authorised user 
-    # is not a member of the valid DM
+    # Checks for exceptions
+    check_valid_token(token)
+    check_valid_dmid(dm_id)
+    start_greater(dm_id, start)
     check_dm_member(dm_id, auth_user_id)
+
+    # Otherwise, return the messages in the DM
 
     # Append all messages in a list
     message_list = []

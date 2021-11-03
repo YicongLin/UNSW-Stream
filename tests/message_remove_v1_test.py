@@ -126,7 +126,7 @@ def test_owner_permission(setup_clear, registered_first, registered_second, crea
     payload1 = {
         "token": token_1,
         "dm_id": dm_id,
-        "message": "Hi"
+        "message": "Ok"
     }
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
     # second user removes the message
@@ -166,6 +166,7 @@ def test_not_owner_valid(setup_clear, registered_first, create_channel):
     }
     r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload3)
     assert r.status_code == 200 
+    
 
 # Test for a successful removal
 def test_successful_removal(setup_clear, registered_second, create_channel):
@@ -177,13 +178,14 @@ def test_successful_removal(setup_clear, registered_second, create_channel):
     # second user sends a message to the channel
     payload1 = {
         "token": token,
+        "u_id": u_id,
         "channel_id": channel_id,
         "message": "Hi"
     }
     requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
-    # obtaining the time the message is created
-    time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # # obtaining the time the message is created
+    # time = datetime.now()
+    # time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # second user removes the message
     payload2 = {
         "token": token,
@@ -199,12 +201,6 @@ def test_successful_removal(setup_clear, registered_second, create_channel):
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload3)
-    message = {
-        'message_id': 1,
-        'u_id': u_id,
-        'message': 'Bye',
-        'time_created': time_created
-    }
     response = r.json()
-    assert response == {"messages": [message], "start": 0, "end": -1}
-
+    assert response == {"messages": [], "start": 0, "end": -1}
+   

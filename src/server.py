@@ -203,7 +203,7 @@ def edit_message():
 def remove_message(): 
     request_data = request.get_json()
     token = request_data['token']
-    message_id = request_data['messages']
+    message_id = request_data['message_id']
     
     result = message_remove_v1(token, message_id)
 

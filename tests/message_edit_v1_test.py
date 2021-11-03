@@ -306,7 +306,7 @@ def test_owner_permission_dm(setup_clear, registered_first, registered_second, d
 
 # Testing for a valid case where the authorised user has owner permissions in the channel
 # but wasn't the one to send the message
-def test_owner_permission_dm(setup_clear, registered_first, registered_second, channel_one, channel_two):
+def test_owner_permission_channel(setup_clear, registered_first, registered_second, channel_one, channel_two):
     # first user registers; obtain token
     token_1 = registered_first['token']
     # second user registers; obtain token

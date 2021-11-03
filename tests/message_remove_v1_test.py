@@ -101,8 +101,8 @@ def dm_two(registered_first, registered_second):
 def test_invalid_message_id(setup_clear, registered_second, channel_two):
     # second user registers; obtain token
     token = registered_second['token']
-    # second user creates channel; obtain channel_id
-    channel_id = channel_two['channel_id']
+    # second user creates channel
+    channel_two
     # second user attempts to remove a message with an invalid message_id
     payload = {
         "token": token,
@@ -238,9 +238,8 @@ def test_successful_removal_channel(setup_clear, registered_second, channel_one,
 
 # Testing for a successful removal in a DM
 def test_successful_removal_dm(setup_clear, registered_second, dm_one, dm_two, channel_one):
-    # second user registers; obtain token and u_id
+    # second user registers; obtain token 
     token = registered_second['token']
-    u_id = registered_second['auth_user_id']
     # first user creates channel and DM
     channel_one
     dm_one

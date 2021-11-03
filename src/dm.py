@@ -33,7 +33,6 @@ def check_valid_dmid(dm_id):
     if dm_id not in all_dm_id :
         raise InputError(description="Invalid dm_id")
 
-
     dm_id_element = 0
     while dm_id_element < len(all_dm_id):
         if dm_id == all_dm_id[dm_id_element]:

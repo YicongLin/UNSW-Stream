@@ -213,17 +213,6 @@ def not_a_member(u_id, channel_id):
 # ==================================
 
 # ==================================
-# Check whether a user is a global owner or not;
-# Returns true if global owner
-def check_global_owner(token):
-    decoded_token = decode_JWT(token)
-    if int(decoded_token['permissions_id']) == 1:
-        return True
-    return False
-# Finish global owner check
-# ==================================
-
-# ==================================
 # Check whether the start of messages is greater than 
 # the total number of messages or not.
 # Returns true if start is greater. 
@@ -296,18 +285,18 @@ def channel_invite_v2(token, channel_id, u_id):
     user_count = 0
     for i in range(len(users)):
         if users[i]["u_id"] == u_id:
-            break
+            user_index = i
         user_count += 1
     
     # extracting the given channel's index
     channel_count = 0
     for i in range(len(channels)):
         if channels[i]["channel_id"] == channel_id:
-            break
+            channel_index = i
         channel_count += 1
 
     # appending the user information to the channel
-    channels[channel_count]["channel_members"].append(users[user_count])
+    channels[channel_index]["channel_members"].append(users[user_index])
     
     return {}
 
@@ -471,7 +460,7 @@ def channel_join_v2(token, channel_id):
     user_count = 0
     for i in range(len(users)):
         if users[i]["u_id"] == auth_user_id:
-            break
+            user_index = i
         user_count += 1
 
     # extracting the given channel's index
@@ -479,11 +468,11 @@ def channel_join_v2(token, channel_id):
     channel_count = 0
     for i in range(len(channels)):
         if channels[i]["channel_id"] == channel_id:
-            break
+            channel_index = i
         channel_count += 1
 
     # appending the user information to the channel
-    channels[channel_count]["channel_members"].append(users[user_count])
+    channels[channel_index]["channel_members"].append(users[user_index])
     return {}
 
 def channel_addowner_v1(token, channel_id, u_id):

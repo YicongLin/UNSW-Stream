@@ -5,7 +5,7 @@ from src import config
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -148,7 +148,7 @@ def test_valid(clear_setup, register_first, channel_one):
     requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     # first user requests channel messages
     payload2 = {
         "token": token,

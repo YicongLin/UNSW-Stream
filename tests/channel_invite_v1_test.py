@@ -5,7 +5,7 @@ from src import config
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -117,12 +117,14 @@ def test_invalid_user(clear_setup, register_first, channel_one):
 
 # Testing for a case where u_id refers to a user 
 # who is already a member of the channel
-def test_already_a_member(clear_setup, register_first, register_second, channel_two):
+def test_already_a_member(clear_setup, register_first, register_second, channel_one, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id = register_first['auth_user_id']
     # second user registers; obtain token
     token_2 = register_second['token']
+    # first user creates channel
+    channel_one
     # second user creates public channel; obtain channel_id
     channel_id = channel_two['channel_id']
     # first user joins channel
@@ -176,7 +178,7 @@ def test_not_a_member(clear_setup, register_first, register_third, channel_two):
     r = requests.post(f'{BASE_URL}/channel/invite/v2', json = payload)
     assert r.status_code == 403
 
-def test_valid(clear_setup, register_first, register_second, channel_one):
+def test_valid(clear_setup, register_first, register_second, channel_one, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     id_1 = register_first['auth_user_id']
@@ -184,6 +186,8 @@ def test_valid(clear_setup, register_first, register_second, channel_one):
     id_2 = register_second['auth_user_id']
     # first user creates channel; obtain channel_id
     channel_id = channel_one['channel_id']
+    # second user creates channel
+    channel_two
     # first user invites second user to the channel
     payload1 = {
         "token": token_1,

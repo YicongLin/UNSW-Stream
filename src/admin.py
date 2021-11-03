@@ -191,6 +191,7 @@ def admin_user_remove_v1(token, u_id):
     data_store.set(data)
     return {}
 
+
 def admin_userpermission_change_v1(token, u_id, permission_id):
     """Given a user by their u_id, set the user's permissions to new permissions described by permission_id.
    

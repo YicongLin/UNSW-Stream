@@ -28,12 +28,13 @@ def check_valid_channel_id(channel_id):
     channel_id_element = 0
     while channel_id_element < len(all_channel_id):
         if channel_id == all_channel_id[channel_id_element]:
-            return channel_id_element 
+            break
         channel_id_element += 1
 
     if channel_id not in all_channel_id:
         raise InputError(description="Invalid channel_id")
 
+    return channel_id_element 
 # Finish authorised user check
 # ==================================
 
@@ -528,7 +529,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     
     # Pick out dict from members and then add it to owner
     new_owner_element = 0
-    while new_owner_element < len(each_member_id):
+    while True:
         if u_id == each_member_id[new_owner_element]:
             break
         new_owner_element+= 1
@@ -592,7 +593,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     # Pick out dict from owners and then delete it 
     remove_owner_element = 0
-    while remove_owner_element < len(each_owner_id):
+    while True:
         if u_id == each_owner_id[remove_owner_element]:
             break
         remove_owner_element += 1

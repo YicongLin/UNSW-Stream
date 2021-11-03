@@ -2,6 +2,7 @@ from flask.globals import request
 import pytest
 import requests
 import json
+from src import config
 
 BASE_URL = 'http://127.0.0.1:3178'
 
@@ -19,6 +20,14 @@ def test_email_sent():
 
     # register valid user 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    assert (r.status_code == 200)
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
+    assert (r.status_code == 200)
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
+    assert (r.status_code == 200)
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
+    assert (r.status_code == 200)
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
     assert (r.status_code == 200)
 
     # user 2
@@ -40,6 +49,9 @@ def test_email_sent():
     # send reset password email 
     r = requests.post(f'{BASE_URL}/auth/passwordreset/request/v1', json = payload)
     assert (r.status_code == 200)
+
+    # all active tokens from that account should be logged out 
+
 
 
 

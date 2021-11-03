@@ -2,6 +2,8 @@ from src.data_store import data_store
 import re 
 import hashlib
 import json
+import string 
+import random 
 
 # CODE TO SEND EMAIL 
 # https://www.tutorialspoint.com/send-mail-from-your-gmail-account-using-python
@@ -37,6 +39,12 @@ def create_email(receiver_address, contents):
     
     return {}
 
+def create_random_code():
+    letters = string.printable
+    code = ''.join(random.choice(letters) for i in range(10)) 
+
+    return code
+
 # PASSWORD RESET 
 def auth_passwordreset_request_v1(email):
     # check valid email - no error if invalid
@@ -45,24 +53,28 @@ def auth_passwordreset_request_v1(email):
         return {}
 
     store = data_store.get()
+
     print(f"{len(store['emailpw'])}")
     print(f"{len(store['users'])}")
 
     # check through database 
     i = 0
     while i < len(store['emailpw']):
-        # print("oinadjna")
+        print("oinadjna")
         user = store['emailpw'][i]
         # if registered user:
         if user['email'] == email:
-            # print("yayayay")
-            # create secret code
-            reset_code = hashlib.sha256(email.encode()).hexdigest()
+            print("yayayay")
+            # create secret code 
+            reset_code = create_random_code() 
             print(f"{reset_code}")
-            # store secret code in emailpw
-            user['reset_code'] = reset_code
             # send user an email 
             create_email(email, reset_code)
+            # hash the code 
+            reset_code = hashlib.sha256(reset_code.encode()).hexdigest()
+            print(f"{reset_code}")
+            # store hashed secret code in emailpw
+            user['reset_code'] = reset_code
             # log out of ALL current sessions 
             user['session_id'] = [ ]
             data_store.set(store)

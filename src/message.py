@@ -2,7 +2,6 @@ from src.data_store import data_store
 from src.error import InputError
 from src.error import AccessError
 from datetime import datetime, timezone
-import time
 from src.users import token_check
 from src.channel import check_channel, not_a_member
 import hashlib
@@ -32,6 +31,10 @@ def valid_dm_id(dm_id):
 # Raises an error if the message length is less than 1 or greater than 1000 characters
 def valid_message_length(message):
     if len(message) < 1 or len(message) > 1000:
+        raise InputError("Invalid message length")
+
+def valid_message_length_edit(message):
+    if len(message) > 1000:
         raise InputError("Invalid message length")
 
 # Raises an error if the authorised user is not a member of the DM
@@ -140,11 +143,11 @@ def owner_permissions(token, message_id):
             return False
 
     # if the message is in a DM, determing whether the authorised user is the creator of the DM
-    if b == 'dm':
+    else:
         for i in range(len(dms)):
             if dms[i]['dm_id'] == int(a):
                 creator = dms[i]['creator']
-                if creator['u_id'] != auth_user_id:
+                if creator[0]['u_id'] != auth_user_id:
                     return False
 
 # Raises an error if none of the following conditions are true:
@@ -253,6 +256,7 @@ def message_send_v1(token, channel_id, message):
     channel_details = data['channels_details']
 
     # checks for exceptions
+    token_check(token)    
     check_channel(channel_id)
     valid_message_length(message)
     not_a_member(auth_user_id, channel_id)
@@ -312,15 +316,18 @@ def message_edit_v1(token, message_id, message):
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
-    # obtaining what channel/DM the message is in 
-    a, b, _ = return_info(message_id)
-
     # checks for exceptions
-    valid_message_length(message)
+    valid_message_length_edit(message)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
+    print('edit:')
+    print(b)
 
     # if the message is in a DM, access the DM the message is in, in order to edit the message
+    index = False
     if b == 'dm':
         for i in range(len(dm_details)):
             if dm_details[i]['dm_id'] == int(a):
@@ -330,16 +337,19 @@ def message_edit_v1(token, message_id, message):
                     if dm_messages[j]['message_id'] == int(message_id):
                         # if the new message is an empty string, delete the message
                         if message == "":
-                            dm_messages.remove(dm_messages[j])
-                            data_store.set(data)
-                            break
+                            message_index = j
+                            index = True
                         # otherwise, replace the message with the new text
                         else:
                             dm_messages[j]['message'] = message
                             data_store.set(data)
+                if index == True:
+                    del dm_messages[message_index]
+                    data_store.set(data)
 
     # if the message is in a channel, access the channel the message is in, in order to edit the message
-    elif b == 'channel':
+    else:
+        index = False 
         for i in range(len(channel_details)):
             if channel_details[i]['channel_id'] == int(a):
                 channel_messages = channel_details[i]['messages']
@@ -348,13 +358,15 @@ def message_edit_v1(token, message_id, message):
                     if channel_messages[j]['message_id'] == int(message_id):
                         # if the new message is an empty string, delete the message
                         if message == "":
-                            channel_messages.remove(channel_messages[j])
-                            data_store.set(data)
-                            break
+                            index = True
+                            message_index = j
                         # otherwise, replace the message with the new text
                         else:
                             channel_messages[j]['message'] = message
                             data_store.set(data)
+                if index == True:
+                    del channel_messages[message_index]
+                    data_store.set(data)
 
     return {}
 
@@ -381,36 +393,41 @@ def message_remove_v1(token, message_id):
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
-    # obtaining what channel/DM the message is in 
-    a, b, _ = return_info(message_id)
-
     # checks for exceptions
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
 
     # if the message is in a DM, access the DM the message is in, in order to remove the message
+    index = False
     if b == 'dm':
         for i in range(len(dm_details)):
-            if dm_details[i]['dm_id'] == int(a):
+            if int(dm_details[i]['dm_id']) == int(a):
                 dm_messages = dm_details[i]['messages']
                 for j in range(len(dm_messages)):
                     # find the message
                     if dm_messages[j]['message_id'] == int(message_id):
-                        dm_messages.remove(dm_messages[j])
-                        data_store.set(data)
-                        break
+                        message_index = j
+                        index = True
+                if index == True:
+                    del dm_messages[message_index]
+                    data_store.set(data)
 
-    # if the message is in a channel, access the channel the message is in, in order to edit the message
-    elif b == 'channel':
+    # if the message is in a channel, access the channel the message is in, in order to remove the message
+    else:
+        index = False
         for i in range(len(channel_details)):
             if channel_details[i]['channel_id'] == int(a):
                 channel_messages = channel_details[i]['messages']
                 for j in range(len(channel_messages)):
                     # find the message
                     if channel_messages[j]['message_id'] == int(message_id):
-                        channel_messages.remove(channel_messages[j])
-                        data_store.set(data)
-                        break
-                       
+                        message_index = j
+                        index = True
+                if index == True:
+                    del channel_messages[message_index]
+                    data_store.set(data)
     return {}
     

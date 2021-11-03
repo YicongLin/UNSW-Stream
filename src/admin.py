@@ -107,7 +107,6 @@ def admin_user_remove_v1(token, u_id):
         dm_members = dm_details[i]['members']
         dm_creator = dm_details[i]['creator']
         dm_name_list = dm_details[i]['name'].split()
-        name = False
         member = False
         # removal from members list
         for j in range(len(dm_members)):
@@ -117,26 +116,25 @@ def admin_user_remove_v1(token, u_id):
                 member = True
         if member == True:
             del dm_members[member_index]
-        data_store.set(data)
-        # removal from creator list
-        if dm_creator[0]['u_id'] == int(u_id):
-            dm_creator == []
             data_store.set(data)
-        # removal from name string
-        for j in range(len(dm_name_list)):
-            if dm_name_list[j] == handle_str:
-                name_index = j
-                name = True
-            elif dm_name_list[j] == handle_str + ',':
-                name_index = j
-                name = True
-        if name == True:
+            # removal from creator list
+            if dm_creator[0]['u_id'] == int(u_id):
+                dm_creator == []
+                data_store.set(data)
+            # removal from name string
+            for j in range(len(dm_name_list)):
+                if dm_name_list[j] == handle_str:
+                    name_index = j
+                elif dm_name_list[j] == handle_str + ',':
+                    name_index = j
             del dm_name_list[name_index]
-        if len(dm_name_list) == 1:
-            dm_name_list[i] = dm_name_list[i].replace(',', '')
-        dm_name = ' '.join(dm_name_list)
-        dm_details[i]['name'] = dm_name
-        data_store.set(data)
+            if len(dm_name_list) == 1:
+                dm_name_list[i] = dm_name_list[i].replace(',', '')
+            dm_name = ' '.join(dm_name_list)
+            if dm_name.endswith(','):
+                dm_name = dm_name[:-1]
+            dm_details[i]['name'] = dm_name
+            data_store.set(data)
         
     # removing the user's message/s from DM/s
     for i in range(len(dm_details)):

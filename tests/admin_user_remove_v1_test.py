@@ -5,7 +5,7 @@ from src import config
 from datetime import datetime, timezone
 import math
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -49,6 +49,19 @@ def register_third():
         "email": "third@email.com", 
         "password": "password", 
         "name_first": "third", 
+        "name_last": "user"
+        }
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# Register fourth user
+@pytest.fixture
+def register_fourth():
+    payload = {
+        "email": "fourth@email.com", 
+        "password": "password", 
+        "name_first": "fourth", 
         "name_last": "user"
         }
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
@@ -256,16 +269,22 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
     assert response == {"messages": [message1, message2], "start": 0, "end": -1}
 
 # Test user removal from dm members list, as well as removal of messages
-def test_all_removed_from_dm(clear_setup, register_first, register_second, register_third, create_dm):
+def test_all_removed_from_dm(clear_setup, register_first, register_second, register_third, register_fourth, create_channel, create_dm):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id_1 = register_first['auth_user_id']
     # second user registers; obtain token and u_id
     token_2 = register_second['token']
     u_id_2 = register_second['auth_user_id']
-    # third user registers; obtain u_id
+    # third user registers; obtain token and u_id
+    token_3 = register_third['token']
     u_id_3 = register_third['auth_user_id']
-    # second user creates DM with first and third user; obtain dm_id
+    # fourth user registers; obtain token and u_id
+    token_4 = register_fourth['token']
+    u_id_4 = register_fourth['auth_user_id']
+    # second user creates channel
+    create_channel
+    # second user creates DM with first and third users; obtain dm_id
     dm_id = create_dm['dm_id']
     # first user sends a message to the dm
     payload = {
@@ -299,14 +318,20 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
         "u_id": u_id_3
     }
     requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload3)
+    # fourth user is removed from Streams
+    payload4 = {
+        "token": token_1,
+        "u_id": u_id_4
+    }
+    requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload4)
     # test that the second and third users are removed from dm;
-    # the first user requests channel details,
+    # the first user requests DM details,
     # which should return a list that does not include the second or third users
-    payload3 = {
+    payload5 = {
         "token": token_1,
         "dm_id": dm_id
     }
-    r = requests.get(f'{BASE_URL}/dm/details/v1', params = payload3)
+    r = requests.get(f'{BASE_URL}/dm/details/v1', params = payload5)
     user = {
         "u_id": u_id_1,
         "email": "first@email.com",
@@ -318,12 +343,12 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     assert response == {"name": "firstuser", "members": [user]}
     # assert the sent message is removed;
     # the first user requests dm messages - the message will be replaced with "Removed user"
-    payload4 = {
+    payload6 = {
         "token": token_1,
         "dm_id": dm_id,
         "start": 0
     }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload4)
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload6)
     message1 = {
         "message_id": 1,
         "u_id": u_id_1,
@@ -338,6 +363,48 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
     }
     response = r.json()
     assert response == {"messages": [message1, message2], "start": 0, "end": -1}
+
+# Test DM creator leaves
+def test_dm_creator_left(clear_setup, register_first, register_second, register_third, create_dm):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id_1 = register_first['auth_user_id']
+    # second user registers; obtain u_id
+    u_id_2 = register_second['auth_user_id']
+    # third user registers; obtain token and u_id
+    u_id_3 = register_third['auth_user_id']
+    # second user creates DM with first and third users; obtain dm_id
+    dm_id = create_dm['dm_id']
+    # third user is removed from Streams
+    payload2 = {
+        "token": token_1,
+        "u_id": u_id_3
+    }
+    requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload2)
+    # test that the third user is removed from DM;
+    # the first user requests DM details,
+    # which should return a list that does not include the third user
+    payload3 = {
+        "token": token_1,
+        "dm_id": dm_id
+    }
+    r = requests.get(f'{BASE_URL}/dm/details/v1', params = payload3)
+    user1 = {
+        "u_id": u_id_1,
+        "email": "first@email.com",
+        "name_first": "first",
+        "name_last": "user",
+        "handle_str": "firstuser"
+    }
+    user2 = {
+        "u_id": u_id_2,
+        "email": "second@email.com",
+        "name_first": "second",
+        "name_last": "user",
+        "handle_str": "seconduser"
+    }
+    response = r.json()
+    assert response == {"name": "firstuser, seconduser", "members": [user1, user2]}
 
 # Test user removal from user list, but still also retrievable with user/profile
 def test_user_list_and_profile(clear_setup, register_first, register_second):

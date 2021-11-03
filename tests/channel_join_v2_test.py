@@ -5,7 +5,7 @@ from src import config
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -131,12 +131,14 @@ def test_private_and_not_global_owner(clear_setup, register_first, register_seco
     r = requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
     assert r.status_code == 403
 
-def test_valid(clear_setup, register_first, register_second, channel_two):
+def test_valid(clear_setup, register_first, register_second, channel_one, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     id_1 = register_first['auth_user_id']
     # second user registers; obtain u_id
     id_2 = register_second['auth_user_id']
+    # first user creates channel
+    channel_one
     # second user creates channel; obtain channel_id
     channel_id = channel_two['channel_id']
     # first user joins channel

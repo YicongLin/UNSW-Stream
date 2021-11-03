@@ -71,12 +71,12 @@ def test_invalid_dm(setup_clear, registered_first):
     # first user registers; obtain token
     token = registered_first['token']
     # first user request messages of a dm with invalid ID 
-    payload2 = {
+    payload = {
         "token": token,
         "dm_id": 5,
         "start": 0
     }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload2)
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
     assert r.status_code == 400
 
 # Testing for a case where start is greater 
@@ -87,12 +87,12 @@ def test_start_greater(setup_clear, registered_first, create_dm):
     # first user creates dm; obtain dm_id
     dm_id = create_dm['dm_id']
     # first user requests dm messages with an invalid start number
-    payload2 = {
+    payload = {
         "token": token,
         "dm_id": dm_id,
         "start": 2
     }
-    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload2)
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
     assert r.status_code == 400
 
 # Testing for invalid token ID
@@ -103,7 +103,7 @@ def test_invalid_token(setup_clear, registered_first, create_dm):
     dm_id = create_dm['dm_id']
     # first user logs out; this invalidates the token
     requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token})
-    # first user attempts to request dm messages
+    # first user attempts to remove dm messages
     payload = {
         "token": token,
         "dm_id": int(dm_id),
@@ -118,7 +118,7 @@ def test_not_a_member(setup_clear, registered_first, create_dm):
     token = registered_first['token']
     # second user creates dm; obtain dm_id
     dm_id = create_dm['dm_id']
-    # first user attempts to request dm messages
+    # first user attempts to remove dm messages
     payload = {
         "token": token,
         "dm_id": int(dm_id),
@@ -143,7 +143,7 @@ def test_valid(setup_clear, registered_first, create_dm):
     # obtaining the time the message is created
     time = datetime.now()
     time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-    # first user requests dm messages
+    # first user removes dm messages
     payload2 = {
         "token": token,
         "dm_id": int(dm_id),

@@ -147,6 +147,7 @@ def test_invalid_message_id(setup_clear, registered_second, create_channel):
     # second user attempts to edit a message with an invalid message_id
     payload = {
         "token": token,
+        "channel_id": channel_id,
         "message_id": 1,
         "message": "Hello World"
     }

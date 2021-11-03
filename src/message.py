@@ -391,12 +391,12 @@ def message_remove_v1(token, message_id):
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
-    # obtaining what channel/DM the message is in 
-    a, b, _ = return_info(message_id)
-
     # checks for exceptions
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
 
     # if the message is in a DM, access the DM the message is in, in order to remove the message
     index = False
@@ -413,7 +413,7 @@ def message_remove_v1(token, message_id):
                     del dm_messages[message_index]
                     data_store.set(data)
 
-    # if the message is in a channel, access the channel the message is in, in order to edit the message
+    # if the message is in a channel, access the channel the message is in, in order to remove the message
     elif b == 'channel':
         index = False
         for i in range(len(channel_details)):

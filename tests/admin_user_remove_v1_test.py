@@ -266,7 +266,7 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
         "time_created": time_created2
     }
     response = r.json()
-    assert response == {"messages": [message1, message2], "start": 0, "end": -1}
+    assert response == {"messages": [message2, message1], "start": 0, "end": -1}
 
 # Test user removal from dm members list, as well as removal of messages
 def test_all_removed_from_dm(clear_setup, register_first, register_second, register_third, register_fourth, create_channel, create_dm):
@@ -360,7 +360,7 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
         "time_created": time_created2
     }
     response = r.json()
-    assert response == {"messages": [message1, message2], "start": 0, "end": -1}
+    assert response == {"messages": [message2, message1], "start": 0, "end": -1}
 
 # Test DM creator leaves
 def test_dm_creator_left(clear_setup, register_first, register_second, register_third, create_dm):
@@ -406,7 +406,7 @@ def test_dm_creator_left(clear_setup, register_first, register_second, register_
 
 # Test user removal from user list, but still also retrievable with user/profile
 def test_user_list_and_profile(clear_setup, register_first, register_second):
-     # first user registers; obtain token and u_id
+    # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id_1 = register_first['auth_user_id']
     # second user registers; obtain u_id
@@ -441,4 +441,30 @@ def test_user_list_and_profile(clear_setup, register_first, register_second):
     }
     response = r.json()
     assert response == {"user": user}
+
+# Test that once a user is removed, the user cannot do anything and
+# the user's email and handle are reusable
+def test_removed_user(clear_setup, register_first, register_second):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    # second user registers; obtain u_id
+    u_id_2 = register_second['auth_user_id']
+    # first user removes second user
+    payload1 = {
+        "token": token_1,
+        "u_id": u_id_2
+    }
+    requests.delete(f'{BASE_URL}/admin/user/remove/v1', json = payload1)
+    # test that the removed user is unable to login
+    payload2 = {
+        "email": "second@email.com",
+        "password": "password"
+    }
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = payload2)
+    assert r.status_code == 400
+    # test that the email and handle are resuable
+    # second user registers again; obtain token and u_id
+    token_2 = register_second['token']
+    u_id_2 = register_second['auth_user_id']
+    assert register_second == {"token": token_2, "auth_user_id": u_id_2}
 

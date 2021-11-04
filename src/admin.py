@@ -93,12 +93,13 @@ def admin_user_remove_v1(token, u_id):
     dm_details = data['dms_details']
     users = data['users']
     channel_details = data['channels_details']
+    emailpw = data['emailpw']
 
     # checks for exceptions
     check_valid_uid(u_id) 
     token_check(token)
-    remove_only_global_owner(u_id)
     not_a_global_owner(token)
+    remove_only_global_owner(u_id)
 
     # otherwise, remove the user from Streams
     
@@ -189,6 +190,14 @@ def admin_user_remove_v1(token, u_id):
             data['deleted_users'].append(deleted_user_dict)
     del users[user_index]
     data_store.set(data)
+
+    # removing the user from the emailpw store
+    for i in range(len(emailpw)):
+        if emailpw[i]['u_id'] == u_id:
+            emailpw_index = i
+    del emailpw[emailpw_index]
+    data_store.set(data)
+
     return {}
 
 
@@ -216,11 +225,11 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     # checks for exceptions
     token_check(token)
     check_valid_uid(u_id)
+    not_a_global_owner(token)
     if permission_id == 2:
         demote_only_global_owner(u_id)
     if permission_id not in [1,2]:
         raise InputError(description="Invalid permission ID")
-    not_a_global_owner(token)
     
     # otherise, change the user's permissions
     for i in range(len(emailpw)):

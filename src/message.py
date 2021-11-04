@@ -338,8 +338,15 @@ def message_edit_v1(token, message_id, message):
                     if dm_messages[j]['message_id'] == int(message_id):
                         # if the new message is an empty string, delete the message
                         if message == "":
-                            message_index = j
                             index = True
+                            message_index = j
+                            removed_message_dict = {
+                                'message_id': message_id,
+                                'u_id': dm_messages[j]['u_id'],
+                                'message': dm_messages[j]['message'],
+                                'time_created': dm_messages[j]['time_created']
+                            }
+                            data['removed_messages'].append(removed_message_dict)
                         # otherwise, replace the message with the new text
                         else:
                             dm_messages[j]['message'] = message
@@ -347,7 +354,7 @@ def message_edit_v1(token, message_id, message):
                 if index == True:
                     del dm_messages[message_index]
                     data_store.set(data)
-
+    
     # if the message is in a channel, access the channel the message is in, in order to edit the message
     else:
         index = False 
@@ -361,6 +368,13 @@ def message_edit_v1(token, message_id, message):
                         if message == "":
                             index = True
                             message_index = j
+                            removed_message_dict = {
+                                'message_id': message_id,
+                                'u_id': channel_messages[j]['u_id'],
+                                'message': channel_messages[j]['message'],
+                                'time_created': channel_messages[j]['time_created']
+                            }
+                            data['removed_messages'].append(removed_message_dict)
                         # otherwise, replace the message with the new text
                         else:
                             channel_messages[j]['message'] = message
@@ -368,7 +382,7 @@ def message_edit_v1(token, message_id, message):
                 if index == True:
                     del channel_messages[message_index]
                     data_store.set(data)
-
+                    
     return {}
 
 # function for removing messages
@@ -411,8 +425,15 @@ def message_remove_v1(token, message_id):
                 for j in range(len(dm_messages)):
                     # find the message
                     if dm_messages[j]['message_id'] == int(message_id):
-                        message_index = j
                         index = True
+                        message_index = j
+                        removed_message_dict = {
+                            'message_id': message_id,
+                            'u_id': dm_messages[j]['u_id'],
+                            'message': dm_messages[j]['message'],
+                            'time_created': dm_messages[j]['time_created']
+                        }
+                        data['removed_messages'].append(removed_message_dict)
                 if index == True:
                     del dm_messages[message_index]
                     data_store.set(data)
@@ -426,8 +447,15 @@ def message_remove_v1(token, message_id):
                 for j in range(len(channel_messages)):
                     # find the message
                     if channel_messages[j]['message_id'] == int(message_id):
-                        message_index = j
                         index = True
+                        message_index = j
+                        removed_message_dict = {
+                            'message_id': message_id,
+                            'u_id': channel_messages[j]['u_id'],
+                            'message': channel_messages[j]['message'],
+                            'time_created': channel_messages[j]['time_created']
+                        }
+                        data['removed_messages'].append(removed_message_dict)
                 if index == True:
                     del channel_messages[message_index]
                     data_store.set(data)

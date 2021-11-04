@@ -177,7 +177,7 @@ def test_valid(clear_setup, register_first, channel_one):
         "message_id": 2,
         "u_id": u_id,
         "message": "Good morning",
-        "time_created": time_created1
+        "time_created": time_created2
     }
     response = r.json()
     assert response == {"messages": [message2, message1], "start": 0, "end": -1}

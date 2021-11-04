@@ -448,7 +448,6 @@ def channel_join_v2(token, channel_id):
     auth_user_id = decoded_token['u_id']
     users = data["users"]
     channels = data["channels_details"]
-    emailpw = data['emailpw']
 
     # checks for exceptions 
     check_valid_channel_id(channel_id)

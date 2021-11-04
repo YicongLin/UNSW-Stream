@@ -222,14 +222,15 @@ initial_object = {
         #     'name_last': 'user',
         #     'handle_str': ''
         # }
+    ],
+    'removed_messages': [
+        # {
+        #     'message_id': 1,
+        #     'u_id': 1,
+        #     'message': 'Hello world',
+        #     'time_created': 1582426789,
+        # }
     ]
- 
-
-    
-
-    
-
-
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

@@ -131,6 +131,7 @@ def test_private_and_not_global_owner(clear_setup, register_first, register_seco
     r = requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
     assert r.status_code == 403
 
+# Test valid case
 def test_valid(clear_setup, register_first, register_second, channel_one, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']

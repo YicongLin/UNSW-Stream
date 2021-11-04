@@ -406,8 +406,9 @@ def channel_messages_v2(token, channel_id, start):
     for i in range(len(channels)):
         if int(channels[i]['channel_id']) == int(channel_id):
             channel_messages = channels[i]['messages']
-            for i in range(len(channel_messages)):
-                message_list.append(channel_messages[i])
+            for j in range(len(channel_messages)):
+                message_list.append(channel_messages[j])
+    message_list.reverse()
 
     if len(message_list) < 50:
         return { 
@@ -445,6 +446,8 @@ def channel_join_v2(token, channel_id):
     data = data_store.get()
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
+    users = data["users"]
+    channels = data["channels_details"]
 
     # checks for exceptions 
     check_valid_channel_id(channel_id)
@@ -454,9 +457,8 @@ def channel_join_v2(token, channel_id):
         channel_status(channel_id)
         
     # otherwise, add the user to the channel
-  
+
     # extracting the given user's index
-    users = data["users"]
     user_count = 0
     for i in range(len(users)):
         if users[i]["u_id"] == auth_user_id:
@@ -464,7 +466,6 @@ def channel_join_v2(token, channel_id):
         user_count += 1
 
     # extracting the given channel's index
-    channels = data["channels_details"]
     channel_count = 0
     for i in range(len(channels)):
         if channels[i]["channel_id"] == channel_id:
@@ -473,7 +474,10 @@ def channel_join_v2(token, channel_id):
 
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
+    data_store.set(data)
     return {}
+
+
 
 def channel_addowner_v1(token, channel_id, u_id):
     """An authorised user to add another user as an owner of a channel

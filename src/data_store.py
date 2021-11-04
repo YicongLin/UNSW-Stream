@@ -70,6 +70,7 @@ initial_object = {
         #     'u_id' : 'new_id',
         #     'permissions_id' : 'permissions_id',
         #     'session_id' : ['session_id']
+        #     'reset_code' : 'reset_code'
         # }, 
         
        

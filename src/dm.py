@@ -521,8 +521,10 @@ def dm_messages_v1(token, dm_id, start):
     for i in range(len(dms)):
         if int(dms[i]['dm_id']) == int(dm_id):
             dm_messages = dms[i]['messages']
-            for i in range(len(dm_messages)):
-                message_list.append(dm_messages[i])
+            for j in range(len(dm_messages)):
+                message_list.append(dm_messages[j])
+                
+    message_list.reverse()
    
     if len(message_list) < 50:
         return { 

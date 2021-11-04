@@ -3,15 +3,9 @@ import requests
 import json
 from src import config
 import math
-from src.auth import auth_register_v2
-from src.dm import dm_create_v1
-from src.channels import channels_create_v2
-from src.token_helpers import decode_JWT
-from src.other import clear_v1
-import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -48,23 +42,10 @@ def registered_second():
     resp = r.json()
     return resp
 
-# Register third user
+# First user creates a channel
 @pytest.fixture
-def registered_third():
-    payload = {
-        "email": "third@email.com", 
-        "password": "password", 
-        "name_first": "third", 
-        "name_last": "user"
-        }
-    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    resp = r.json()
-    return resp
-
-# Second user creates a channel
-@pytest.fixture
-def create_channel(register_second):
-    token = register_second['token']
+def channel_one(registered_first):
+    token = registered_first['token']
     payload = {
         "token": token,
         "name": "1",
@@ -74,40 +55,66 @@ def create_channel(register_second):
     resp = r.json()
     return resp
 
-# Second user creates a DM with first and third users
+# Second user creates a channel
 @pytest.fixture
-def create_dm(register_first, register_second, register_third):
-    token = register_second['token']
-    u_id_3 = register_third['auth_user_id']
-    u_id_1 = register_first['auth_user_id']
+def channel_two(registered_second):
+    token = registered_second['token']
     payload = {
         "token": token,
-        "u_ids": [u_id_1, u_id_3]
+        "name": "2",
+        "is_public": True
+    }
+    r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# First user creates a DM
+@pytest.fixture
+def dm_one(registered_first):
+    token = registered_first['token']
+    payload = {
+        "token": token,
+        "u_ids": []
     }
     r = requests.post(f'{BASE_URL}/dm/create/v1', json = payload)
     resp = r.json()
     return resp
 
+# Second user creates a DM with first user
+@pytest.fixture
+def dm_two(registered_first, registered_second):
+    token = registered_second['token']
+    u_id = registered_first['auth_user_id']
+    payload = {
+        "token": token,
+        "u_ids": [u_id]
+    }
+    r = requests.post(f'{BASE_URL}/dm/create/v1', json = payload)
+    resp = r.json()
+    return resp
+
+
 # ================================================
 # =================== TESTS ======================
 # ================================================
 # Testing for invalid message length
-def test_invalid_message_length(setup_clear, registered_first, create_channel):
-    # first user registers; obtain token
-    token = registered_first['token']
-    # second user creates channel with first user; obtain channel_id
-    channel_id = create_channel['channel_id']
+def test_invalid_message_length(setup_clear, registered_second, channel_two):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # second user sends a message to the channel
     payload1 = {
         "token": token,
         "channel_id": channel_id,
-        "message": ""
+        "message": "Hi"
     }
     r = requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
-    assert r.status_code == 400
-
+    # second user attempts to replace existing message 
+    # with a new message greater than 1000 characters
     payload2 = {
-       "token": token,
-        "channel_id": channel_id,
+        "token": token,
+        "message_id": 1,
         "message": "Lorem ipsum dolor sit amet, \
                     consectetuer adipiscing elit. Aenean commodo \
                     ligula eget dolor. Aenean massa. Cum sociis \
@@ -123,83 +130,326 @@ def test_invalid_message_length(setup_clear, registered_first, create_channel):
                     Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, \
                     sit amet adipiscing sem neque sed ipsum. No" 
     }
-    r = requests.put(f'{BASE_URL}/message/remove/v1', json = payload2)
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
     assert r.status_code == 400
 
+# Testing for a case where the new message is an empty string
+def test_empty_string_channel(setup_clear, registered_second, channel_two):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # second user sends a message to the channel
+    payload1 = {
+        "token": token,
+        "channel_id": channel_id,
+        "message": "Hi"
+    }
+    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+    # second user replaces existing message with an empty message
+    payload2 = {
+        "token": token,
+        "message_id": 1,
+        "message": "" 
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # test that the message is now deleted;
+    # second user requests channel messages
+    payload3 = {
+        "token": token,
+        "channel_id": channel_id,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload3)
+    response = r.json()
+    assert response == {"messages": [], "start": 0, "end": -1}
+
+# Testing for a case where the new message is an empty string
+def test_empty_string_dm(setup_clear, registered_second, dm_two):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # second user creates DM; obtain channel_id
+    dm_id = dm_two['dm_id']
+    # second user sends a message to the DM
+    payload1 = {
+        "token": token,
+        "dm_id": dm_id,
+        "message": "Hi"
+    }
+    r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # second user replaces existing message with an empty message
+    payload2 = {
+        "token": token,
+        "message_id": 1,
+        "message": "" 
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # test that the message is now deleted;
+    # second user requests dm messages
+    payload3 = {
+        "token": token,
+        "dm_id": dm_id,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload3)
+    response = r.json()
+    assert response == {"messages": [], "start": 0, "end": -1}
+
+
 # Testing for when message_id does not refer to a valid message 
-def test_invalid_message_id(setup_clear, registered_first):
-     # first user registers; obtain token
-    token = registered_first['token']
-    # first user attempts to send a message with an invalid message_id
+def test_invalid_message_id(setup_clear, registered_second, channel_two):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # second user attempts to edit a message with an invalid message_id
     payload = {
         "token": token,
-        "message_id": 0
+        "channel_id": channel_id,
+        "message_id": 1,
         "message": "Hello World"
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
     assert r.status_code == 400 
 
-# Testing if user making request to edit has permission
-# the message was sent by the authorised user making this request
-# and the authorised user has owner permissions in the channel/DM
-def test_no_user_permission(setup_clear, registered_first, registered_second):
-    # first user registers; obtain token and u_id
+# Testing for a case where the authorised user did not send the original message,
+# and doesn't have owner permissions in the DM
+def test_no_user_permission_dm(setup_clear, registered_first, registered_second, dm_two):
+    # first user registers; obtain token
     token_1 = registered_first['token']
-    u_id_1 = registered_first['auth_user_id']
-    # second user registers; obtain token and u_id
+    # second user registers; obtain token
     token_2 = registered_second['token']
-    u_id_2 = registered_second['auth_user_id']
-    # second user creates channel with first user
-    dm_id = create_dm['dm_id']
-    # first user sends a message to the dm
-    payload = {
-        "token": token_1,
+    # second user creates DM with first user; obtain dm_id
+    dm_id = dm_two['dm_id']
+    # second user sends a message to the DM
+    payload1 = {
+        "token": token_2,
         "dm_id": dm_id,
-        "message_id": message_id,
-        "message": "Hello World"
+        "message": "Hi"
     }
-    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
-    # obtaining the time the message is created
-    time = datetime.now()
-    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-    # second user attempts to edit the message
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # first user attempts to edit the message
+    payload2 = {
+        "token": token_1,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    assert r.status_code == 403
+
+# Testing for a case where the authorised user did not send the original message,
+# and doesn't have owner permissions in the channel
+def test_no_user_permission_channel(setup_clear, registered_first, registered_second, channel_two, dm_two):
+    # first user registers; obtain token
+    token_1 = registered_first['token']
+    # second user registers; obtain token
+    token_2 = registered_second['token']
+    # second user creates DM with first user, obtain dm_id
+    dm_id = dm_two['dm_id']
+    # second user sends a message to the dm
     payload = {
         "token": token_2,
         "dm_id": dm_id,
-        "message_id": message_id
-        "message": "Goodbye World"
+        "message": "Hi"
     }
-    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    assert r.status_code == 400 
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # first user joins channel
+    payload1 = {
+        "token": token_1,
+        "channel_id": channel_id
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # second user sends a message to the channel
+    payload2 = {
+        "token": token_2,
+        "channel_id": channel_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user attempts to edit the message
+    payload3 = {
+        "token": token_1,
+        "message_id": 2,
+        "message": "Bye"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)
+    assert r.status_code == 403
 
-# Testing for when the function fails to edit the message
-def test_unedited_message(setup_clear, registered_first, registered_second, registered_third):
-    # first user registers; obtain token and u_id
+# Testing for a valid case where the authorised user has owner permissions in the DM
+# but wasn't the one to send the message
+def test_owner_permission_dm(setup_clear, registered_first, registered_second, dm_one, dm_two):
+    # first user registers; obtain token
     token_1 = registered_first['token']
-    u_id_1 = registered_first['auth_user_id']
-    # second user registers; obtain token and u_id
+    # second user registers; obtain token
     token_2 = registered_second['token']
-    u_id_2 = registered_second['auth_user_id']
-    # third user registers; obtain u_id
-    u_id_3 = registered_third['auth_user_id']
-    # second user creates channel with first and third user; obtain channel_id
-    channel_id = create_channel['channel_id']
-    # first user sends a message to the channel
+    # first user creates DM
+    dm_one
+    # second user creates DM with first user; obtain dm_id
+    dm_id = dm_two['dm_id']
+    # first user sends a message to the DM
+    payload1 = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # second user edits the message
+    payload2 = {
+        "token": token_2,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    assert r.status_code == 200 
+
+# Testing for a valid case where the authorised user has owner permissions in the channel
+# but wasn't the one to send the message
+def test_owner_permission_channel(setup_clear, registered_first, registered_second, channel_one, channel_two):
+    # first user registers; obtain token
+    token_1 = registered_first['token']
+    # second user registers; obtain token
+    token_2 = registered_second['token']
+    # first user creates channel
+    channel_one
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # first user joins second channel
     payload = {
         "token": token_1,
-        "channel_id": channel_id,
-        "message_id": message_id,
-        "message": "Hello World"
+        "channel_id": channel_id
     }
-    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
-    # obtaining the time the message is created
-    time = datetime.now()
-    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload)
-    payload = {
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
+    # first user sends a message to the channel
+    payload1 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+    # second user edits the message
+    payload2 = {
+        "token": token_2,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    assert r.status_code == 200 
+
+# Testing for a valid case where the authorised user sent the message
+# but isn't an owner of the channel
+def test_not_owner_valid(setup_clear, registered_first, channel_two):
+    # first user registers; obtain token
+    token = registered_first['token']
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # first user joins channel
+    payload1 = {
+        "token": token,
+        "channel_id": channel_id
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user sends a message to the channel
+    payload2 = {
         "token": token,
         "channel_id": channel_id,
-        "message_id": message_id
-        "message": "Hello World"
+        "message": "Hi"
     }
-    assert r.status_code == 400 
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user edits the message
+    payload3 = {
+        "token": token,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)
+    assert r.status_code == 200 
+
+# Testing for a successful edit in a channel
+def test_successful_edit_channel(setup_clear, registered_second, channel_one, channel_two):
+    # second user registers; obtain token and u_id
+    token = registered_second['token']
+    u_id = registered_second['auth_user_id']
+    # first user creates channel
+    channel_one
+    # second user creates channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # second user sends a message to the channel
+    payload1 = {
+        "token": token,
+        "channel_id": channel_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # second user edits the message
+    payload2 = {
+        "token": token,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # second user calls channel messages;
+    # test that the original message is changed
+    payload3 = {
+        "token": token,
+        "channel_id": channel_id,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload3)
+    message = {
+        'message_id': 1,
+        'u_id': u_id,
+        'message': 'Bye',
+        'time_created': time_created
+    }
+    response = r.json()
+    assert response == {"messages": [message], "start": 0, "end": -1}
+
+
+# Testing for a successful edit in a DM
+def test_successful_edit_dm(setup_clear, registered_second, dm_one, dm_two):
+    # second user registers; obtain token and u_id
+    token = registered_second['token']
+    u_id = registered_second['auth_user_id']
+    # first user creates dm
+    dm_one
+    # second user creates dm with first user; obtain channel_id
+    dm_id = dm_two['dm_id']
+    # second user sends a message to the DM
+    payload1 = {
+        "token": token,
+        "dm_id": dm_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # second user edits the message
+    payload2 = {
+        "token": token,
+        "message_id": 1,
+        "message": "Bye"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # second user calls DM messages;
+    # test that the original message is changed
+    payload3 = {
+        "token": token,
+        "dm_id": dm_id,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload3)
+    message = {
+        'message_id': 1,
+        'u_id': u_id,
+        'message': 'Bye',
+        'time_created': time_created
+    }
+    response = r.json()
+    assert response == {"messages": [message], "start": 0, "end": -1}
+

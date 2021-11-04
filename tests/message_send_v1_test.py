@@ -2,15 +2,10 @@ import pytest
 import requests
 import json
 from src import config
-import jwt
 import math
-from src.auth import auth_register_v2
-from src.channels import channels_create_v2
-from src.token_helpers import decode_JWT
-from src.other import clear_v1
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 
 # ================================================
@@ -48,27 +43,14 @@ def registered_second():
     resp = r.json()
     return resp
 
-# Register third user
+# First user creates a public channel 
 @pytest.fixture
-def registered_third():
-    payload = {
-        "email": "third@email.com", 
-        "password": "password", 
-        "name_first": "third", 
-        "name_last": "user"
-        }
-    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    resp = r.json()
-    return resp
-
-# Second user creates a channel with first user
-@pytest.fixture
-def create_channel(registered_second, registered_first):
-    token = registered_second['token']
-    u_id = registered_first['auth_user_id']
+def create_channel(registered_first):
+    token = registered_first['token']
     payload = {
         "token": token,
-        "u_ids": [u_id]
+        "name": "1",
+        "is_public": True
     }
     r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
     resp = r.json()
@@ -95,7 +77,7 @@ def test_invalid_dm_id(setup_clear, registered_first):
 def test_invalid_token_id(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
     token = registered_first['token']
-    # second user creates channel with first user; obtain channel_id
+    # first user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
     # first user logs out; this invalidates the token
     requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token})
@@ -112,8 +94,9 @@ def test_invalid_token_id(setup_clear, registered_first, create_channel):
 def test_invalid_message_length(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
     token = registered_first['token']
-    # second user creates channel with first user; obtain channel_id
+    # first user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
+    # first user sends an empty message to the channel
     payload1 = {
         "token": token,
         "channel_id": channel_id,
@@ -121,7 +104,7 @@ def test_invalid_message_length(setup_clear, registered_first, create_channel):
     }
     r = requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
     assert r.status_code == 400
-
+    # first user sends a message with over 1000 characters to the channel
     payload2 = {
        "token": token,
         "channel_id": channel_id,
@@ -144,11 +127,12 @@ def test_invalid_message_length(setup_clear, registered_first, create_channel):
     assert r.status_code == 400
 
 # Testing for a case where the authorised user isn't a member of the channel
-def test_not_a_member(setup_clear, registered_third, create_channel):
-    # third user registers; obtain token
-    token = registered_third['token']
-    # second user creates channel with first user; obtain channel_id
+def test_not_a_member(setup_clear, registered_second, create_channel):
+    # second user registers; obtain token
+    token = registered_second['token']
+    # first user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
+    # second user attempts to send a message to the channel
     payload = {
         "token": token,
         "channel_id": channel_id,
@@ -161,8 +145,9 @@ def test_not_a_member(setup_clear, registered_third, create_channel):
 def test_valid(setup_clear, registered_first, create_channel):
     # first user registers; obtain token
     token = registered_first['token']
-    # second user creates channel with first user; obtain channel_id
+    # first user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
+    # first user sends a message
     payload = {
         "token": token,
         "channel_id": channel_id,
@@ -172,37 +157,32 @@ def test_valid(setup_clear, registered_first, create_channel):
     assert r.status_code == 200
 
 # Testing to ensure the message was sent to the specified channel
-def test_sent_messages(setup_clear, registered_first, registered_second, create_channel):
-     # first user registers; obtain token and u_id
-    token_1 = registered_first['token']
-    u_id_1 = registered_first['auth_user_id']
-     # first user registers; obtain token
-    token_2 = registered_second['token']
-    # second user creates channel with first user; obtain channel_id
+def test_sent_messages(setup_clear, registered_first, create_channel):
+    # first user registers; obtain token and u_id
+    token = registered_first['token']
+    u_id = registered_first['auth_user_id']
+    # first user creates channel; obtain channel_id
     channel_id = create_channel['channel_id']
-
     # first user sends a message to the channel
     payload = {
-        "token": token_1,
+        "token": token,
         "channel_id": channel_id,
         "message": "Hello World"
     }
     requests.post(f'{BASE_URL}/message/send/v1', json = payload)
-
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
-
-    # second user returns messages in the channel
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user returns messages in the channel
     payload = {
-        "token": token_2,
+        "token": token,
         "channel_id": channel_id,
         "start": 0
     }
     r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload)
     message = {
         "message_id": 1,
-        "u_id": u_id_1,
+        "u_id": u_id,
         "message": "Hello World",
         "time_created": time_created
     }

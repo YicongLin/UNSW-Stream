@@ -4,7 +4,7 @@ from src.channels import channels_create_v2
 from src.auth import auth_register_v2, auth_login_v2, auth_logout_v1
 from src.error import InputError, AccessError
 from src.dm import dm_create_v1, dm_list_v1
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 import json
 import requests
 # checking for invalid token, if a user is logged out that token is invalid
@@ -55,7 +55,7 @@ def test_dm_create():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['kevinlin', 'yiconglin']
+                'name': 'kevinlin, yiconglin'
             }
         ]
     }

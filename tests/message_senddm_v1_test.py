@@ -3,14 +3,11 @@ import requests
 import json
 from src import config
 import jwt
-from src.auth import auth_register_v2
-from src.dm import dm_create_v1
 from src.token_helpers import decode_JWT
-from src.other import clear_v1
 import math
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 
 # ================================================
@@ -191,7 +188,7 @@ def test_sent_messages(clear_setup, register_first, register_second, create_dm):
 
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp())
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
 
     # second user returns messages in the DM
     payload = {
@@ -208,3 +205,5 @@ def test_sent_messages(clear_setup, register_first, register_second, create_dm):
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}
+
+

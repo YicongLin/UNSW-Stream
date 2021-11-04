@@ -135,80 +135,72 @@ def user_profile_v1(token, u_id):
             return {'user' : user}
         i += 1 
 
-    raise InputError(description = "user_profile: Invalid u_id")
-
 def user_profile_setname_v1(token, name_first, name_last):
     """
     Update the authorised user's first and last name
     """
     store = data_store.get()
 
+    token_check(token)
     check_name_length(name_first)
     check_name_length(name_last)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['name_first'] = name_first
-            user['name_last'] = name_last
-            data_store.set(store)
-            return { } 
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['name_first'] = name_first
+                user['name_last'] = name_last
+                data_store.set(store)
+                return { } 
 
-        i += 1 
+            i += 1 
     
-    # if user does not exist
-    raise InputError(description = "user_profile_setname: Invalid user") 
-
 def user_profile_setemail_v1(token, email):
     """
     Update the authorised user's email address 
     """
     store = data_store.get()
 
+    token_check(token)
     check_duplicate_email(email)
     check_valid_email(email)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['email'] = email
-            data_store.set(store)
-            return { } 
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['email'] = email
+                data_store.set(store)
+                return { } 
 
-        i += 1 
-    
-    # if user does not exist
-    raise InputError(description = "user_profile_setemail: Invalid user")
+            i += 1 
 
 def user_profile_sethandle_v1(token, handle_str):
 
     store = data_store.get()
+    token_check(token)
     check_handle(handle_str)
     check_duplicate_handle(handle_str)
     check_alpha_num(handle_str)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 
     # update users dict 
     i = 0
-    while i < len(store['users']):
-        user = store['users'][i]
-        if user['u_id'] == decoded_token['u_id']:
-            user['handle_str'] = handle_str
-            data_store.set(store)
-            return { } 
-        i += 1 
-    
-    # if user does not exist
-    raise InputError(description = "user_profile_sethandle: Invalid user")
+    while True:
+        if i < len(store['users']):
+            user = store['users'][i]
+            if user['u_id'] == decoded_token['u_id']:
+                user['handle_str'] = handle_str
+                data_store.set(store)
+                return { } 
+            i += 1 

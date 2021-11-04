@@ -6,7 +6,7 @@ from src.channels import channels_create_v2
 from src.auth import auth_logout_v1, auth_register_v2, auth_login_v2
 from src.error import AccessError
 from src.dm import dm_create_v1, dm_list_v1
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 # checking for invalid token, if a user is logged out that token is invalid
 def test_invalid_token_dm_list():
     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")
@@ -51,7 +51,7 @@ def test_list_only_creator():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['johnsmith']
+                'name': 'johnsmith'
             }
         ]
     }
@@ -98,7 +98,7 @@ def test_list():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['kangliu', 'lilianpok', 'prasannaapandey', 'yiconglin', 'zamilee']
+                'name': 'kangliu, lilianpok, prasannaapandey, yiconglin, zamilee'
             }
         ]
     }
@@ -138,7 +138,7 @@ def test_list1():
         'dms': [
             {
                 'dm_id': dm_id,
-                'name': ['jikezhang', 'longma', 'xinxu']
+                'name': 'jikezhang, longma, xinxu'
             }
         ]
     }

@@ -139,29 +139,45 @@ def test_valid(clear_setup, register_first, channel_one):
     u_id = register_first['auth_user_id']
     # first user creates channel; obtain channel_id
     channel_id = channel_one['channel_id']
-    # first user sends message to channel
+    # first user sends first message to channel
     payload1 = {
         "token": token,
-        "channel_id": int(channel_id),
+        "channel_id": channel_id,
         "message": "Goodnight"
     }
     requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
     # obtaining the time the message is created
     time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    # first user requests channel messages
+    time_created1 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user sends second message to channel
     payload2 = {
+        "token": token,
+        "channel_id": channel_id,
+        "message": "Good morning"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created2 = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user requests channel messages
+    payload3 = {
         "token": token,
         "channel_id": int(channel_id),
         "start": 0
     }
-    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload2)
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload3)
     assert r.status_code == 200
-    message = {
+    message1 = {
         "message_id": 1,
         "u_id": u_id,
         "message": "Goodnight",
-        "time_created": time_created
+        "time_created": time_created1
+    }
+    message2 = {
+        "message_id": 2,
+        "u_id": u_id,
+        "message": "Good morning",
+        "time_created": time_created1
     }
     response = r.json()
-    assert response == {"messages": [message], "start": 0, "end": -1}
+    assert response == {"messages": [message2, message1], "start": 0, "end": -1}

@@ -239,7 +239,7 @@ def test_no_user_permission_dm(setup_clear, registered_first, registered_second,
 
 # Testing for a case where the authorised user did not send the original message,
 # and doesn't have owner permissions in the channel
-def test_no_user_permission_channel(setup_clear, registered_first, registered_second, channel_two, dm_two):
+def test_no_user_permission_channel(setup_clear, registered_first, registered_second, channel_one, dm_two):
     # first user registers; obtain token
     token_1 = registered_first['token']
     # second user registers; obtain token
@@ -253,24 +253,24 @@ def test_no_user_permission_channel(setup_clear, registered_first, registered_se
         "message": "Hi"
     }
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
-    # second user creates channel; obtain channel_id
-    channel_id = channel_two['channel_id']
-    # first user joins channel
+    # first user creates channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user joins channel
     payload1 = {
-        "token": token_1,
+        "token": token_2,
         "channel_id": channel_id
     }
     requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
-    # second user sends a message to the channel
+    # first user sends a message to the channel
     payload2 = {
-        "token": token_2,
+        "token": token_1,
         "channel_id": channel_id,
         "message": "Hi"
     }
     requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
-    # first user attempts to edit the message
+    # second user attempts to edit the message
     payload3 = {
-        "token": token_1,
+        "token": token_2,
         "message_id": 2,
         "message": "Bye"
     }

@@ -119,12 +119,14 @@ def valid_message_id(token, message_id):
         raise InputError("Invalid message ID")
 
 # Returning false if the authorised user doesn't have owner permissions 
-# in the channel/DM that a given message is in
+# in the channel a given message is in and is not a global owner, or if the authorised user
+# isn't a creator of the DM that a given message is in
 def owner_permissions(token, message_id):
     # obtaining data
     data = data_store.get()
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
+    permissions = decoded_token['permissions_id']
     channels = data['channels_details']
     dms = data['dms_details']
 
@@ -139,7 +141,7 @@ def owner_permissions(token, message_id):
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
                     owner_members_list.append(owner_members[j]['u_id'])
-        if auth_user_id not in owner_members_list:
+        if auth_user_id not in owner_members_list and permissions != 1:
             return False
 
     # if the message is in a DM, determing whether the authorised user is the creator of the DM
@@ -317,14 +319,13 @@ def message_edit_v1(token, message_id, message):
     channel_details = data['channels_details']
 
     # checks for exceptions
+    token_check(token)
     valid_message_length_edit(message)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     
     # obtaining what channel/DM the message is in 
     a, b, _ = return_info(message_id)
-    print('edit:')
-    print(b)
 
     # if the message is in a DM, access the DM the message is in, in order to edit the message
     index = False
@@ -394,6 +395,7 @@ def message_remove_v1(token, message_id):
     channel_details = data['channels_details']
 
     # checks for exceptions
+    token_check(token)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     

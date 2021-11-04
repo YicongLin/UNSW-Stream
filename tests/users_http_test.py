@@ -171,28 +171,6 @@ def test_user_profile_setname():
     
     resp = r.json()
 
-    # valid name token and first and last 
-    payload = {
-        "token" : resp['token'],
-        "name_first" : "firstfirst",
-        "name_last" : "lastlast"
-    } 
-    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
-    assert (r.status_code == 200) 
-
-    # logout
-    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
-    assert (r.status_code == 200)
-
-    # invalid token 
-    payload = {
-        "token" : resp['token'],
-        "name_first" : "firstfirst",
-        "name_last" : "lastlast"
-    } 
-    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
-    assert (r.status_code == 403)
-
     # invalid name first - empty 
     payload = {
         "token" : resp['token'],
@@ -227,7 +205,31 @@ def test_user_profile_setname():
         "name_last" : "asdfghjklfshgdjasdkasdlasda8721031209312sdassaudhasuidhah78324623864319023123daoijdaojsda"
     } 
     r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
-    assert (r.status_code == 400) 
+    assert (r.status_code == 400)
+
+    # valid name token and first and last 
+    payload = {
+        "token" : resp['token'],
+        "name_first" : "firstfirst",
+        "name_last" : "lastlast"
+    } 
+    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
+    assert (r.status_code == 200) 
+
+    # logout
+    r = requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": resp['token']})
+    assert (r.status_code == 200)
+
+    # invalid token 
+    payload = {
+        "token" : resp['token'],
+        "name_first" : "firstfirst",
+        "name_last" : "lastlast"
+    } 
+    r = requests.put(f'{BASE_URL}/user/profile/setname/v1', json = payload)
+    assert (r.status_code == 403)
+
+     
 
 
 # USER PROFILE SETEMAIL

@@ -333,12 +333,7 @@ def channels_create():
 
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():
-    
-    # token = data['token']
     token = request.args.get('token')
-
-
-    
     result = channels_list_v2(token)
     return dumps(result)
 
@@ -362,6 +357,12 @@ def auth_passwordreset_request_http():
     email = data['email']
 
     result = auth_passwordreset_request_v1(email)
+    return dumps(result)
+
+@APP.route('/notifications/get/v1', methods=['GET'])
+def notifications_get_http():
+    token = request.args.get('token')
+    result = notifications_get_v1(token)
     return dumps(result)
 
 #### NO NEED TO MODIFY BELOW THIS POINT

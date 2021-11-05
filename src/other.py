@@ -17,7 +17,8 @@ def clear_v1():
     
     return {}
 
-# def notifications_get_v1():
+def notifications_get_v1():
+    pass
    
 
     

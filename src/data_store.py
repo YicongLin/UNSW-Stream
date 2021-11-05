@@ -230,8 +230,8 @@ initial_object = {
         #     'time_created': 1582426789,
         # }
     ],
-    'timestamps' : [
-        # 'users' : [
+    'timestamps' : {
+        'users' : [
         #     {
         #         'u_id' : 1, 
         #         'channels_joined' : [
@@ -300,9 +300,8 @@ initial_object = {
         #         ],
         #         'involvement_rate' : float 
         #     }    
-        # ], 
-
-    #     'workspace' : {
+        ], 
+        'workspace' : {
     #         'channels_exist' : [
     #             {
     #                 'num_channels_exist' : 0,
@@ -326,8 +325,8 @@ initial_object = {
     #             }
     #         ], 
     #         'utilization_rate' : float 
-    #     }
-    ]
+        }
+    }
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

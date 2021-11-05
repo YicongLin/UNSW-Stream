@@ -35,13 +35,13 @@ def create_email(receiver_address, contents):
     text = message.as_string()
     session.sendmail(sender_email, receiver_email, text)
     session.quit()
-    print('Mail Sent')
+    # print('Mail Sent')
     
     return {}
 
 def create_random_code():
     letters = string.printable
-    code = ''.join(random.choice(letters) for i in range(10)) 
+    code = ''.join(random.choice(letters) for i in range(20)) 
 
     return code
 
@@ -54,25 +54,18 @@ def auth_passwordreset_request_v1(email):
 
     store = data_store.get()
 
-    print(f"{len(store['emailpw'])}")
-    print(f"{len(store['users'])}")
-
     # check through database 
     i = 0
     while i < len(store['emailpw']):
-        print("oinadjna")
         user = store['emailpw'][i]
         # if registered user:
         if user['email'] == email:
-            print("yayayay")
             # create secret code 
             reset_code = create_random_code() 
-            print(f"{reset_code}")
             # send user an email 
             create_email(email, reset_code)
             # hash the code 
             reset_code = hashlib.sha256(reset_code.encode()).hexdigest()
-            print(f"{reset_code}")
             # store hashed secret code in emailpw
             user['reset_code'] = reset_code
             # log out of ALL current sessions 
@@ -82,7 +75,6 @@ def auth_passwordreset_request_v1(email):
         i += 1
     
     # if no matching (unregistered) - no error
-    print("+++++++++++")
     return {}
 
 def auth_passwordreset_reset_v1(reset_code, new_password):

@@ -88,7 +88,7 @@ def start_greater(dm_id, start):
     dms = data["dms_details"]
     
     for i in range(len(dms)):
-        if dm_id == dms[i]["dm_id"]:
+        if int(dm_id) == dms[i]["dm_id"]:
             x = dms[i]
             messages = x["messages"]
             if int(start) > len(messages):
@@ -502,24 +502,19 @@ def dm_messages_v1(token, dm_id, start):
     # Accessing the data store
     data = data_store.get()
     dms = data["dms_details"]
-
-    # Extracting the authorised user's ID from the token
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
         
     # Defining the end index
     end = int(start) + 50
-    
-    # Raising an error if the given dm ID is not a valid DM
-    check_valid_dmid(dm_id)
-       
-    # Raising an error if start is greater than
-    # the total number of messages in the given DM
-    start_greater(dm_id, start)
         
-    # Raising an error if the authorised user 
-    # is not a member of the valid DM
+    # Checks for exceptions
+    check_valid_token(token)
+    check_valid_dmid(dm_id)
+    start_greater(dm_id, start)
     check_dm_member(dm_id, auth_user_id)
+
+    # Otherwise, return the messages in the DM
 
     # Append all messages in a list
     message_list = []

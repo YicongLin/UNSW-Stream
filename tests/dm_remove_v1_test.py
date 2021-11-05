@@ -3,7 +3,7 @@ import pytest
 import requests
 import json
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 # checking for invalid token, if a user is logged out that token is invalid
 def test_invalid_token_remove():
     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")

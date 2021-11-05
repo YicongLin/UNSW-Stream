@@ -15,8 +15,12 @@ from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, us
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
+<<<<<<< HEAD
 from src.other import clear_v1
 from src.auth_pw import auth_passwordreset_request_v1
+=======
+from src.other import clear_v1, notifications_get_v1
+>>>>>>> Tests and wrapping for notifications_get complete
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -364,6 +368,7 @@ def notifications_get_http():
     token = request.args.get('token')
     result = notifications_get_v1(token)
     return dumps(result)
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

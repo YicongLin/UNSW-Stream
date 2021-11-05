@@ -263,7 +263,25 @@ def dm_create_v1(token, u_ids):
         'messages': []
     }
     
+    creator_handle = creator_detail['handle_str']
+    
+    i = 0
+    while i < len(u_ids) - 1:
+        notifications_dict = {
+            'u_id': u_ids[i],
+            'notification_message': [
+                {
+                    'channel_id': -1,
+                    'dm_id': new_dm_id,
+                    'notification_message': creator_handle + " added you to " + handle_str
+                }
+            ]
+        }
+        data['notifications_details'].append(notifications_dict)
+        i += 1
+
     data['dms_details'].append(dm_detail_dict)
+    
     data_store.set(data)
     return {
         'dm_id': new_dm_id

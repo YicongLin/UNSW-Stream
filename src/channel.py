@@ -77,7 +77,7 @@ def check_member(channel_id_element, u_id):
         each_member_element += 1 
 
     if u_id not in each_member_id:
-        raise InputError(description="User is not a member of this channel")
+        raise InputError(description="Authorised user is not a member of this channel")
 
     return each_member_id
 # Finish member users check
@@ -88,8 +88,10 @@ def check_member(channel_id_element, u_id):
 # Serach information at data['channels_details'][channel_id_element]['channel_members']
 # If the authorised_user with u_id is not a member of channel then return False
 # If the authorised_user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
-def check_member_authorised_user(channel_id_element, u_id):
+def check_member_authorised_user(channel_id_element, token):
     data = data_store.get()
+
+    auth_user_id = decode_JWT(token)['u_id']
 
     members_in_channel = data['channels_details'][channel_id_element]['channel_members']
     each_member_element = 0
@@ -99,7 +101,7 @@ def check_member_authorised_user(channel_id_element, u_id):
         each_member_id.append(each_memeber['u_id'])
         each_member_element += 1 
 
-    if u_id not in each_member_id:
+    if auth_user_id not in each_member_id:
         raise AccessError(description="User is not a member of this channel")
 
     return each_member_id
@@ -341,8 +343,7 @@ def channel_details_v2(token, channel_id):
 
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
-    auth_user_id = decode_JWT(token)['u_id']
-    check_member_authorised_user(channel_id_element, auth_user_id)
+    check_member_authorised_user(channel_id_element, token)
 
 
     # For return
@@ -510,8 +511,7 @@ def channel_addowner_v1(token, channel_id, u_id):
 
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
-    auth_user_id = decode_JWT(token)['u_id']
-    check_member_authorised_user(channel_id_element, auth_user_id)
+    check_member_authorised_user(channel_id_element, token)
 
     # Raise a InputError if authorised user type in invalid u_id
     check_valid_uid(u_id)
@@ -579,8 +579,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
-    auth_user_id = decode_JWT(token)['u_id']
-    check_member_authorised_user(channel_id_element, auth_user_id)
+    check_member_authorised_user(channel_id_element, token)
 
     # Raise a InputError if authorised user type in invalid u_id
     check_valid_uid(u_id)

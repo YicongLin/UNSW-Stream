@@ -15,12 +15,8 @@ from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, us
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
-<<<<<<< HEAD
-from src.other import clear_v1
-from src.auth_pw import auth_passwordreset_request_v1
-=======
 from src.other import clear_v1, notifications_get_v1
->>>>>>> Tests and wrapping for notifications_get complete
+from src.auth_pw import auth_passwordreset_request_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -343,8 +339,6 @@ def channels_list():
 
 @APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
-    
-    
     token = request.args.get('token')
     result = dm_list_v1(token)
     return dumps(result)
@@ -356,7 +350,6 @@ def clear():
 
 @APP.route('/auth/passwordreset/request/v1', methods=['POST'])
 def auth_passwordreset_request_http():
-    clear_v1()
     data = request.get_json()
     email = data['email']
 
@@ -366,9 +359,9 @@ def auth_passwordreset_request_http():
 @APP.route('/notifications/get/v1', methods=['GET'])
 def notifications_get_http():
     token = request.args.get('token')
+    
     result = notifications_get_v1(token)
     return dumps(result)
-
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

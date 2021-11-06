@@ -345,25 +345,25 @@ def test_multiple_tags_dm(clear_setup, register_first, register_second, register
     token_3 = register_third['token']
     # second user creates a DM with first and third users; obtain dm_id
     dm_id = dm_two['dm_id']
-    # first user tags second and third users in the same message 
+    # second user tags first and third users in the same message 
     payload = {
-        "token": token_1,
+        "token": token_2,
         "dm_id": dm_id,
-        "message": "Hi guys @seconduser @thirduser"
+        "message": "Hi guys @firstuser @thirduser"
     }
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
-    # test that the second and third users both receive a notification
-    r1 = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    # test that the first and third users both receive a notification
+    r1 = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_1})
     r2 = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_3})
     notification1 = {
         "channel_id": -1,
         "dm_id": dm_id,
-        "notification_message": "first user added you to firstuser, seconduser, thirduser"
+        "notification_message": "seconduser added you to firstuser, seconduser, thirduser"
     }
     notification2 = {
         "channel_id": -1,
         "dm_id": dm_id,
-        "notification_message": "firstuser tagged you in firstuser, seconduser: Hi guys @seconduser "
+        "notification_message": "seconduser tagged you in firstuser, seconduser, thirduser: Hi guys @firstuser @"
     }
     response1 = r1.json()
     response2 = r2.json()

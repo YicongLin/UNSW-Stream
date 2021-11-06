@@ -7,7 +7,6 @@ import jwt
 from src.token_helpers import decode_JWT
 from src.channel import check_valid_uid
 from src.users import token_check
-from src.channel import check_valid_uid
 
 # ================================================
 # ================== HELPERS =====================

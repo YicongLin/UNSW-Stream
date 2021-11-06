@@ -230,6 +230,28 @@ initial_object = {
         #     'message': 'Hello world',
         #     'time_created': 1582426789,
         # }
+    ],
+    'notifications_details': [
+        # {
+        #     'u_id': 1,
+        #     'notifications': [
+        #         {
+        #             'channel_id': -1,
+        #             'dm_id': 1,
+        #             'notification_message': "{user handle} tagged you in {DM name}: {first 20 characters of the message}"
+        #         },
+        #         {
+        #             'channel_id': 1, 
+        #             'dm_id': -1, 
+        #             'notification_message': "lilianpok tagged you in Camel: hi @camel"
+        #         },
+        #         {
+        #             'channel_id': -1,
+        #             'dm_id': 2, 
+        #             'notification_message': "lilianpok reacted to your message in Camel"
+        #         }
+        #     ]
+        # }
     ]
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE

@@ -58,8 +58,7 @@ initial_object = {
         #     'name_first': 'd', 
         #     'name_last':'4last', 
         #     'handle_str': 'dhandle3' 
-        # }
-        
+        # }    
     ],
     
     'emailpw' : [
@@ -252,7 +251,104 @@ initial_object = {
         #         }
         #     ]
         # }
-    ]
+    ],
+    'timestamps' : {
+        'users' : [
+        #     {
+        #         'u_id' : 1, 
+        #         'channels_joined' : [
+        #             {
+        #                 'num_channels_joined' : 0, 
+        #                 'time_stamp' : 0
+        #             }, 
+        #             {
+        #                 'num_channels_joined' : 1, 
+        #                 'time_stamp' : 12:30am
+        #             }
+        #         ],
+        #         'dms_joined' : [
+        #             {
+        #                 'num_dms_joined' : 0, 
+        #                 'time_stamp' : 
+        #             }, 
+        #             {
+        #                 'num_dms_joined' : 1, 
+        #                 'time_stamp' :
+        #             }
+        #         ],
+        #         'messages_sent' : [
+        #             {
+        #                 'num_messages_sent' : 0, 
+        #                 'time_stamp' : 12:49am
+        #             }, 
+        #             {
+        #                ' num_messages_sent' : 1, 
+        #                'time_stamp' : 12:35am
+        #                }
+        #         ],
+        #         'involvement_rate' : float 
+        #     },
+        #     {
+        #         'u_id' : 2, 
+        #         'channels_joined' : [
+        #             {
+        #                 'num_channels_joined' : 0, 
+        #                 'time_stamp' : 0
+        #             }, 
+        #             {
+        #                 'num_channels_joined' : 1, 
+        #                 'time_stamp' : 12:30am
+        #             }
+        #         ],
+        #         'dms_joined' : [
+        #             {
+        #                 'num_dms_joined' : 0, 
+        #                 'time_stamp' : 
+        #             }, 
+        #             {
+        #                 'num_dms_joined' : 1, 
+        #                 'time_stamp' :
+        #             }
+        #         ],
+        #         'messages_sent' : [
+        #             {
+        #                 'num_messages_sent' : 0, 
+        #                 'time_stamp' : 12:49am
+        #             }, 
+        #             {
+        #                ' num_messages_sent' : 1, 
+        #                'time_stamp' : 12:35am
+        #                }
+        #         ],
+        #         'involvement_rate' : float 
+        #     }    
+        ], 
+        'workspace' : {
+    #         'channels_exist' : [
+    #             {
+    #                 'num_channels_exist' : 0,
+    #                 'time_stamp' : 12:30am 
+    #             },
+    #             {
+    #                 'num_channels_exist' : 1,
+    #                 'time_stamp' : 12:32am 
+    #             }
+    #         ], 
+    #         'dms_exist' : [
+    #             {
+    #                 'num_dms_exist' : 0, 
+    #                 'time_stamp' 12:30am 
+    #             }
+    #         ], 
+    #         'messages_exist' : [
+    #             {
+    #                 'num_messages_exist' : 0, 
+    #                 'time_stamp' : 0
+    #             }
+    #         ], 
+    #         'utilization_rate' : float 
+        }
+    }
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

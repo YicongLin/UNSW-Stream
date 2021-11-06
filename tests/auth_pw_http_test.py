@@ -4,7 +4,7 @@ import requests
 import json
 from src import config
 
-BASE_URL = 'http://127.0.0.1:3178'
+BASE_URL = 'http://127.0.0.1:2000'
 
 # test whether email is sent 
 def test_email_sent():
@@ -12,7 +12,7 @@ def test_email_sent():
 
     # user 1 
     payload = {
-        "email" : "zamisylee@gmail.com",
+        "email" : "fakeemail@email.com",
         "password" : "password",
         "name_first" : "first",
         "name_last" : "last"
@@ -21,13 +21,7 @@ def test_email_sent():
     # register valid user 
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     assert (r.status_code == 200)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
-    assert (r.status_code == 200)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
-    assert (r.status_code == 200)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
-    assert (r.status_code == 200)
-    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "zamisylee@gmail.com", "password" : "password"})
+    r = requests.post(f'{BASE_URL}/auth/login/v2', json = {"email": "fakeemail@email.com", "password" : "password"})
     assert (r.status_code == 200)
 
     # user 2
@@ -43,7 +37,7 @@ def test_email_sent():
     assert (r.status_code == 200)
 
     payload = {
-        "email" : "zamisylee@gmail.com"
+        "email" : "fakeemail@email.com"
     }
     
     # send reset password email 
@@ -51,6 +45,7 @@ def test_email_sent():
     assert (r.status_code == 200)
 
     # all active tokens from that account should be logged out 
+    
 
 
 

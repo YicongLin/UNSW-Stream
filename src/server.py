@@ -15,8 +15,14 @@ from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, us
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
+<<<<<<< HEAD
 from src.other import clear_v1, notifications_get_v1
 from src.auth_pw import auth_passwordreset_request_v1
+=======
+from src.other import clear_v1
+from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
+from src.stats import user_stats_v1, users_stats_v1
+>>>>>>> origin/zami/iter-3.1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -362,6 +368,21 @@ def notifications_get_http():
     
     result = notifications_get_v1(token)
     return dumps(result)
+
+@APP.route('/auth/passwordreset/reset/v1', methods=['POST'])
+def auth_passwordreset_reset_http():
+    data = request.get_json()
+    reset_code = data['reset_code']
+    new_password = data['new_password']
+
+
+    result = auth_passwordreset_reset_v1(reset_code, new_password)
+    return dumps(result)
+
+@APP.route('/user/stats/v1', methods = ['GET'])
+def user_stats_http():
+
+    return 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

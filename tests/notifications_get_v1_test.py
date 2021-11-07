@@ -149,12 +149,9 @@ def test_added_to_channel(clear_setup, register_first, register_second, channel_
     assert response == {"notifications": [notification]}
 
 # Testing that adding a user to a DM will notify the user
-def test_added_to_dm(clear_setup, register_first, register_second, dm_one):
-    # first user registers; obtain token
-    token_1 = register_first['token']
+def test_added_to_dm(clear_setup, register_second, dm_one):
     # second user registers; obtain token and u_id
     token_2 = register_second['token']
-    u_id_2 = register_second['auth_user_id']
     # first user creates a DM with second user; obtain dm_id
     dm_id = dm_one['dm_id']
     # test that the second user gets a notification
@@ -369,9 +366,137 @@ def test_multiple_tags_dm(clear_setup, register_first, register_second, register
     response2 = r2.json()
     assert response1 == response2 == {"notifications": [notification2, notification1]} 
 
-# Testing for a case where a message sent by a user in a channel gets a react;
+# Testing for a case where a user edits a message in a channel to contain a new tag;
+# the tagged user should receive a notification
+def test_edit_with_tags_channel(clear_setup, register_first, register_second, channel_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a public channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user joins the channel
+    payload1 = {
+        "token": token_2,
+        "channel_id": channel_id,
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user sends a message
+    payload2 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user edits the message to tag second user
+    payload3 = {
+        "token": token_1,
+        "message_id": 1,
+        "message": "Hi @seconduser!!"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)
+    # test that the second user receives a notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    notification = {
+        "channel_id": channel_id,
+        "dm_id": -1,
+        "notification_message": "firstuser tagged you in Channel one: Hi @seconduser!!"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]} 
+
+# Testing for a case where a user edits a message in a DM to contain a new tag;
+# the tagged user should receive a notification
+def test_edit_with_tags_dm(clear_setup, register_first, register_second, dm_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id = dm_one['dm_id']
+    # second user sends a message
+    payload1 = {
+        "token": token_2,
+        "dm_id": dm_id,
+        "message": "Hi"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # second user edits the message to tag first user
+    payload2 = {
+        "token": token_2,
+        "message_id": 1,
+        "message": "Hi @firstuser!!"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # test that the first user receives a notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_1})
+    notification = {
+        "channel_id": -1,
+        "dm_id": dm_id,
+        "notification_message": "seconduser tagged you in firstuser, seconduser: Hi @firstuser!!"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]}
+
+# Testing for duplicate tags in a channel; the tagged user should only receive one notification
+def test_duplicate_tags_channel(clear_setup, register_first, register_second, channel_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a public channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user joins the channel
+    payload1 = {
+        "token": token_2,
+        "channel_id": channel_id,
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user tags second user in a message twice
+    payload2 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "I'm annoying @seconduser @seconduser"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # test that the second user only receives one notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    notification = {
+        "channel_id": channel_id,
+        "dm_id": -1,
+        "notification_message": "firstuser tagged you in Channel one: I'm annoying @second"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]} 
+
+# Testing for duplicate tags in a channel; the tagged user should only receive one notification
+def test_duplicate_tags_dm(clear_setup, register_first, register_second, dm_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id = dm_one['dm_id']
+    # second user tags first user in a message twice 
+    payload = {
+        "token": token_2,
+        "dm_id": dm_id,
+        "message": "I'm annoying @firstuser @firstuser"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    # test that the first user only receives one notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_1})
+    notification = {
+        "channel_id": -1,
+        "dm_id": dm_id,
+        "notification_message": "seconduser tagged you in firstuser, seconduser: I'm annoying @firstu"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]}
+
+""" # Testing for a case where a message sent by a user in a channel gets a react;
 # the user should receive a notification
-def test_react_channel(clear_setup, register_first, register_second):
+def test_react_channel(clear_setup, register_first, register_second, channel_one):
     # first user registers; obtain token
     token_1 = register_first['token']
     # second user registers; obtain token
@@ -439,4 +564,4 @@ def test_react_dm(clear_setup, register_first, register_second, dm_one):
         "notification_message": "seconduser reacted to your message in firstuser, seconduser"
     }
     response = r.json()
-    assert response == {"notifications": [notification]}
+    assert response == {"notifications": [notification]} """

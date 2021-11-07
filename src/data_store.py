@@ -178,7 +178,14 @@ initial_object = {
         #             'message': 'Hello world',
         #             'time_created': 1582426789,
         #         }
-        #     ]             
+        #     ],
+        #
+        #     'channel_standup': [
+        #         {
+        #           'start_uid': 1,
+        #           'time_finish': 1636262035
+        #        },    
+        #    ] 
         # },
 
         # {
@@ -213,6 +220,7 @@ initial_object = {
         # },
                        
     ], 
+    
     'deleted_users': [
         # {
         #     'u_id': 1,

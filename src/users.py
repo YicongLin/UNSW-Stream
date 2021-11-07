@@ -204,3 +204,11 @@ def user_profile_sethandle_v1(token, handle_str):
                 data_store.set(store)
                 return { } 
             i += 1 
+
+
+def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    
+    # Raise an AccessError if authorised user login with an invalid token
+    check_valid_token(token)
+
+    return {}

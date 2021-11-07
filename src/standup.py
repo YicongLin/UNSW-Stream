@@ -1,6 +1,6 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
-from src.channel import check_valid_token, check_valid_channel_id, check_member
+from src.channel import check_valid_token, check_valid_channel_id, check_member_authorised_user
 from datetime import datetime, timezone
 from src.token_helpers import decode_JWT
 
@@ -89,8 +89,6 @@ def standup_start_v1(token, channel_id, length):
 
 
 def standup_active_v1(token, channel_id):
-    # Obtain data already existed
-    data = data_store.get()
 
     # Raise an AccessError if authorised user login with an invalid token
     check_valid_token(token)
@@ -112,7 +110,7 @@ def standup_active_v1(token, channel_id):
         is_active = True
         time_finish = int(check_active_standup(channel_id_element)['time_finish'])
 
-    return{
+    return {
         "is_active": is_active,
         "time_finish": time_finish
     }

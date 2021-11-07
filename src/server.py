@@ -13,6 +13,7 @@ from src.message import message_senddm_v1, message_send_v1, message_edit_v1, mes
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.standup import standup_start_v1, standup_active_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1
@@ -336,8 +337,6 @@ def channels_list():
     # token = data['token']
     token = request.args.get('token')
 
-
-    
     result = channels_list_v2(token)
     return dumps(result)
 
@@ -347,6 +346,26 @@ def dm_list():
     
     token = request.args.get('token')
     result = dm_list_v1(token)
+    return dumps(result)
+
+
+@APP.route('/standup/start/v1', methods=['POST'])
+def standup_start():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    u_id = request_data['length']
+
+    result = standup_start_v1(token, channel_id, length)
+    return dumps(result)
+
+@APP.route('/standup/active/v1', methods=['GET'])
+def standup_active()):
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+
+    result = standup_active_v1(token, channel_id)
     return dumps(result)
 
 @APP.route('/clear/v1', methods=['DELETE'])

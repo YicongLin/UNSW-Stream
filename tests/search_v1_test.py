@@ -2,6 +2,8 @@ import pytest
 import requests
 import json
 from src import config
+from datetime import datetime, timezone
+import math
 
 BASE_URL = 'http://127.0.0.1:2000'
 
@@ -157,7 +159,7 @@ def test_invalid_query_str_length(clear_setup, register_first):
     assert r.status_code == 400
 
 # Testing for a valid case where there is a match to the search
-def test_search_found(clear_setup, register_first, register_second, channel_one, channel_two, dm_one, dm_two)
+def test_search_found(clear_setup, register_first, register_second, channel_one, channel_two, dm_one, dm_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id_1 = register_first['auth_user_id']
@@ -171,7 +173,6 @@ def test_search_found(clear_setup, register_first, register_second, channel_one,
     dm_one
     # second user creates a DM with first and third users; obtain dm_id
     dm_id = dm_two['dm_id']
-
     # second user joins first channel
     payload1 = {
         "token": token_2,
@@ -219,4 +220,138 @@ def test_search_found(clear_setup, register_first, register_second, channel_one,
     }
     response = r.json()
     assert response == {"messages": [message1, message2]}
+
+# Testing for a valid case where there is no match to the search
+def test_search_not_found(clear_setup, register_first, register_second, channel_one, dm_two):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id_1 = register_first['auth_user_id']
+    # second user registers; obtain token and u_id
+    token_2 = register_second['token']
+    # first user creates channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user creates a DM with first and third users; obtain dm_id
+    dm_id = dm_two['dm_id']
+    # second user joins first channel
+    payload1 = {
+        "token": token_2,
+        "channel_id": channel_id
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user sends a message to the channel
+    payload2 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Hi everyone, nice to meet you"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user sends a message to the DM
+    payload3 = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message": "Hi everyone, this is a DM"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload3)
+    # second user makes a search
+    payload4 = {
+        "token": token_2,
+        "query_str": "Hello"
+    }
+    r = requests.get(f'{BASE_URL}/search/v1', params = payload4)
+    response = r.json()    
+    assert response == {"messages": []}
+
+# Testing for a valid case where there are some matches to the search
+def test_search_combination(clear_setup, register_first, register_second, channel_one, dm_two):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id_1 = register_first['auth_user_id']
+    # second user registers; obtain token and u_id
+    token_2 = register_second['token']
+    # first user creates channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user creates a DM with first and third users; obtain dm_id
+    dm_id = dm_two['dm_id']
+    # second user joins first channel
+    payload1 = {
+        "token": token_2,
+        "channel_id": channel_id
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user sends a message to the channel
+    payload2 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Hi everyone"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # obtaining the time the message is created
+    time = datetime.now()
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user sends a message to the DM
+    payload3 = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message": "Hi guys"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload3)
+    # second user makes a search
+    payload4 = {
+        "token": token_2,
+        "query_str": "guys"
+    }
+    r = requests.get(f'{BASE_URL}/search/v1', params = payload4)
+    message = {
+        "message_id": 2,
+        "u_id": u_id_1,
+        "message": "Hi guys",
+        "time_created": time_created
+    }
+    response = r.json()    
+    assert response == {"messages": [message]}
+
+# Testing for a valid case where there are authorised user isn't a member of the channels/DMs
+# that the matched messages are in
+def test_not_a_member(clear_setup, register_first, register_third, channel_one, dm_one):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id_1 = register_first['auth_user_id']
+    # third user registers; obtain token and u_id
+    token_3 = register_third['token']
+    # first user creates channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id = dm_one['dm_id']
+    # first user sends a message to the channel
+    payload1 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Good morning"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
+    # first user sends a message to the DM
+    payload2 = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message": "Goodnight"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload2)
+    # third user makes a search
+    payload3 = {
+        "token": token_3,
+        "query_str": "Good"
+    }
+    r = requests.get(f'{BASE_URL}/search/v1', params = payload3)
+    response = r.json()    
+    assert response == {"messages": []}
+
+
+
+
+
+
+
+
+
+
 

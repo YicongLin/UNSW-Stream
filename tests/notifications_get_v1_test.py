@@ -368,7 +368,7 @@ def test_multiple_tags_dm(clear_setup, register_first, register_second, register
 
 # Testing for a case where a user edits a message in a channel to contain a new tag;
 # the tagged user should receive a notification
-def test_edit_with_tags_channel(clear_setup, register_first, register_second, channel_one):
+def test_edit_with_new_tags_channel(clear_setup, register_first, register_second, channel_one):
     # first user registers; obtain token
     token_1 = register_first['token']
     # second user registers; obtain token
@@ -407,7 +407,7 @@ def test_edit_with_tags_channel(clear_setup, register_first, register_second, ch
 
 # Testing for a case where a user edits a message in a DM to contain a new tag;
 # the tagged user should receive a notification
-def test_edit_with_tags_dm(clear_setup, register_first, register_second, dm_one):
+def test_edit_with_new_tags_dm(clear_setup, register_first, register_second, dm_one):
     # first user registers; obtain token
     token_1 = register_first['token']
     # second user registers; obtain token

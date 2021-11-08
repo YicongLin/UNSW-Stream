@@ -265,7 +265,6 @@ def dm_create_v1(token, u_ids):
     }
     
     creator_handle = creator_detail[0]['handle_str']
-    notifications_details = data['notifications_details']
     
     notification_dict = {
         'channel_id': -1,

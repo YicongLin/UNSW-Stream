@@ -238,7 +238,6 @@ def channel_invite_v2(token, channel_id, u_id):
     data = data_store.get()
     channels = data["channels_details"]
     users = data["users"]
-    notifications_details = data['notifications_details']
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
 

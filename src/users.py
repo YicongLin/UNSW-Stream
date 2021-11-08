@@ -236,9 +236,9 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     auth_user_id = decode_JWT(token)['u_id']
 
-    # ==============================================================
-    # User pass in a unavailable img_url will be tested in server.py
-    # ==============================================================
+    # Raise an InputError if authorised user pass in unavailable image url
+    if urllib.request.urlopen(img_url).status != 200:
+        raise InputError(description="Unavailable image url")
 
     # Get and store the image user upload
     urllib.request.urlretrieve(img_url, f"src/static/{auth_user_id}.jpg")
@@ -268,7 +268,7 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     # Obtain index of authorised user's user dict store in users list
     # Update image url to authorised user's user dict
-    users_index = users_index(auth_user_id)
-    data['users'][users_index]['profile_img_url'] = f"src/static/{auth_user_id}.jpg"
+    user_index = users_index(auth_user_id)
+    data['users'][user_index]['profile_img_url'] = f"src/static/{auth_user_id}.jpg"
 
     return {}

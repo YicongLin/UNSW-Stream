@@ -65,7 +65,7 @@ def standup_start_v1(token, channel_id, length):
     check_valid_length(length)
     
     # Raise a InputError if an active standup is currently running in the channel
-    if type(check_active_standup(channel_id_element)) is list:
+    if type(check_active_standup(channel_id_element)) != list:
         raise InputError(description="A standup is running")
     
     # Obtaining the uid of authorised user who start a standup

@@ -225,7 +225,6 @@ def test_search_found(clear_setup, register_first, register_second, channel_one,
 def test_search_not_found(clear_setup, register_first, register_second, channel_one, dm_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
-    u_id_1 = register_first['auth_user_id']
     # second user registers; obtain token and u_id
     token_2 = register_second['token']
     # first user creates channel; obtain channel_id
@@ -315,7 +314,6 @@ def test_search_combination(clear_setup, register_first, register_second, channe
 def test_not_a_member(clear_setup, register_first, register_third, channel_one, dm_one):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
-    u_id_1 = register_first['auth_user_id']
     # third user registers; obtain token and u_id
     token_3 = register_third['token']
     # first user creates channel; obtain channel_id

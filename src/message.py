@@ -195,10 +195,10 @@ def edit_message_dm(message, message_id, token):
                 data['removed_messages'].append(removed_message_dict)
             # otherwise, replace the message with the new text
             else:
-                dm_messages[j]['message'] = message
-                data_store.set(data)
                 # check if the message contained a tag
                 edit_with_tags_check_dm(dm_messages[j]['message'], message, name, a, token)
+                dm_messages[j]['message'] = message
+                data_store.set(data)
     if index == True:
         del dm_messages[message_index]
         data_store.set(data)
@@ -217,9 +217,13 @@ def edit_with_tags_check_dm(old_message, new_message, name, dm_id, token):
             handle = x.group()[1:]
             # ensure the handle has not already been tagged in the same message
             if handle not in handle_list:
+                print("hello????")
                 if handle_check_dm(handle, dm_id) != None:
+                    print("excuse me")
+                    print(old_message, new_message)
                     # if the tag wasn't in the original message, add the notification
                     if not re.search(handle, old_message):
+                        print("um")
                         # creating a notification dictionary for the user
                         notification_dict = {
                             'channel_id': -1,
@@ -260,10 +264,10 @@ def edit_message_channel(message, message_id, token):
                 data['removed_messages'].append(removed_message_dict)
             # otherwise, replace the message with the new text
             else:
-                channel_messages[j]['message'] = message
-                data_store.set(data) 
                 # check if the new message included any tags, to create a notification 
                 edit_with_tags_check_channel(channel_messages[j]['message'], message, name, a, token)
+                channel_messages[j]['message'] = message
+                data_store.set(data) 
     if index == True:
         del channel_messages[message_index]
         data_store.set(data)

@@ -17,7 +17,6 @@ from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
 from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
-from src.stats import user_stats_v1, users_stats_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -382,10 +381,6 @@ def auth_passwordreset_reset_http():
     result = auth_passwordreset_reset_v1(reset_code, new_password)
     return dumps(result)
 
-@APP.route('/user/stats/v1', methods = ['GET'])
-def user_stats_http():
-
-    return 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

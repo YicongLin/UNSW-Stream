@@ -355,7 +355,7 @@ def standup_start():
 
     token = request_data['token']
     channel_id = request_data['channel_id']
-    u_id = request_data['length']
+    length = request_data['length']
 
     result = standup_start_v1(token, channel_id, length)
     return dumps(result)

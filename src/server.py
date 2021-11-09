@@ -11,7 +11,7 @@ from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remo
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.standup import standup_start_v1, standup_active_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
@@ -368,20 +368,20 @@ def standup_active():
     result = standup_active_v1(token, channel_id)
     return dumps(result)
 
-@APP.route('user/profile/uploadphoto/v1', methods=['POST'])
-def user_uploadphoto():
-    request_data = request.get_json()
+# @APP.route('user/profile/uploadphoto/v1', methods=['POST'])
+# def user_uploadphoto():
+#     request_data = request.get_json()
     
-    token = request_data['token']
-    img_url = request_data['img_url']
-    x_start = request_data['x_start']
-    y_start = request_data['y_start']
-    x_end = request_data['x_end']
-    y_end = request_data['y_end']
+#     token = request_data['token']
+#     img_url = request_data['img_url']
+#     x_start = request_data['x_start']
+#     y_start = request_data['y_start']
+#     x_end = request_data['x_end']
+#     y_end = request_data['y_end']
 
-    user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end)
+#     user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end)
 
-    return dumps({})
+#     return dumps({})
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():

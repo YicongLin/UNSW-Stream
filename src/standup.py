@@ -23,23 +23,29 @@ def check_valid_length(length):
 # ==================================
 # Check active standup in the channel
 # If an active standup is currently running in the channel then return the dict of running standup
-# If no a standup is running in the channel then return False
+# If no a standup is running in the channel then return True
 def check_active_standup(channel_id_element):
     now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
 
     data = data_store.get()
-    
-    lately_standup_element = len(data['channels_details'][channel_id_element]['channel_standup'])
+
+    # If no standup has been run in the channel
+    if len(data['channels_details'][channel_id_element]['channel_standup']) == 0:
+        return True
+
+    lately_standup_element = len(data['channels_details'][channel_id_element]['channel_standup']) - 1
     channel_lately_time_finish = data['channels_details'][channel_id_element]['channel_standup'][lately_standup_element]['time_finish']
 
-    if now_time < channel_lately_time_finish:
-        return data['channels_details'][channel_id_element]['channel_standup'][lately_standup_element]
+    # If no standup has been run in the channel
+    if now_time > channel_lately_time_finish:
+        return True
 
-    return False
+    # return the dict of running standup
+    else:
+        return data['channels_details'][channel_id_element]['channel_standup'][lately_standup_element]
+    
 # Finish active standup check
 # ==================================
-
-
 
 
 # ============================================================
@@ -65,7 +71,7 @@ def standup_start_v1(token, channel_id, length):
     check_valid_length(length)
     
     # Raise a InputError if an active standup is currently running in the channel
-    if type(check_active_standup(channel_id_element)) != list:
+    if check_active_standup(channel_id_element) != True:
         raise InputError(description="A standup is running")
     
     # Obtaining the uid of authorised user who start a standup
@@ -106,7 +112,7 @@ def standup_active_v1(token, channel_id):
     time_finish = None
 
     # If there is a running standup then change varibales values
-    if type(check_active_standup(channel_id_element)) is list:
+    if type(check_active_standup(channel_id_element)) is dict:
         is_active = True
         time_finish = int(check_active_standup(channel_id_element)['time_finish'])
 

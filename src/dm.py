@@ -6,6 +6,7 @@ import hashlib
 import jwt
 from src.token_helpers import decode_JWT
 from src.channel import check_valid_token
+from src.message import add_notification
 
 secret = 'COMP1531'
 
@@ -263,22 +264,18 @@ def dm_create_v1(token, u_ids):
         'messages': []
     }
     
-    creator_handle = creator_detail['handle_str']
+    creator_handle = creator_detail[0]['handle_str']
     
+    notification_dict = {
+        'channel_id': -1,
+        'dm_id': new_dm_id,
+        'notification_message': creator_handle + " added you to " + handle_str
+    }   
     i = 0
     while i < len(u_ids) - 1:
-        notifications_dict = {
-            'u_id': u_ids[i],
-            'notification_message': [
-                {
-                    'channel_id': -1,
-                    'dm_id': new_dm_id,
-                    'notification_message': creator_handle + " added you to " + handle_str
-                }
-            ]
-        }
-        data['notifications_details'].append(notifications_dict)
+        add_notification(notification_dict, u_ids[i])
         i += 1
+        
 
     data['dms_details'].append(dm_detail_dict)
     

@@ -141,9 +141,9 @@ def user_profile_setname_v1(token, name_first, name_last):
     """
     store = data_store.get()
 
+    token_check(token)
     check_name_length(name_first)
     check_name_length(name_last)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 
@@ -166,9 +166,9 @@ def user_profile_setemail_v1(token, email):
     """
     store = data_store.get()
 
+    token_check(token)
     check_duplicate_email(email)
     check_valid_email(email)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 
@@ -187,10 +187,10 @@ def user_profile_setemail_v1(token, email):
 def user_profile_sethandle_v1(token, handle_str):
 
     store = data_store.get()
+    token_check(token)
     check_handle(handle_str)
     check_duplicate_handle(handle_str)
     check_alpha_num(handle_str)
-    token_check(token)
 
     decoded_token = decode_JWT(token)
 

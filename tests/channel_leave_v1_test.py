@@ -76,7 +76,7 @@ def test_invalid_channel(clear_setup, register_first):
     token = register_first['token']
     payload = {
         "token": token,
-        "channel_id": "invalid_id"
+        "channel_id": 5
     }
     r = requests.post(f'{BASE_URL}/channel/leave/v1', json = payload)
     assert r.status_code == 400

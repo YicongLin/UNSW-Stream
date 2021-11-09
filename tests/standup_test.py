@@ -18,7 +18,6 @@ def test_start_active():
     # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
     decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
-    uid_2 = decoded_token_2['u_id']
 
     # Login in user_two to create channel 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
@@ -58,12 +57,10 @@ def test_start_active_errors():
     # user_one ----> global owner
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
     decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
-    uid_1 = decoded_token_1['u_id']
     
     # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
     decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
-    uid_2 = decoded_token_2['u_id']
 
     # Login in user_two to create channel 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})

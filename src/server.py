@@ -1,7 +1,7 @@
 import sys
 import signal
 from json import dump, dumps
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
@@ -11,8 +11,9 @@ from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remo
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
 from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
-from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
+from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.standup import standup_start_v1, standup_active_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
@@ -342,6 +343,48 @@ def dm_list():
     token = request.args.get('token')
     result = dm_list_v1(token)
     return dumps(result)
+
+
+@APP.route('/standup/start/v1', methods=['POST'])
+def standup_start():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    length = request_data['length']
+
+    result = standup_start_v1(token, channel_id, length)
+    return dumps(result)
+
+@APP.route('/standup/active/v1', methods=['GET'])
+def standup_active():
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+
+    result = standup_active_v1(token, channel_id)
+    return dumps(result)
+
+@APP.route('/user/profile/uploadphoto/v1', methods=['POST'])
+def user_uploadphoto():
+    request_data = request.get_json()
+    
+    token = request_data['token']
+    img_url = request_data['img_url']
+    x_start = request_data['x_start']
+    y_start = request_data['y_start']
+    x_end = request_data['x_end']
+    y_end = request_data['y_end']
+
+    user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end)
+
+    return dumps({})
+
+# Copy from lec code 7.4
+# Return jpg file
+@APP.route('/static/<path:path>')
+def send_js(path):
+    return send_from_directory('', path)
+
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():

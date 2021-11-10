@@ -411,3 +411,44 @@ def test_removerowner_errors():
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
+
+# def test_autotest_errors():
+#     # Clear
+#     requests.delete(f'{BASE_URL}/clear/v1')
+
+#     # user_one ----> global owner
+#     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+#     decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
+#     uid_1 = decoded_token_1['u_id']
+    
+#     # user_two ----> channel creator
+#     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
+#     decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
+#     uid_2 = decoded_token_2['u_id']
+
+#     # user_three ----> channel member
+#     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})
+#     decoded_token_3 = decode_JWT(json.loads(response.text)['token'])
+#     uid_3 = decoded_token_3['u_id']
+
+#     # Login in user_two to create channel (test owner permmisons)
+#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
+#     token_2 = json.loads(response.text)['token']
+
+#     response = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_2 , "name": "channel1", "is_public": False})
+#     channel_id = json.loads(response.text)['channel_id']
+
+#     # User_two invite user_three
+#     requests.post(f'{BASE_URL}/channel/invite/v2', json={"token": token_2, "channel_id": channel_id, "u_id": uid_3})
+
+#     # ===================================
+#     # Switch user
+#     # ===================================  
+
+#     # Login user_one
+#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+#     token_1 = json.loads(response.text)['token']
+
+#     # 
+#     resp = requests.post(f'{BASE_URL}/channel/addowner/v1', json={"token": token_1, "channel_id": channel_id, "u_id": uid_3})
+#     assert (resp.status_code == 403)

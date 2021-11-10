@@ -3,11 +3,11 @@ from src.error import InputError
 from src.error import AccessError
 from datetime import datetime, timezone
 from src.users import token_check
-from src.channel import check_channel, not_a_member
 import hashlib
 import jwt
 from src.token_helpers import decode_JWT
 import math
+import re
 
 # ================================================
 # ================== HELPERS =====================
@@ -33,6 +33,7 @@ def valid_message_length(message):
     if len(message) < 1 or len(message) > 1000:
         raise InputError("Invalid message length")
 
+# Raises an error if the message length is greater than 1000 characters
 def valid_message_length_edit(message):
     if len(message) > 1000:
         raise InputError("Invalid message length")
@@ -119,12 +120,11 @@ def valid_message_id(token, message_id):
         raise InputError("Invalid message ID")
 
 # Returning false if the authorised user doesn't have owner permissions 
-# in the channel/DM that a given message is in
+# in the channel/DM a given message is in and is not a global owner
 def owner_permissions(token, message_id):
     # obtaining data
     data = data_store.get()
     decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token['u_id']
     channels = data['channels_details']
     dms = data['dms_details']
 
@@ -139,7 +139,7 @@ def owner_permissions(token, message_id):
                 owner_members = channels[i]['owner_members']
                 for j in range(len(owner_members)):
                     owner_members_list.append(owner_members[j]['u_id'])
-        if auth_user_id not in owner_members_list:
+        if decoded_token['u_id'] not in owner_members_list and decoded_token['permissions_id'] != 1:
             return False
 
     # if the message is in a DM, determing whether the authorised user is the creator of the DM
@@ -147,7 +147,7 @@ def owner_permissions(token, message_id):
         for i in range(len(dms)):
             if dms[i]['dm_id'] == int(a):
                 creator = dms[i]['creator']
-                if creator[0]['u_id'] != auth_user_id:
+                if creator[0]['u_id'] != decoded_token['u_id']:
                     return False
 
 # Raises an error if none of the following conditions are true:
@@ -164,6 +164,304 @@ def conditional_edit(token, message_id):
     # raising the error 
     if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
         raise AccessError(description="You do not have access to edit the message")
+
+# Editing a message in a DM
+def edit_message_dm(message, message_id, token):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    a, _, _ = return_info(message_id)
+
+    # updating the message 
+    index = False
+    for i in range(len(dm_details)):
+        if dm_details[i]['dm_id'] == int(a):
+            dm_index = i
+    dm_messages = dm_details[dm_index]['messages']
+    name = dm_details[dm_index]['name']
+    for j in range(len(dm_messages)):
+        # find the message
+        if dm_messages[j]['message_id'] == int(message_id):
+            # if the new message is an empty string, delete the message
+            if message == "":
+                index = True
+                message_index = j
+                removed_message_dict = {
+                    'message_id': message_id,
+                    'u_id': dm_messages[j]['u_id'],
+                    'message': dm_messages[j]['message'],
+                    'time_created': dm_messages[j]['time_created']
+                }
+                data['removed_messages'].append(removed_message_dict)
+            # otherwise, replace the message with the new text
+            else:
+                # check if the message contained a tag
+                edit_with_tags_check_dm(dm_messages[j]['message'], message, name, a, token)
+                dm_messages[j]['message'] = message
+                data_store.set(data)
+    if index == True:
+        del dm_messages[message_index]
+        data_store.set(data)
+
+# If a message is edited in a DM to include any valid tags, create a notification
+def edit_with_tags_check_dm(old_message, new_message, name, dm_id, token):
+    # obtaining the authorised user's handle
+    auth_user_handle = find_handle(token)
+
+    # creating a list of handles to avoid repeats
+    handle_list = []
+    
+    for i in range(len(new_message)):
+        if new_message[i] == '@':
+            x = re.search('@([a-z]){2,}([0-9])*', new_message[i:])
+            handle = x.group()[1:]
+            # ensure the handle has not already been tagged in the same message
+            if handle not in handle_list:
+                print("hello????")
+                if handle_check_dm(handle, dm_id) != None:
+                    print("excuse me")
+                    print(old_message, new_message)
+                    # if the tag wasn't in the original message, add the notification
+                    if not re.search(handle, old_message):
+                        print("um")
+                        # creating a notification dictionary for the user
+                        notification_dict = {
+                            'channel_id': -1,
+                            'dm_id': dm_id,
+                            'notification_message': f'{auth_user_handle} tagged you in {name}: {new_message[:20]}'
+                        }
+                        # adding the notification
+                        add_notification(notification_dict, handle_check_dm(handle, dm_id))
+                        handle_list.append(handle)
+
+# Editing a message in a channel
+def edit_message_channel(message, message_id, token):
+    # obtaining data
+    data = data_store.get()
+    channel_details = data['channels_details']
+    a, _, _ = return_info(message_id)
+
+    # updating the message
+    index = False 
+    for i in range(len(channel_details)):
+        if channel_details[i]['channel_id'] == int(a):
+            channel_index = i
+    channel_messages = channel_details[channel_index]['messages']
+    name = channel_details[channel_index]['name']
+    for j in range(len(channel_messages)):
+        # find the message
+        if channel_messages[j]['message_id'] == int(message_id):
+            # if the new message is an empty string, delete the message
+            if message == "":
+                index = True
+                message_index = j
+                removed_message_dict = {
+                    'message_id': message_id,
+                    'u_id': channel_messages[j]['u_id'],
+                    'message': channel_messages[j]['message'],
+                    'time_created': channel_messages[j]['time_created']
+                }
+                data['removed_messages'].append(removed_message_dict)
+            # otherwise, replace the message with the new text
+            else:
+                # check if the new message included any tags, to create a notification 
+                edit_with_tags_check_channel(channel_messages[j]['message'], message, name, a, token)
+                channel_messages[j]['message'] = message
+                data_store.set(data) 
+    if index == True:
+        del channel_messages[message_index]
+        data_store.set(data)
+
+# If a message is edited in a channel to include any valid tags, create a notification
+def edit_with_tags_check_channel(old_message, new_message, name, channel_id, token):
+    # obtaining the authorised user's handle
+    auth_user_handle = find_handle(token)
+
+    # creating a list of handles to avoid repeats
+    handle_list = []
+
+    for i in range(len(new_message)):
+        if new_message[i] == '@':
+            x = re.search('@([a-z]){2,}([0-9])*', new_message[i:])
+            handle = x.group()[1:]
+            # ensure the handle has not already been tagged in the same message
+            if handle not in handle_list:
+                if handle_check_channel(handle, channel_id) != None:
+                    # if the tag wasn't in the original message, add the notification
+                    if not re.search(handle, old_message):
+                        # creating a notification dictionary for the user
+                        notification_dict = {
+                            'channel_id': channel_id,
+                            'dm_id': -1,
+                            'notification_message': f'{auth_user_handle} tagged you in {name}: {new_message[:20]}'
+                        }
+                        # adding the notification
+                        add_notification(notification_dict, handle_check_channel(handle, channel_id))
+                        handle_list.append(handle)
+
+#  Removing a message from a DM
+def remove_message_dm(message_id):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    a, _, _ = return_info(message_id)
+
+    # removing the message
+    index = False
+    for i in range(len(dm_details)):
+        if int(dm_details[i]['dm_id']) == int(a):
+            dm_index = i
+    dm_messages = dm_details[dm_index]['messages']
+    for j in range(len(dm_messages)):
+        # find the message
+        if dm_messages[j]['message_id'] == int(message_id):
+            index = True
+            message_index = j
+            removed_message_dict = {
+                'message_id': message_id,
+                'u_id': dm_messages[j]['u_id'],
+                'message': dm_messages[j]['message'],
+                'time_created': dm_messages[j]['time_created']
+            }
+            data['removed_messages'].append(removed_message_dict)
+    if index == True:
+        del dm_messages[message_index]
+        data_store.set(data)
+
+# Removing a message from a channel
+def remove_message_channel(message_id):
+    # obtaining data
+    data = data_store.get()
+    channel_details = data['channels_details']
+    a, _, _ = return_info(message_id)
+
+    index = False
+    for i in range(len(channel_details)):
+        if channel_details[i]['channel_id'] == int(a):
+            channel_index = i
+    channel_messages = channel_details[channel_index]['messages']
+    for j in range(len(channel_messages)):
+        # find the message
+        if channel_messages[j]['message_id'] == int(message_id):
+            index = True
+            message_index = j
+            removed_message_dict = {
+                'message_id': message_id,
+                'u_id': channel_messages[j]['u_id'],
+                'message': channel_messages[j]['message'],
+                'time_created': channel_messages[j]['time_created']
+            }
+            data['removed_messages'].append(removed_message_dict)
+    if index == True:
+        del channel_messages[message_index]
+        data_store.set(data)
+
+# Returns the number of total messages sent
+def number_of_messages():
+    # obtaining data
+    data = data_store.get()
+    channel_details = data['channels_details']
+    dm_details = data['dms_details']
+
+    # finding the total number of messages sent
+    number_of_messages = 0
+    for i in range(len(dm_details)):
+        number_of_messages += len(dm_details[i]['messages'])
+    for i in range(len(channel_details)):
+        number_of_messages += len(channel_details[i]['messages'])
+    return number_of_messages
+
+# Determines if a handle belongs to a valid user in a given channel, 
+# and returns the u_id of the user if valid
+def handle_check_channel(handle, channel_id):
+    # obtaining data
+    data = data_store.get()
+    channels = data['channels_details']
+    
+    # finding the given channel and its details
+    for i in range(len(channels)):
+        if channels[i]['channel_id'] == channel_id:
+            channel_members = channels[i]['channel_members']
+            for j in range(len(channel_members)):
+                if channel_members[j]['handle_str'] == handle:
+                    return channel_members[j]['u_id']
+    return None
+
+# Determines if a handle belongs to a valid user in a given DM, 
+# and returns the u_id of the user if valid
+def handle_check_dm(handle, dm_id):
+    # obtaining data
+    data = data_store.get()
+    dms = data['dms_details']
+    
+    # finding the given DM and its details
+    for i in range(len(dms)):
+        if dms[i]['dm_id'] == dm_id:
+            dm_members = dms[i]['members']
+            for j in range(len(dm_members)):
+                if dm_members[j]['handle_str'] == handle:
+                    return dm_members[j]['u_id']
+    return None
+
+# Adds a notification for a given user
+def add_notification(notification_dict, u_id):
+    # obtaining data
+    data = data_store.get()
+    notifications_details = data['notifications_details']
+    
+    # add notification
+    appended = False
+
+    for i in range(len(notifications_details)):
+        # if the user already exists in the notification data store, append relevant information
+        if notifications_details[i]['u_id'] == u_id:
+            notifications_details[i]['notifications'].append(notification_dict)
+            appended = True
+
+    # if the user doesn't already exist, create a new dictionary
+    if appended == False:
+        notifications = {
+            'u_id': u_id,
+            'notifications': [notification_dict]
+        }
+        notifications_details.append(notifications)
+    data_store.set(data)
+
+# Finds and returns a user's handle 
+def find_handle(token):
+    # obtaining data
+    data = data_store.get()
+    users = data['users']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
+
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            return users[i]['handle_str']
+
+# Raising an error if channel_id is invalid
+def check_channel(channel_id):
+    data = data_store.get()
+    channels = data["channels_details"]
+    channel_id_list = []
+    for i in range(len(channels)):
+        channel_id_list.append(channels[i]['channel_id'])
+    if int(channel_id) not in channel_id_list:
+        raise InputError(description="Invalid channel")
+    
+# Raising an error if a user is not a member of the channel
+def not_a_member(u_id, channel_id):
+    data = data_store.get()
+    channels = data["channels_details"]
+    is_member = False
+    for i in range(len(channels)):
+        if int(channels[i]['channel_id']) == int(channel_id):
+            members = channels[i]['channel_members']
+            for j in range(len(members)):
+                if int(members[j]['u_id']) == int(u_id):
+                    is_member = True
+    if is_member == False:
+        raise AccessError("You are not a member of the channel")
 
 # ================================================
 # ================= FUNCTIONS ====================
@@ -190,7 +488,6 @@ def message_senddm_v1(token, dm_id, message):
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
     dm_details = data['dms_details']
-    channel_details = data['channels_details']
 
     # checks for exceptions
     token_check(token)    
@@ -198,17 +495,8 @@ def message_senddm_v1(token, dm_id, message):
     valid_message_length(message)
     check_dm_member(token, dm_id)
     
-    # otherwise, send the message to the specified DM
-
-    # obtain the total number of messages existing in order to assign a message ID
-    length_of_messages = 0
-    for i in range(len(dm_details)):
-        length_of_messages += len(dm_details[i]['messages'])
-    for i in range(len(channel_details)):
-        length_of_messages += len(channel_details[i]['messages'])
- 
     # assigning the message ID
-    message_id = length_of_messages + 1
+    message_id = number_of_messages() + 1
 
     # obtaining the time the message is created
     time = datetime.now()
@@ -225,8 +513,34 @@ def message_senddm_v1(token, dm_id, message):
     # finding the DM with given dm_id and appending the message to the DM's details
     for i in range(len(dm_details)):
         if dm_details[i]['dm_id'] == int(dm_id):
-            data['dms_details'][i]['messages'].append(message_dict)
+            dm_details[i]['messages'].append(message_dict)
             data_store.set(data)
+            name = dm_details[i]['name']
+    
+    # obtaining the authorised user's handle
+    auth_user_handle = find_handle(token)
+
+    # creating a list of handles to avoid repeats
+    handle_list = []
+
+    # determining whether the message contains any tags
+    for i in range(len(message)):
+        if message[i] == '@':
+            x = re.search('@([a-z]){2,}([0-9])*', message[i:])
+            handle = x.group()[1:]
+            # ensure the handle has not already been tagged in the same message
+            if handle not in handle_list:
+                # check if the handle belongs to a valid user
+                if handle_check_dm(handle, dm_id) != None:
+                    # creating a notification dictionary for the user
+                    notification_dict = {
+                        'channel_id': -1,
+                        'dm_id': dm_id,
+                        'notification_message': f'{auth_user_handle} tagged you in {name}: {message[:20]}'
+                    }
+                    # adding the notification
+                    add_notification(notification_dict, handle_check_dm(handle, dm_id))
+                    handle_list.append(handle)
 
     return {"message_id": message_id}
 
@@ -247,12 +561,10 @@ def message_send_v1(token, channel_id, message):
     Return Value:
         Returns message_id on all valid conditions
     """
- 
     # obtaining data
     data = data_store.get()
     decoded_token = decode_JWT(token)
     auth_user_id = decoded_token['u_id']
-    dm_details = data['dms_details']
     channel_details = data['channels_details']
 
     # checks for exceptions
@@ -260,18 +572,9 @@ def message_send_v1(token, channel_id, message):
     check_channel(channel_id)
     valid_message_length(message)
     not_a_member(auth_user_id, channel_id)
-    
-    # otherwise, send the message to the specified channel
-
-    # obtain the total number of messages existing in order to assign a message ID
-    length_of_messages = 0
-    for i in range(len(dm_details)):
-        length_of_messages += len(dm_details[i]['messages'])
-    for i in range(len(channel_details)):
-        length_of_messages += len(channel_details[i]['messages'])
- 
+     
     # assigning the message ID
-    message_id = length_of_messages + 1
+    message_id = number_of_messages() + 1
 
     # obtaining the time the message is created
     time = datetime.now()
@@ -290,7 +593,33 @@ def message_send_v1(token, channel_id, message):
         if int(channel_details[i]['channel_id']) == int(channel_id):
             data['channels_details'][i]['messages'].append(message_dict)
             data_store.set(data)
+            name = channel_details[i]["name"]
     
+    # obtaining the authorised user's handle
+    auth_user_handle = find_handle(token)
+
+    # creating a list of handles to avoid repeats
+    handle_list = []
+
+    # determining whether the message contains any tags
+    for i in range(len(message)):
+        if message[i] == '@':
+            x = re.search('@([a-z]){2,}([0-9])*', message[i:])
+            handle = x.group()[1:]
+            # ensure the handle has not already been tagged in the same message
+            if handle not in handle_list:
+                # check if the handle belongs to a valid user in the channel
+                if handle_check_channel(handle, channel_id) != None:
+                    # creating a notification dictionary for the user
+                    notification_dict = {
+                        'channel_id': channel_id,
+                        'dm_id': -1,
+                        'notification_message': f'{auth_user_handle} tagged you in {name}: {message[:20]}'
+                    }
+                    # adding the notification
+                    add_notification(notification_dict, handle_check_channel(handle, channel_id))
+                    handle_list.append(handle)
+
     return {"message_id": message_id}
 
 def message_edit_v1(token, message_id, message):
@@ -311,63 +640,24 @@ def message_edit_v1(token, message_id, message):
     Return Value:
         Returns an empty dictionary on all valid conditions. 
     """
-    # obtaining data
-    data = data_store.get()
-    dm_details = data['dms_details']
-    channel_details = data['channels_details']
 
     # checks for exceptions
+    token_check(token)
     valid_message_length_edit(message)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     
     # obtaining what channel/DM the message is in 
-    a, b, _ = return_info(message_id)
-    print('edit:')
-    print(b)
+    _, b, _ = return_info(message_id)
 
-    # if the message is in a DM, access the DM the message is in, in order to edit the message
-    index = False
+    # editing the message in a DM
     if b == 'dm':
-        for i in range(len(dm_details)):
-            if dm_details[i]['dm_id'] == int(a):
-                dm_messages = dm_details[i]['messages']
-                for j in range(len(dm_messages)):
-                    # find the message
-                    if dm_messages[j]['message_id'] == int(message_id):
-                        # if the new message is an empty string, delete the message
-                        if message == "":
-                            message_index = j
-                            index = True
-                        # otherwise, replace the message with the new text
-                        else:
-                            dm_messages[j]['message'] = message
-                            data_store.set(data)
-                if index == True:
-                    del dm_messages[message_index]
-                    data_store.set(data)
+        edit_message_dm(message, message_id, token)
 
-    # if the message is in a channel, access the channel the message is in, in order to edit the message
+    # editing the message in a channel
     else:
-        index = False 
-        for i in range(len(channel_details)):
-            if channel_details[i]['channel_id'] == int(a):
-                channel_messages = channel_details[i]['messages']
-                for j in range(len(channel_messages)):
-                    # find the message
-                    if channel_messages[j]['message_id'] == int(message_id):
-                        # if the new message is an empty string, delete the message
-                        if message == "":
-                            index = True
-                            message_index = j
-                        # otherwise, replace the message with the new text
-                        else:
-                            channel_messages[j]['message'] = message
-                            data_store.set(data)
-                if index == True:
-                    del channel_messages[message_index]
-                    data_store.set(data)
-
+        edit_message_channel(message, message_id, token)
+                    
     return {}
 
 # function for removing messages
@@ -388,47 +678,23 @@ def message_remove_v1(token, message_id):
     Return Value:
         Returns an empty dictionary on all valid conditions. 
     """
-    # obtaining data
-    data = data_store.get()
-    dm_details = data['dms_details']
-    channel_details = data['channels_details']
 
     # checks for exceptions
+    token_check(token)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     
     # obtaining what channel/DM the message is in 
-    a, b, _ = return_info(message_id)
+    _, b, _ = return_info(message_id)
 
-    # if the message is in a DM, access the DM the message is in, in order to remove the message
-    index = False
+    # removing the message from a DM
     if b == 'dm':
-        for i in range(len(dm_details)):
-            if int(dm_details[i]['dm_id']) == int(a):
-                dm_messages = dm_details[i]['messages']
-                for j in range(len(dm_messages)):
-                    # find the message
-                    if dm_messages[j]['message_id'] == int(message_id):
-                        message_index = j
-                        index = True
-                if index == True:
-                    del dm_messages[message_index]
-                    data_store.set(data)
+        remove_message_dm(message_id)
 
-    # if the message is in a channel, access the channel the message is in, in order to remove the message
+    # removing the message from a channel
     else:
-        index = False
-        for i in range(len(channel_details)):
-            if channel_details[i]['channel_id'] == int(a):
-                channel_messages = channel_details[i]['messages']
-                for j in range(len(channel_messages)):
-                    # find the message
-                    if channel_messages[j]['message_id'] == int(message_id):
-                        message_index = j
-                        index = True
-                if index == True:
-                    del channel_messages[message_index]
-                    data_store.set(data)
+        remove_message_channel(message_id)
+
     return {}
 
 def message_react_v1(token, message_id, react_id ):
@@ -492,3 +758,8 @@ def message_unpin_v1(token, message_id):
 
     return {}
     
+=======
+        remove_message_channel(message_id)
+
+    return {} 
+>>>>>>> master

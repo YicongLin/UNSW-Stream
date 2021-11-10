@@ -208,12 +208,6 @@ def dm_leave_v1(token, dm_id):
     # but the authorised user is not a member of dm
     # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
     each_member_id = check_valid_dm_token(auth_user_id, dm_id_element)
-
-    # Find out the index of auth_user within dm['members']
-    # while member_id_element < len(each_member_id):
-    #     if data['dms_details'][dm_id_element]['members'][member_id_element]['u_id'] == auth_user_id:
-    #         break
-    #     member_id_element += 1
     member_id_element = auth_user_dm_index(each_member_id, auth_user_id)
 
     # Pick out dict from dm's members and then delete it 

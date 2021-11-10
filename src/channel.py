@@ -79,7 +79,7 @@ def check_member(channel_id_element, u_id):
         each_member_element += 1 
 
     if u_id not in each_member_id:
-        raise InputError(description="User is not a member of this channel")
+        raise InputError(description="Authorised user is not a member of this channel")
 
     return each_member_id
 # Finish member users check
@@ -90,8 +90,10 @@ def check_member(channel_id_element, u_id):
 # Serach information at data['channels_details'][channel_id_element]['channel_members']
 # If the authorised_user with u_id is not a member of channel then return False
 # If the authorised_user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
-def check_member_authorised_user(channel_id_element, u_id):
+def check_member_authorised_user(channel_id_element, token):
     data = data_store.get()
+
+    auth_user_id = decode_JWT(token)['u_id']
 
     members_in_channel = data['channels_details'][channel_id_element]['channel_members']
     each_member_element = 0
@@ -101,7 +103,7 @@ def check_member_authorised_user(channel_id_element, u_id):
         each_member_id.append(each_memeber['u_id'])
         each_member_element += 1 
 
-    if u_id not in each_member_id:
+    if auth_user_id not in each_member_id:
         raise AccessError(description="User is not a member of this channel")
 
     return each_member_id
@@ -155,13 +157,14 @@ def check_valid_token(token):
 # If authorised user has channel/global owener permissions then return False
 # If authorised user has channel/global owener permissions then return True
 def check_channel_owner_permissions(token, each_owner_id):
+
     decoded_token = decode_JWT(token)
 
     owner_permission = decoded_token['permissions_id']
     auth_user_id = decoded_token['u_id']
 
     if owner_permission != 1 and auth_user_id not in each_owner_id:
-        raise AccessError(description="No permissions to add user")
+        raise AccessError(description="No permissions to add/remove user")
 
     return True
 # Finish authorised user permissions check
@@ -318,8 +321,7 @@ def channel_details_v2(token, channel_id):
 
     # Raise an AccessError if authorised user type in a valid channel_id
     # but the authorised user is not a member of channel
-    auth_user_id = decode_JWT(token)['u_id']
-    check_member_authorised_user(channel_id_element, auth_user_id)
+    check_member_authorised_user(channel_id_element, token)
 
 
     # For return
@@ -481,6 +483,10 @@ def channel_addowner_v1(token, channel_id, u_id):
     # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
     channel_id_element = check_valid_channel_id(channel_id)
 
+    # Raise an AccessError if authorised user type in a valid channel_id
+    # but the authorised user is not a member of channel
+    check_member_authorised_user(channel_id_element, token)
+
     # Raise a InputError if authorised user type in invalid u_id
     check_valid_uid(u_id)
 
@@ -492,14 +498,14 @@ def channel_addowner_v1(token, channel_id, u_id):
     # Obtain a list whcih contains all owners' id
     each_owner_id = channel_owners_ids(channel_id_element)
 
+    # Raise an AccessError if authorised user type in a valid channel_id
+    # but the authorised user is not eligible to add owner
+    check_channel_owner_permissions(token, each_owner_id)
+
     # Raise a InputError if authorised user type in a valid u_id
     # but the user with u_id is already is an owner of channel
     if u_id in each_owner_id:
         raise InputError(description="User already is an owner of channel")
-    
-    # Raise an AccessError if authorised user type in a valid channel_id
-    # but the authorised user is not eligible to add owner
-    check_channel_owner_permissions(token, each_owner_id)
     
     # Pick out dict from members and then add it to owner
     new_owner_element = 0
@@ -545,11 +551,19 @@ def channel_removeowner_v1(token, channel_id, u_id):
     # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
     channel_id_element = check_valid_channel_id(channel_id)
 
+    # Raise an AccessError if authorised user type in a valid channel_id
+    # but the authorised user is not a member of channel
+    check_member_authorised_user(channel_id_element, token)
+
     # Raise a InputError if authorised user type in invalid u_id
     check_valid_uid(u_id)
 
     # Obtain a list whcih contains all owners' id
     each_owner_id = channel_owners_ids(channel_id_element)
+
+    # Raise an AccessError if authorised user type in a valid channel_id
+    # but the authorised user is not eligible to remove owner
+    check_channel_owner_permissions(token, each_owner_id)
 
     # Raise a InputError if authorised user type in a valid u_id
     # but the user with u_id is not a owner of channel yet
@@ -560,10 +574,6 @@ def channel_removeowner_v1(token, channel_id, u_id):
     # but the user with u_id is only owner of channel
     if u_id in each_owner_id and len(each_owner_id) == 1:
         raise InputError(description="User is the only owner of channel")
-
-    # Raise an AccessError if authorised user type in a valid channel_id
-    # but the authorised user is not eligible to remove owner
-    check_channel_owner_permissions(token, each_owner_id)
 
     # Pick out dict from owners and then delete it 
     remove_owner_element = 0

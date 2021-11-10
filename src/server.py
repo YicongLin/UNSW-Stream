@@ -13,11 +13,12 @@ from src.message import message_senddm_v1, message_send_v1, message_edit_v1, mes
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.standup import standup_start_v1, standup_active_v1
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
 from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
+from src.iter3_message import message_sendlater_v1, message_sendlaterdm_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -424,6 +425,37 @@ def auth_passwordreset_reset_http():
     result = auth_passwordreset_reset_v1(reset_code, new_password)
     return dumps(result)
 
+@APP.route('/message/sendlater/v1', methods=['POST'])
+def message_sendlater_http():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    time_sent = data['time_sent']
+
+    result = message_sendlater_v1(token, channel_id, message, time_sent)
+    return dumps(result)
+
+@APP.route('/message/sendlaterdm/v1', methods=['POST'])
+def message_sendlaterdm_http():
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    message = data['message']
+    time_sent = data['time_sent']
+
+    result = message_sendlaterdm_v1(token, dm_id, message, time_sent)
+    return dumps(result)
+
+@APP.route('/standup/send/v1', methods=['POST'])
+def standup_send():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+
+    standup_send_v1(token, channel_id, message)
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

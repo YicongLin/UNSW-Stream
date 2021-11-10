@@ -277,3 +277,4 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
         raise InputError(description="Unavailable image url") from None
 
     return {}
+

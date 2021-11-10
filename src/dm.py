@@ -282,8 +282,7 @@ def dm_leave_v1(token, dm_id):
     leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
     data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
 
-    # Store timestamp into datastore 
-    lately_dms_joined_num = dms_joined_num_leave(auth_user_id)
+    dms_joined_num_leave(auth_user_id)
 
     data_store.set(data)
 
@@ -343,16 +342,6 @@ def dm_create_v1(token, u_ids):
         i += 1
 
     data['dms_details'].append(dm_detail_dict)
-
-    if len(data['timestamps']['users']) == 0:
-        data['timestamps']['users'].append({
-            "u_id": auth_user_id,
-            'channels_joined': [],
-            'dms_joined': [],
-            'messages_sent': [],
-            'involvement_rate': -1 
-            })
-
 
     # Recursion to update timestamp
     uids_index = 0

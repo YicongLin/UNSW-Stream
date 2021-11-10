@@ -1,0 +1,11 @@
+#!/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/test_venv/bin/python3
+
+# -*- coding: utf-8 -*-
+import re
+import sys
+
+from pylint import run_epylint
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(run_epylint())

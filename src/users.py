@@ -274,6 +274,6 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
     except (HTTPError, URLError):
         # if urllib.request.urlopen(img_url).status != 200 or urllib.request.urlretrieve.status != 200:
-        raise InputError(description="Unavailable image url") from src.error 
+        raise InputError(description="Unavailable image url") from None
 
     return {}

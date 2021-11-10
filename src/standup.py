@@ -157,3 +157,5 @@ def standup_send_v1(token, channel_id, message):
     # an active standup is not currently running in the channel
     if check_active_standup(channel_id) == True:
         raise InputError(description="Stand up is not currently running")
+    
+    return {}

@@ -14,10 +14,14 @@ BASE_URL = 'http://127.0.0.1:2000'
 def test_start_active():
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
+    
+    # Possible time for running routes
+    length = 10 # Assume start standup in 10 secs
+    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    possible_time = [int(now_time + length), int(now_time + length + 1), int(now_time + length + 2)]
 
     # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
-    decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
 
     # Login in user_two to create channel 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})
@@ -31,11 +35,6 @@ def test_start_active():
     resp = requests.get(f'{BASE_URL}/standup/active/v1', params={"token": token_2, "channel_id": channel_id})
     assert (resp.status_code == 200)
     assert (json.loads(resp.text) =={'is_active': False, 'time_finish': None})
-
-    # Possible time for running routes
-    length = 10 # Assume start standup in 10 secs
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
-    possible_time = [int(now_time + length), int(now_time + length + 1), int(now_time + length + 2)]
 
     # Start a standup in 10 secs -----> successful implement
     resp = requests.post(f'{BASE_URL}/standup/start/v1', json={"token": token_2, "channel_id": channel_id, "length": length})
@@ -56,11 +55,9 @@ def test_start_active_errors():
 
     # user_one ----> global owner
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
-    decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
     
     # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
-    decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
 
     # Login in user_two to create channel 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo"})

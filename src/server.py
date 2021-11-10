@@ -447,8 +447,8 @@ def standup_send():
     channel_id = data['channel_id']
     message = data['message']
 
-    result = standup_send_v1(token, channel_id, message)
-    return dumps(result)
+    standup_send_v1(token, channel_id, message)
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

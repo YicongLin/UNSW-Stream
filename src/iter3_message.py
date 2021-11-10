@@ -1,9 +1,11 @@
 from src.data_store import data_store
 from src.dm import is_valid_token, decode_token
 from src.error import AccessError, InputError
-from src.message import message_send_v1, message_senddm_v1, check_dm_member
+from src.message import message_send_v1, message_senddm_v1, check_dm_member, number_of_messages
 import math
+import threading
 from datetime import timezone, datetime
+import time
 def message_sendlater_v1(token, channel_id, message, time_sent):
     """ 
     Send a message from the authorised user to the channel specified by channel_id automatically at a specified time in the future. 
@@ -24,24 +26,27 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
     # errors check
     is_valid_token(token)
     
+    # channel_id does not refer to a valid channel
     is_valid_channel(channel_id)
 
+    # authorised user is not a member of the channel
     is_channel_member(token, channel_id)
-    
+
     if len(message) > 1000:
         raise InputError(description="Message is too long")
 
-    time = datetime.now()
-    # time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    if (time_sent < time):
-        raise InputError(description="Can't send messages to the past!")
-
+    time_now = datetime.now()
+    time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
     
-    while True:
-        time = datetime.now()
-        if (time == time_sent):
-            message_id = message_send_v1(token, channel_id, message)
-            break
+    if (time_sent < time_created):
+        raise InputError(description="Can't send messages to the past!")
+    
+    waiting_time = time_sent - time_created
+    
+    message_id = message_send_v1(token, channel_id, message)
+    
+    sending = threading.Timer(waiting_time, message_send_v1, [token, channel_id, message])
+    sending.start()
 
     return {
         'message_id': message_id
@@ -78,15 +83,16 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
         raise InputError(description="Message is too long")
 
     time = datetime.now()
-    # time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    if (time_sent < time):
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    if (time_sent < time_created):
         raise InputError(description="Can't send messages to the past!")
 
-    while True:
-        time = datetime.now()
-        if (time == time_sent):
-            message_id = message_send_v1(token, dm_id, message)
-            break
+    waiting_time = time_sent - time_created
+    
+    message_id = message_senddm_v1(token, dm_id, message)
+    
+    sending = threading.Timer(waiting_time, message_senddm_v1, [token, dm_id, message])
+    sending.start()
 
     return {
         'message_id': message_id
@@ -142,3 +148,4 @@ def is_channel_member(token, channel_id):
         i += 1
 
     raise AccessError(description="User is not a member of this channel")
+

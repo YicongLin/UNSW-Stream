@@ -14,8 +14,8 @@ def test_invalid_token_message_send_later():
     token = json.loads(response.text)['token']
 
     # create a channel
-    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
-    channel_id = json.loads(create_return.text)['channel_id']
+    create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    dm_id = json.loads(create_return.text)['dm_id']
 
     # log out
     response = requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token})
@@ -27,7 +27,7 @@ def test_invalid_token_message_send_later():
     time_sent = int(time_created + 5)
 
     # it should raise an access error
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json={"token": token, "channel_id": channel_id, "message": "helloworld", "time_sent": time_sent})
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token, "dm_id": dm_id, "message": "helloworld", "time_sent": time_sent})
     assert (response.status_code) == 403
     
 
@@ -47,19 +47,19 @@ def test_not_a_member():
     token_sec = json.loads(response.text)['token']
 
     # second user create a channel
-    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token_sec, "name": "channel1", "is_public": True})
-    channel_id = json.loads(create_return.text)['channel_id']
+    create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token_sec, "u_ids": []})
+    dm_id = json.loads(create_return.text)['dm_id']
 
     time = datetime.now()
     time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     time_sent = time_created + 5
 
     # first user try to send a message
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json={"token": token_fir, "channel_id": channel_id, "message": "helloworld", "time_sent": time_sent})
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token_fir, "dm_id": dm_id, "message": "helloworld", "time_sent": time_sent})
     assert (response.status_code) == 403
 
 
-def test_invalid_channel():
+def test_invalid_dm():
     requests.delete(f'{BASE_URL}/clear/v1')
     
     # user register
@@ -70,14 +70,14 @@ def test_invalid_channel():
     token = json.loads(response.text)['token']
 
     # user create a channel
-    requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
+    requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
 
     # user try to send message to an invalid channel
     time = datetime.now()
     time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     time_sent = time_created + 5
 
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json={"token": token, "channel_id": -1, "message": "helloworld", "time_sent": time_sent})
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token, "dm_id": -1, "message": "helloworld", "time_sent": time_sent})
     assert (response.status_code) == 400
 
 
@@ -92,8 +92,8 @@ def test_invalid_message_length():
     token = json.loads(response.text)['token']
 
     # user create a channel
-    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
-    channel_id = json.loads(create_return.text)['channel_id']
+    create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    dm_id = json.loads(create_return.text)['dm_id']
 
     # user try to send a message with over 1000 characters
     time = datetime.now()
@@ -102,7 +102,7 @@ def test_invalid_message_length():
 
     payload = {
         "token": token, 
-        "channel_id": channel_id, 
+        "dm_id": dm_id, 
         "message": "Lorem ipsum dolor sit amet, \
                     consectetuer adipiscing elit. Aenean commodo \
                     ligula eget dolor. Aenean massa. Cum sociis \
@@ -120,7 +120,7 @@ def test_invalid_message_length():
         "time_sent": time_sent
     }
 
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json= payload)
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json= payload)
     assert (response.status_code) == 400
 
 
@@ -135,15 +135,15 @@ def test_invalid_time():
     token = json.loads(response.text)['token']
 
     # user create a channel
-    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
-    channel_id = json.loads(create_return.text)['channel_id']
+    create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token, "u_ids": []})
+    dm_id = json.loads(create_return.text)['dm_id']
 
     # user try to send a message with over 1000 characters
     time = datetime.now()
     time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     time_sent = time_created - 1
 
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json={"token": token, "channel_id": channel_id, "message": "helloworld", "time_sent": time_sent})
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token, "dm_id": dm_id, "message": "helloworld", "time_sent": time_sent})
     assert (response.status_code) == 400
 
 def test_valid_message():
@@ -165,23 +165,15 @@ def test_valid_message():
     user2 = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login2@gmail.com", "password": "password454643"})
     token2 = json.loads(user2.text)['token']
     
-    # 1st user create a channel
-    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token1, "name": "channel1", "is_public": True})
-    channel_id = json.loads(create_return.text)['channel_id']
+    # 1st user create a dm with 2nd and 3rd user
+    create_return = requests.post(f'{BASE_URL}/dm/create/v1', json={"token": token1, "u_ids": [u_id2, u_id3]})
+    dm_id = json.loads(create_return.text)['dm_id']
 
-    # 1st user invite 2nd and 3rd user to the channel
-    requests.post(f'{BASE_URL}/channel/invite/v2', json = {"token": token1, "channel_id": channel_id, "u_id": u_id2})
-    requests.post(f'{BASE_URL}/channel/invite/v2', json = {"token": token1, "channel_id": channel_id, "u_id": u_id3})
 
-    # 2nd user send a message later to the channel
+    # 2nd user send a message later to the dm
     time = datetime.now()
     time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     time_sent = time_created + 5
 
-    response = requests.post(f'{BASE_URL}/message/sendlater/v1', json={"token": token2, "channel_id": channel_id, "message": "hey guys how u going with project", "time_sent": time_sent})
+    response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token2, "dm_id": dm_id, "message": "hey guys how u going with project", "time_sent": time_sent})
     assert (response.status_code) == 200
-
-    
-    # message_id = json.loads(response.text)['message_id']
-    # resp = requests.put(f'{BASE_URL}/message/edit/v1', json={"token": token2, "message_id": message_id, "message": "have u finish the functions"})
-    # assert (resp.status_code) == 200

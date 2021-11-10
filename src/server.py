@@ -17,6 +17,7 @@ from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
 from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
+from src.iter3_message import message_sendlater_v1, message_sendlaterdm_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -381,7 +382,37 @@ def auth_passwordreset_reset_http():
     result = auth_passwordreset_reset_v1(reset_code, new_password)
     return dumps(result)
 
+@APP.route('/message/sendlater/v1', methods=['POST'])
+def message_sendlater_http():
+    #token = request.args.get('token')
+    # channel_id = request.args.get('channel_id')
+    # message = request.args.get('message')
+    # time_sent = request.args.get('time_sent')
 
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    time_sent = data['time_sent']
+
+    result = message_sendlater_v1(token, channel_id, message, time_sent)
+    return dumps(result)
+
+@APP.route('/message/sendlaterdm/v1', methods=['POST'])
+def message_sendlaterdm_http():
+    # token = request.args.get('token')
+    # dm_id = request.args.get('dm_id')
+    # message = request.args.get('message')
+    # time_sent = request.args.get('time_sent')
+
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    message = data['message']
+    time_sent = data['time_sent']
+
+    result = message_sendlaterdm_v1(token, dm_id, message, time_sent)
+    return dumps(result)
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

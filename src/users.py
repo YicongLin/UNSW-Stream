@@ -6,6 +6,8 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.token_helpers import decode_JWT
 import urllib.request
+from urllib.error import HTTPError, URLError
+
 from PIL import Image
 # HELPER FUNCTIONS 
 def token_check(token):
@@ -101,6 +103,25 @@ def check_duplicate_email(email):
         i += 1
     
     return  
+
+# ==================================
+# Return the index about where uid stroes in users list
+# Associate with other uploadphoto functions
+def users_index(auth_user_id):
+
+    data = data_store.get()
+
+    users_index = 0
+    while True:
+        if data['users'][users_index]['u_id'] == auth_user_id:
+            break
+        users_index += 1
+
+    data_store.set(data)
+
+    return users_index 
+# Finish function
+# ==================================
 
 # USERS FUNCTIONS
 def users_all_v1(token):
@@ -217,38 +238,42 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     auth_user_id = decode_JWT(token)['u_id']
 
     # Raise an InputError if authorised user pass in unavailable image url
-    if urllib.request.urlopen(img_url).status != 200:
+    
+
+    try:
+        # Get and store the image user upload
+        urllib.request.urlretrieve(img_url, f"src/static/{auth_user_id}_temp.jpg")
+        img = Image.open(f"src/static/{auth_user_id}_temp.jpg")
+
+        # Raise an InputError if authorised user pass in not JPG image
+        if img.format != "JPG" and img.format != "JPEG":
+            raise InputError(description="Unacceptable image format")
+
+        # Obtain the size of image
+        width, height = img.size
+
+        # Raise an InputError if authorised user type in a bound out of dimensions of the image
+        if x_start not in range (0, width + 1) or x_end not in range (0, width + 1):
+            raise InputError(description="Out of dimensions of the image")
+
+        if y_start not in range (0, height + 1) or y_end not in range (0, height + 1):
+            raise InputError(description="Out of dimensions of the image")
+
+        # Raise an InputError if authorised user type in a impossiable crop bound 
+        if x_end < x_start or y_end < y_start:
+            raise InputError(description="Impossible crop image bounds")
+
+        # Crop image and save it
+        cropped = img.crop((x_start, y_start, x_end, y_end))
+        cropped.save(f"src/static/{auth_user_id}.jpg")
+
+        # Obtain index of authorised user's user dict store in users list
+        # Update image url to authorised user's user dict
+        user_index = users_index(auth_user_id)
+        data['users'][user_index]['profile_img_url'] = f"src/static/{auth_user_id}.jpg"
+
+    except (HTTPError, URLError):
+        # if urllib.request.urlopen(img_url).status != 200 or urllib.request.urlretrieve.status != 200:
         raise InputError(description="Unavailable image url")
-
-    # Get and store the image user upload
-    urllib.request.urlretrieve(img_url, f"src/static/{auth_user_id}.jpg")
-    img = Image.open(f"src/static/{auth_user_id}.jpg")
-
-    # Raise an InputError if authorised user pass in not JPG image
-    if img.format != "JPG":
-        raise InputError(description="Unacceptable image format")
-
-    # Obtain the size of image
-    width, height = img.size
-
-    # Raise an InputError if authorised user type in a bound out of dimensions of the image
-    if x_start or x_end not in range (0, width):
-        raise InputError(description="Out of dimensions of the image")
-
-    if y_start or y_end not in range (0, height):
-        raise InputError(description="Out of dimensions of the image")
-
-    # Raise an InputError if authorised user type in a impossiable crop bound 
-    if x_end < x_start or y_end < y_start:
-        raise InputError(description="Impossible crop image bounds")
-
-    # Crop image and save it
-    cropped = img.crop((x_start, y_start, x_end, y_end))
-    cropped.save(f"src/static/{auth_user_id}.jpg")
-
-    # Obtain index of authorised user's user dict store in users list
-    # Update image url to authorised user's user dict
-    user_index = users_index(auth_user_id)
-    data['users'][user_index]['profile_img_url'] = f"src/static/{auth_user_id}.jpg"
 
     return {}

@@ -129,7 +129,8 @@ def channels_create_v2(token, name, is_public):
         'channel_members': [
             users_info[user_id - 1]
         ],
-        'messages': []
+        'messages': [],
+        'channel_standup': [],
     }
     
     # append all data and return

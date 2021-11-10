@@ -430,4 +430,37 @@ def message_remove_v1(token, message_id):
                     del channel_messages[message_index]
                     data_store.set(data)
     return {}
+
+def message_react_v1(token, message_id, react_id ):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    channel_details = data['channels_details']
+    is_this_user_reacted 
+    return {}
+
+def message_unreact_v1(token, message_id, react_id ):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    channel_details = data['channels_details']
+
+    return {}
+
+def message_pin_v1(token, message_id):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    channel_details = data['channels_details']
+    is_pinned
+
+    return {}
+
+def message_unpin_v1(token, message_id):
+    # obtaining data
+    data = data_store.get()
+    dm_details = data['dms_details']
+    channel_details = data['channels_details']
+
+    return {}
     

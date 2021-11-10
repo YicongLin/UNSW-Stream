@@ -9,7 +9,7 @@ from src.channel import channel_addowner_v1, channel_details_v2, channel_removeo
 from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
 from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1
+from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1, message_pin_v1, message_unpin_v1, message_react_v1, message_unreact_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
@@ -216,7 +216,7 @@ def react_message():
     message_id = request_data['message_id']
     react_id = request_data['react_id']
 
-    return = message_react_v1(token, message_id, react_id)
+    message_react_v1(token, message_id, react_id)
 
     return dumps({})
 
@@ -227,7 +227,7 @@ def unreact_message():
     message_id = request_data['message_id']
     react_id = request_data['react_id']
 
-    return = message_unreact_v1(token, message_id, react_id)
+    message_unreact_v1(token, message_id, react_id)
 
     return dumps({})
 
@@ -237,7 +237,7 @@ def pin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    return = message_pin_v1(token, message_id)
+    message_pin_v1(token, message_id)
 
     return dumps({})
 
@@ -247,7 +247,7 @@ def unpin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    return = message_unpin_v1(token, message_id)
+    message_unpin_v1(token, message_id)
 
     return dumps({})
 

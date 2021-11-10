@@ -7,6 +7,7 @@ import jwt
 from src.token_helpers import decode_JWT
 from src.channel import check_valid_token
 from src.message import add_notification
+from datetime import datetime, timezone
 
 secret = 'COMP1531'
 
@@ -122,6 +123,72 @@ def check_dm_member(dm_id, u_id):
 # Finish DM member check
 # ==================================
 
+# ==================================
+# Update 'dms_joined' when a user leave a dm
+def dms_joined_num_leave(auth_user_id):
+    data = data_store.get()
+
+    # "normal" timestamp for changing number of dms that user is member to
+    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+
+    # Pick out user's index in ['timestamps']['users']
+    timestamps_user_index = 0
+    while True:
+        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
+            break
+        timestamps_user_index += 1
+
+    # Obtain user's lately dm info
+    lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
+    lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
+    
+    # Update dm user's dm info
+    new_dms_joined = {
+        'num_channels_joined' : (lately_dms_joined_num - 1), 
+        'time_stamp' : int(now_time)
+    }
+    data['timestamps']['users'][timestamps_user_index]['dms_joined'].append(new_dms_joined)
+
+    data_store.set(data)
+
+    pass
+# Finish function
+# ==================================
+
+# ==================================
+# Update 'dms_joined' when a user join a dm
+def dms_joined_num_join(auth_user_id):
+    data = data_store.get()
+
+    # "normal" timestamp for changing number of dms that user is member to
+    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+
+    # Pick out user's index in ['timestamps']['users']
+    timestamps_user_index = 0
+    while True:
+        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
+            break
+        timestamps_user_index += 1
+
+     # Obtain user's lately dm info
+    if len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) == 0:
+        lately_dms_joined_num = 0
+
+    elif len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) > 0:  
+        lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
+        lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
+    
+    # Update dm user's dm info
+    new_dms_joined = {
+        'num_dms_joined' : (lately_dms_joined_num + 1), 
+        'time_stamp' : int(now_time)
+    }
+    data['timestamps']['users'][timestamps_user_index]['dms_joined'].append(new_dms_joined)
+
+    pass
+# Finish function
+# ==================================
+
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
@@ -215,6 +282,11 @@ def dm_leave_v1(token, dm_id):
     leave_dm_member = data['dms_details'][dm_id_element]['members'][member_id_element]
     data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
 
+    # Store timestamp into datastore 
+    lately_dms_joined_num = dms_joined_num_leave(auth_user_id)
+
+    data_store.set(data)
+
     return {}
 
 def dm_create_v1(token, u_ids):
@@ -269,11 +341,27 @@ def dm_create_v1(token, u_ids):
     while i < len(u_ids) - 1:
         add_notification(notification_dict, u_ids[i])
         i += 1
-        
 
     data['dms_details'].append(dm_detail_dict)
-    
+
+    if len(data['timestamps']['users']) == 0:
+        data['timestamps']['users'].append({
+            "u_id": auth_user_id,
+            'channels_joined': [],
+            'dms_joined': [],
+            'messages_sent': [],
+            'involvement_rate': -1 
+            })
+
+
+    # Recursion to update timestamp
+    uids_index = 0
+    while uids_index < len(u_ids):
+        dms_joined_num_join(u_ids[uids_index])
+        uids_index += 1
+
     data_store.set(data)
+
     return {
         'dm_id': new_dm_id
     }

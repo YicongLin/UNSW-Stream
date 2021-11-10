@@ -178,7 +178,14 @@ initial_object = {
         #             'message': 'Hello world',
         #             'time_created': 1582426789,
         #         }
-        #     ]             
+        #     ],
+        #
+        #     'channel_standup': [
+        #         {
+        #           'start_uid': 1,
+        #           'time_finish': 1636262035
+        #        },    
+        #    ] 
         # },
 
         # {
@@ -213,6 +220,7 @@ initial_object = {
         # },
                        
     ], 
+    
     'deleted_users': [
         # {
         #     'u_id': 1,
@@ -228,6 +236,28 @@ initial_object = {
         #     'u_id': 1,
         #     'message': 'Hello world',
         #     'time_created': 1582426789,
+        # }
+    ],
+    'notifications_details': [
+        # {
+        #     'u_id': 1,
+        #     'notifications': [
+        #         {
+        #             'channel_id': -1,
+        #             'dm_id': 1,
+        #             'notification_message': "{user handle} tagged you in {DM name}: {first 20 characters of the message}"
+        #         },
+        #         {
+        #             'channel_id': 1, 
+        #             'dm_id': -1, 
+        #             'notification_message': "lilianpok tagged you in Camel: hi @camel"
+        #         },
+        #         {
+        #             'channel_id': -1,
+        #             'dm_id': 2, 
+        #             'notification_message': "lilianpok reacted to your message in Camel"
+        #         }
+        #     ]
         # }
     ],
     'timestamps' : {

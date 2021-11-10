@@ -170,10 +170,10 @@ def test_valid(clear_setup, register_first, create_dm):
 
 # Testing to ensure the message was sent to the specified DM
 def test_sent_messages(clear_setup, register_first, register_second, create_dm):
-     # first user registers; obtain token and u_id
+    # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id_1 = register_first['auth_user_id']
-     # first user registers; obtain token
+    # second user registers; obtain token
     token_2 = register_second['token']
     # second user creates DM with first user; obtain dm_id
     dm_id = create_dm['dm_id']

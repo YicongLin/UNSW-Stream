@@ -151,9 +151,20 @@ def auth_register_v2(email, password, name_first, name_last):
         'permissions_id' : permissions_id,
         'session_id' : [session_id]
     }
+
+    # create dictionary of users' timestamp
+    # and store them in store['timestamps']['users']
+    store['timestamps']['users'].append({
+        "u_id": new_id,
+        'channels_joined': [],
+        'dms_joined': [],
+        'messages_sent': [],
+        'involvement_rate': -1 # Need to be updated
+        })
     
     # add email+password dictionary into the list 'emailpw'
     store['emailpw'].append(email_password)
+    
 
     data_store.set(store)
     

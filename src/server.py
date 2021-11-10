@@ -16,7 +16,8 @@ from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.standup import standup_start_v1, standup_active_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
-from src.other import clear_v1
+from src.other import clear_v1, notifications_get_v1, search_v1
+from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -333,17 +334,12 @@ def channels_create():
 
 @APP.route('/channels/list/v2', methods=['GET'])
 def channels_list():
-    
-    # token = data['token']
     token = request.args.get('token')
-
     result = channels_list_v2(token)
     return dumps(result)
 
 @APP.route('/dm/list/v1', methods=['GET'])
 def dm_list():
-    
-    
     token = request.args.get('token')
     result = dm_list_v1(token)
     return dumps(result)
@@ -394,6 +390,40 @@ def send_js(path):
 def clear():
     clear_v1()
     return dumps({})
+
+@APP.route('/auth/passwordreset/request/v1', methods=['POST'])
+def auth_passwordreset_request_http():
+    data = request.get_json()
+    email = data['email']
+
+    result = auth_passwordreset_request_v1(email)
+    return dumps(result)
+
+@APP.route('/notifications/get/v1', methods=['GET'])
+def notifications_get_http():
+    token = request.args.get('token')
+    
+    result = notifications_get_v1(token)
+    return dumps(result)
+
+@APP.route('/search/v1', methods=['GET'])
+def search_http():
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    
+    result = search_v1(token, query_str)
+    return dumps(result)
+
+@APP.route('/auth/passwordreset/reset/v1', methods=['POST'])
+def auth_passwordreset_reset_http():
+    data = request.get_json()
+    reset_code = data['reset_code']
+    new_password = data['new_password']
+
+
+    result = auth_passwordreset_reset_v1(reset_code, new_password)
+    return dumps(result)
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

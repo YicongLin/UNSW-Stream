@@ -103,11 +103,14 @@ def user_stats_v1(token):
         involvement_rate == 1
 
     return {
-        'channels_joined' : store['timestamps']['users'][u_id - 1]['channels_joined'],
-        'dms_joined' : store['timestamps']['users'][u_id - 1]['dms_joined'], 
-        'messages_sent': store['timestamps']['users'][u_id - 1]['messages_sent'], 
-        involvement_rate
-    }
+        'user_stats' : 
+            {
+            'channels_joined' : store['timestamps']['users'][u_id - 1]['channels_joined'],
+            'dms_joined' : store['timestamps']['users'][u_id - 1]['dms_joined'], 
+            'messages_sent': store['timestamps']['users'][u_id - 1]['messages_sent'], 
+            'involvement_rate' : involvement_rate
+        }
+    } 
 
 def users_stats_v1(token):
     """
@@ -190,10 +193,13 @@ def users_stats_v1(token):
     utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
     return {
-        'channels_exist': store['timestamps']['workspace']['channels_exist'], 
-        'dms_exist': store['timestamps']['workspace']['dms_exist'], 
-        'messages_exist': store['timestamps']['workspace']['messages_exist'], 
-        utilization_rate
+        'workplace_stats' : 
+            {
+            'channels_exist': store['timestamps']['workspace']['channels_exist'], 
+            'dms_exist': store['timestamps']['workspace']['dms_exist'], 
+            'messages_exist': store['timestamps']['workspace']['messages_exist'], 
+            'utilization_rate' : utilization_rate
+            }
     }
 
 

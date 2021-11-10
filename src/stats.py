@@ -36,12 +36,11 @@ def user_stats_v1(token):
 
     # number of messages sent (only increases, removed messages does not affect)
     # messages in channels
-    store['channels_details']
 
-    i = 0
-    j = 0
     channel_msgs_sent = 0
+    i = 0
     while i < len(store['channels_details']):
+        j = 0
         while j < len(store['channels_details'][i]['messages']):
             if store['channels_details'][i]['messages'][j]['u_id'] == u_id:
                 channel_msgs_sent += 1
@@ -96,14 +95,19 @@ def user_stats_v1(token):
 
     # involvement rate 
     if sum(num_channels, num_dms, num_msgs) == 0:
-        user_involvement = 0 
+        involvement_rate = 0 
     else: 
-        user_involvement = sum(num_channels_joined, num_dms_joined, num_msgs_sent)/sum(num_channels, num_dms, num_msgs)
+        involvement_rate = sum(num_channels_joined, num_dms_joined, num_msgs_sent)/sum(num_channels, num_dms, num_msgs)
 
-    if user_involvement > 1:
-        user_involvement == 1
+    if involvement_rate > 1:
+        involvement_rate == 1
 
-    return {}
+    return {
+        'channels_joined' : store['timestamps']['users'][u_id - 1]['channels_joined'],
+        'dms_joined' : store['timestamps']['users'][u_id - 1]['dms_joined'], 
+        'messages_sent': store['timestamps']['users'][u_id - 1]['messages_sent'], 
+        involvement_rate
+    }
 
 def users_stats_v1(token):
     """
@@ -123,46 +127,73 @@ def users_stats_v1(token):
     token_check(token)
     store = data_store.get()
 
-    # number of existing channels 
-    channel_list = channels_listall_v2(token)
-    num_channels = len(channel_list)
+    # # number of existing channels 
+    # channel_list = channels_listall_v2(token)
+    # num_channels = len(channel_list)
     
-    # number of existing dms 
-    dm_list = store['dms_details']
-    num_dms = len(dm_list)
+    # # number of existing dms 
+    # dm_list = store['dms_details']
+    # num_dms = len(dm_list)
 
     # number of users 
     num_users = len(store['users'])
 
-    # current number of messages -  number of messages that exist at the current time (can decrease)
-    # loop through dms_details to find total messages
-    dms_msgs = 0 
-    i = 0
-    while i < len(store['dms_details']):
-        dms_msgs += len(store['dms_details'][i]['messages'])     
-    i += 1
+    # # current number of messages -  number of messages that exist at the current time (can decrease)
+    # # loop through dms_details to find total messages
+    # dms_msgs = 0 
+    # i = 0
+    # while i < len(store['dms_details']):
+    #     dms_msgs += len(store['dms_details'][i]['messages'])     
+    # i += 1
 
-    # loop through channels_details to find total messages 
-    channels_msgs = 0 
-    i = 0
-    while i < len(store['channels_details']):
-        channels_msgs += len(store['channels_details'][i]['messages'])     
-    i += 1
+    # # loop through channels_details to find total messages 
+    # channels_msgs = 0 
+    # i = 0
+    # while i < len(store['channels_details']):
+    #     channels_msgs += len(store['channels_details'][i]['messages'])     
+    # i += 1
 
-    # DO NOT LOOP THROUGH REMOVED MESSAGES 
-    num_msgs = dms_msgs + channels_msgs
+    # # DO NOT LOOP THROUGH REMOVED MESSAGES 
+    # num_msgs = dms_msgs + channels_msgs
 
     # users who have joined at least 1 channel or dm 
+    
+    # create list of u_ids who are in a dm 
+    dms_list = [ ]
+
+    i = 0
+    while i < len(store['dms_details']):
+        j = 0
+        while j < len(store['dms_details']['members']):
+            current_id = store['dms_details']['members'][j]['u_id'] 
+            dms_list.append(current_id)
+        j += 1
+    i += 1
+
+    channels_list = [ ]
+    i = 0
+    while i < len(store['channels_details']):
+        j = 0
+        while j < len(store['channels_details']['channel_members']):
+            current_id = store['channels_details']['channel_members'][j]['u_id'] 
+            channels_list.append(current_id)
+        j += 1
+    i += 1
+
+    dms_list_set = set(dms_list)
+    common = dms_list_set.intersection(channels_list)
+
+    common_list = list(common)
+    num_users_who_have_joined_at_least_one_channel_or_dm = len(common_list)
 
     # utilization rate 
     utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
-    return 
-
-
-
-
-
-
+    return {
+        'channels_exist': store['timestamps']['workspace']['channels_exist'], 
+        'dms_exist': store['timestamps']['workspace']['dms_exist'], 
+        'messages_exist': store['timestamps']['workspace']['messages_exist'], 
+        utilization_rate
+    }
 
 

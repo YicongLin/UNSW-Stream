@@ -144,8 +144,8 @@ def dms_joined_num_leave(auth_user_id):
     
     # Update dm user's dm info
     new_dms_joined = {
-        'num_channels_joined' : (lately_dms_joined_num - 1), 
-        'time_stamp' : int(now_time)
+        "num_dms_joined" : (lately_dms_joined_num - 1), 
+        "time_stamp" : int(now_time)
     }
     data['timestamps']['users'][timestamps_user_index]['dms_joined'].append(new_dms_joined)
 
@@ -180,8 +180,8 @@ def dms_joined_num_join(auth_user_id):
     
     # Update dm user's dm info
     new_dms_joined = {
-        'num_dms_joined' : (lately_dms_joined_num + 1), 
-        'time_stamp' : int(now_time)
+        "num_dms_joined" : (lately_dms_joined_num + 1), 
+        "time_stamp" : int(now_time)
     }
     data['timestamps']['users'][timestamps_user_index]['dms_joined'].append(new_dms_joined)
 

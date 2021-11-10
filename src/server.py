@@ -1,7 +1,7 @@
 import sys
 import signal
 from json import dump, dumps
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
@@ -379,6 +379,13 @@ def user_uploadphoto():
     user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end)
 
     return dumps({})
+
+# Copy from lec code 7.4
+# Return jpg file
+@APP.route('/static/<path:path>')
+def send_js(path):
+    return send_from_directory('', path)
+
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():

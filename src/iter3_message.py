@@ -43,7 +43,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
     
     waiting_time = time_sent - time_created
     
-    message_id = message_send_v1(token, channel_id, message)
+    message_id = number_of_messages() + 1
     
     sending = threading.Timer(waiting_time, message_send_v1, [token, channel_id, message])
     sending.start()
@@ -89,7 +89,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
 
     waiting_time = time_sent - time_created
     
-    message_id = message_senddm_v1(token, dm_id, message)
+    message_id = number_of_messages() + 1
     
     sending = threading.Timer(waiting_time, message_senddm_v1, [token, dm_id, message])
     sending.start()

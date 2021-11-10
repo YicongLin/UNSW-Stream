@@ -177,3 +177,7 @@ def test_valid_message():
 
     response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token2, "dm_id": dm_id, "message": "hey guys how u going with project", "time_sent": time_sent})
     assert (response.status_code) == 200
+
+    # message_id = json.loads(response.text)['message_id']
+    # resp = requests.put(f'{BASE_URL}/message/edit/v1', json={"token": token2, "message_id": message_id, "message": "have u finish the functions"})
+    # assert (resp.status_code) == 200

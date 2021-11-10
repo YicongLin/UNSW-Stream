@@ -3,7 +3,8 @@ from src.error import InputError, AccessError
 from src.channel import check_valid_token, check_valid_channel_id, check_member_authorised_user
 from datetime import datetime, timezone
 from src.token_helpers import decode_JWT
-
+from src.dm import is_valid_token
+from src.iter3_message import is_valid_channel, is_channel_member
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -120,3 +121,39 @@ def standup_active_v1(token, channel_id):
         "is_active": is_active,
         "time_finish": time_finish
     }
+
+
+def standup_send_v1(token, channel_id, message):
+    """ 
+    Sending a message to get buffered in the standup queue, assuming a standup is currently active. 
+    Note: We do not expect @ tags to be parsed as proper tags when sending to standup/send
+    
+    parameter: token, dm_id, message, time_sent
+        
+        errors: 
+            - access: invalid token
+            - access: channel_id is valid and the authorised user is not a member of the channel
+            - input: 
+                    channel_id does not refer to a valid channel
+                    length of message is over 1000 characters
+                    an active standup is not currently running in the channel
+
+        return value: message_id
+
+    """
+    # invalid token
+    is_valid_token(token)
+
+    # channel_id does not refer to a valid channel
+    is_valid_channel(channel_id)
+
+    # channel_id is valid and the authorised user is not a member of the channel
+    is_channel_member(token, channel_id)
+
+    # length of message is over 1000 characters
+    if len(message) > 1000:
+        raise InputError(description="Message is too long")
+
+    # an active standup is not currently running in the channel
+    if check_active_standup(channel_id) == True:
+        raise InputError(description="Stand up is not currently running")

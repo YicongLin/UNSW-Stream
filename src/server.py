@@ -13,7 +13,7 @@ from src.message import message_senddm_v1, message_send_v1, message_edit_v1, mes
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.standup import standup_start_v1, standup_active_v1
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 from jwt import InvalidSignatureError, DecodeError, InvalidTokenError
 from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
@@ -420,11 +420,6 @@ def auth_passwordreset_reset_http():
 
 @APP.route('/message/sendlater/v1', methods=['POST'])
 def message_sendlater_http():
-    #token = request.args.get('token')
-    # channel_id = request.args.get('channel_id')
-    # message = request.args.get('message')
-    # time_sent = request.args.get('time_sent')
-
     data = request.get_json()
     token = data['token']
     channel_id = data['channel_id']
@@ -436,11 +431,6 @@ def message_sendlater_http():
 
 @APP.route('/message/sendlaterdm/v1', methods=['POST'])
 def message_sendlaterdm_http():
-    # token = request.args.get('token')
-    # dm_id = request.args.get('dm_id')
-    # message = request.args.get('message')
-    # time_sent = request.args.get('time_sent')
-
     data = request.get_json()
     token = data['token']
     dm_id = data['dm_id']
@@ -449,6 +439,17 @@ def message_sendlaterdm_http():
 
     result = message_sendlaterdm_v1(token, dm_id, message, time_sent)
     return dumps(result)
+
+@APP.route('/standup/send/v1', methods=['POST'])
+def standup_send():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+
+    result = standup_send_v1(token, channel_id, message)
+    return dumps(result)
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

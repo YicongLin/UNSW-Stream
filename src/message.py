@@ -437,6 +437,14 @@ def message_react_v1(token, message_id, react_id ):
     dm_details = data['dms_details']
     channel_details = data['channels_details']
     is_this_user_reacted 
+
+    # checks for exceptions
+    valid_message_id(token, message_id)
+    conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
+
     return {}
 
 def message_unreact_v1(token, message_id, react_id ):
@@ -444,7 +452,13 @@ def message_unreact_v1(token, message_id, react_id ):
     data = data_store.get()
     dm_details = data['dms_details']
     channel_details = data['channels_details']
-
+    
+    # checks for exceptions
+    valid_message_id(token, message_id)
+    conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
     return {}
 
 def message_pin_v1(token, message_id):
@@ -454,6 +468,13 @@ def message_pin_v1(token, message_id):
     channel_details = data['channels_details']
     is_pinned
 
+    # checks for exceptions
+    valid_message_id(token, message_id)
+    conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
+
     return {}
 
 def message_unpin_v1(token, message_id):
@@ -461,6 +482,13 @@ def message_unpin_v1(token, message_id):
     data = data_store.get()
     dm_details = data['dms_details']
     channel_details = data['channels_details']
+
+    # checks for exceptions
+    valid_message_id(token, message_id)
+    conditional_edit(token, message_id)
+    
+    # obtaining what channel/DM the message is in 
+    a, b, _ = return_info(message_id)
 
     return {}
     

@@ -19,6 +19,7 @@ from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
 from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
 from src.iter3_message import message_sendlater_v1, message_sendlaterdm_v1
+from src.stats import user_stats_v1, users_stats_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -456,6 +457,23 @@ def standup_send():
 
     standup_send_v1(token, channel_id, message)
     return dumps({})
+
+@APP.route('/user/stats/v1', methods=['GET'])
+def user_stats_http():
+    token = request.args.get('token')
+
+    result = user_stats_v1(token)
+    return dumps(result)
+
+@APP.route('/users/stats/v1', methods=['GET'])
+def users_stats_http():
+    token = request.args.get('token')
+
+    result = users_stats_v1(token)
+    return dumps(result)
+
+
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

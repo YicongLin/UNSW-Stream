@@ -81,23 +81,23 @@ def user_stats_v1(token):
     i = 0
     while i < len(store['dms_details']):
         dms_msgs += len(store['dms_details'][i]['messages'])     
-    i += 1
+        i += 1
 
     # loop through channels_details to find total messages 
     channels_msgs = 0 
     i = 0
     while i < len(store['channels_details']):
         channels_msgs += len(store['channels_details'][i]['messages'])     
-    i += 1
+        i += 1
 
     # DO NOT LOOP THROUGH REMOVED MESSAGES 
     num_msgs = dms_msgs + channels_msgs
 
     # involvement rate 
-    if sum(num_channels, num_dms, num_msgs) == 0:
+    if (num_channels + num_dms + num_msgs) == 0:
         involvement_rate = 0 
     else: 
-        involvement_rate = sum(num_channels_joined, num_dms_joined, num_msgs_sent)/sum(num_channels, num_dms, num_msgs)
+        involvement_rate = (num_channels_joined + num_dms_joined + num_msgs_sent)/(num_channels + num_dms + num_msgs)
 
     if involvement_rate > 1:
         involvement_rate == 1

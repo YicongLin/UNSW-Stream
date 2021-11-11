@@ -381,7 +381,7 @@ def user_uploadphoto():
 
 # Copy from lec code 7.4
 # Return jpg file
-@APP.route('/static/<path:path>')
+@APP.route('/src/static/<path:path>')
 def send_js(path):
     return send_from_directory('', path)
 

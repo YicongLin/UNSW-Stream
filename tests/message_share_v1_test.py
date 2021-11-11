@@ -2,8 +2,10 @@ import pytest
 import requests
 import json
 from src import config
+from datetime import datetime, timezone
+import math
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:7777'
 
 # ================================================
 # ================= FIXTURES =====================
@@ -141,7 +143,7 @@ def test_invalid_channel_dm_id(clear_setup, register_first, channel_one, dm_one)
         "channel_id": channel_id,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     # first user attempts to share a message with invalid channel_id
     payload = {
         'token': token,
@@ -158,7 +160,7 @@ def test_invalid_channel_dm_id(clear_setup, register_first, channel_one, dm_one)
         "dm_id": dm_id,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     # first user attempts to share the message with invalid dm_id
     payload = {
         'token': token,
@@ -184,7 +186,7 @@ def test_both_ids_not_negative_one(clear_setup, register_first, channel_one, dm_
         "channel_id": channel_id,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     # first user attempts to share the message with both channel and DM IDs not -1
     payload = {
         'token': token,
@@ -204,7 +206,7 @@ def test_invalid_og_message_id(clear_setup, register_first, channel_one, channel
     # first user creates a channel; obtain channel_id
     channel_id_1 = channel_one['channel_id']
     # second user creates a channel; obtain channel_id
-    channel_id_2 = channel_two['chanel_id']
+    channel_id_2 = channel_two['channel_id']
     # first user joins second channel
     payload = {
         "token": token,
@@ -217,7 +219,7 @@ def test_invalid_og_message_id(clear_setup, register_first, channel_one, channel
         "channel_id": channel_id_1,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     # first user attempts to share the message with an invalid message ID
     payload = {
         'token': token,
@@ -236,7 +238,7 @@ def test_invalid_message_length(clear_setup, register_first, channel_one, channe
     # first user creates a channel; obtain channel_id
     channel_id_1 = channel_one['channel_id']
     # second user creates a channel; obtain channel_id
-    channel_id_2 = channel_two['chanel_id']
+    channel_id_2 = channel_two['channel_id']
     # first user joins second channel
     payload = {
         "token": token,
@@ -249,7 +251,7 @@ def test_invalid_message_length(clear_setup, register_first, channel_one, channe
         "channel_id": channel_id_1,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     # first user attempts to share the message with an additional message 
     # that has a length of greater than 1000 characters
     payload = {
@@ -290,9 +292,9 @@ def test_not_a_channel_member(clear_setup, register_first, channel_one, channel_
         "channel_id": channel_id_1,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
     # first user attempts to share the message to second channel
-     payload = {
+    payload = {
         'token': token,
         'og_message_id': 1,
         'message': "Bye",
@@ -316,15 +318,16 @@ def test_not_a_dm_member(clear_setup, register_first, dm_one, dm_two):
         'token': token,
         'dm_id': dm_id_2
     }
+    requests.post(f'{BASE_URL}/dm/leave/v1', json = payload)
     # first user sends a message to first DM
     payload = {
         "token": token,
         "dm_id": dm_id_1,
         "message": "Hi"
     }
-    r = requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
     # first user attempts to share the message to second DM
-     payload = {
+    payload = {
         'token': token,
         'og_message_id': 1,
         'message': "Bye",
@@ -334,3 +337,202 @@ def test_not_a_dm_member(clear_setup, register_first, dm_one, dm_two):
     r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
     assert r.status_code == 403
 
+# Testing for a case where the message is successfully shared to a channel,
+# with and without an additional message
+def test_successful_share_channel(clear_setup, register_first, channel_one, channel_two):
+    # first user registers; obtain token and u_id
+    token = register_first['token']
+    u_id = register_first['auth_user_id']
+    # first user creates a channel; obtain channel_id
+    channel_id_1 = channel_one['channel_id']
+    # second user creates a channel; obtain channel_id
+    channel_id_2 = channel_two['channel_id']
+    # first user joins second channel
+    payload = {
+        "token": token,
+        "channel_id": channel_id_2,
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
+    # first user sends a message to first channel
+    payload = {
+        "token": token,
+        "channel_id": channel_id_1,
+        "message": "This is the original message"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    # first user shares the message to second channel with no additional message
+    payload = {
+        'token': token,
+        'og_message_id': 1,
+        'message': "",
+        "channel_id": channel_id_2,
+        "dm_id": -1
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # obtaining the time the message is shared
+    time = datetime.now()
+    time_shared = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user shares the message to second channel with an additional message
+    payload = {
+        'token': token,
+        'og_message_id': 1,
+        'message': "This is the additional message",
+        "channel_id": channel_id_2,
+        "dm_id": -1
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # test that the messages have been shared to the second channel; 
+    # first user requests channel messages
+    payload = {
+        'token': token,
+        'channel_id': channel_id_2,
+        'start': 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload)
+    message1 = {
+        'message_id': 2,
+        'u_id': u_id,
+        'message': "This is the original message",
+        'time_created': time_shared
+    }
+    message2 = {
+        'message_id': 3,
+        'u_id': u_id,
+        'message': "This is the original messageThis is the additional message",
+        'time_created': time_shared
+    }
+    response = r.json()
+    assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
+
+# Testing for a case where the message is successfully shared to a DM,
+# with and without an additional message
+def test_successful_share_dm(clear_setup, register_first, dm_one, dm_two):
+    # first user registers; obtain token and u_id
+    token = register_first['token']
+    u_id = register_first['auth_user_id']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id_1 = dm_one['dm_id']
+    # second user creates a DM with first and third users; obtain dm_id
+    dm_id_2 = dm_two['dm_id']
+    # first user sends a message to first DM
+    payload = {
+        "token": token,
+        "dm_id": dm_id_1,
+        "message": "This is the original message"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    # first user shares the message to second DM with no additional message
+    payload = {
+        'token': token,
+        'og_message_id': 1,
+        'message': "",
+        "channel_id": -1,
+        "dm_id": dm_id_2
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # obtaining the time the message is shared
+    time = datetime.now()
+    time_shared = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # first user shares the message to second DM with an additional message
+    payload = {
+        'token': token,
+        'og_message_id': 1,
+        'message': "This is the additional message",
+        "channel_id": -1,
+        "dm_id": dm_id_2
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # test that the messages have been shared to the second DM; 
+    # first user requests DM messages
+    payload = {
+        'token': token,
+        'dm_id': dm_id_2,
+        'start': 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
+    message1 = {
+        'message_id': 2,
+        'u_id': u_id,
+        'message': "This is the original message",
+        'time_created': time_shared
+    }
+    message2 = {
+        'message_id': 3,
+        'u_id': u_id,
+        'message': "This is the original messageThis is the additional message",
+        'time_created': time_shared
+    }
+    response = r.json()
+    assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
+
+# Testing for a case where a message is being shared to the same channel it was originally in, 
+# and the additional message containing a tag; the tagged user should receive a notification
+def test_additional_message_with_tags(clear_setup, register_first, register_second, channel_one):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id = register_first['auth_user_id']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user joins the channel
+    payload = {
+        "token": token_2,
+        "channel_id": channel_id,
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
+    # first user sends a message to the channel
+    payload = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "This is the original message"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+    # first user shares the message to the channel with an additional message, tagging the second user
+    payload = {
+        'token': token_1,
+        'og_message_id': 1,
+        'message': "Look @seconduser",
+        "channel_id": channel_id,
+        "dm_id": -1
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # obtaining the time the message is shared
+    time = datetime.now()
+    time_shared = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # test that the message has been shared to the channel; 
+    # first user requests channel messages
+    payload = {
+        'token': token_1,
+        'channel_id': channel_id,
+        'start': 0
+    }
+    r = requests.get(f'{BASE_URL}/channel/messages/v2', params = payload)
+    message1 = {
+        'message_id': 1,
+        'u_id': u_id,
+        'message': "This is the original message",
+        'time_created': time_shared
+    }
+    message2 = {
+        'message_id': 2,
+        'u_id': u_id,
+        'message': "This is the original messageLook @seconduser",
+        'time_created': time_shared
+    }
+    response = r.json()
+    assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
+    # test that the second user receives a notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    notification = {
+        "channel_id": channel_id,
+        "dm_id": -1,
+        "notification_message": "firstuser tagged you in Channel one: Look @seconduser"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]}

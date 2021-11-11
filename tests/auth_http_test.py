@@ -7,7 +7,7 @@ from src.other import clear_v1
 from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 from src.users import token_check
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:7777'
 
 # AUTH REGISTER 
 def test_auth_register():

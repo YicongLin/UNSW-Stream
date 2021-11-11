@@ -5,7 +5,7 @@ from src import config
 from src.token_helpers import decode_JWT
 from datetime import datetime, timezone
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:7777'
 
 # ==================================
 # Test both start and active

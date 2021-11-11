@@ -381,10 +381,9 @@ def user_uploadphoto():
 
 # Copy from lec code 7.4
 # Return jpg file
-@APP.route('/src/static/<path:path>')
+@APP.route('/static/<path:path>')
 def send_js(path):
     return send_from_directory('', path)
-
 
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():

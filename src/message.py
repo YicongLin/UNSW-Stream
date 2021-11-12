@@ -539,6 +539,47 @@ def tags_in_shared_message_dm(token, message, name, dm_id):
                     add_notification(notification_dict, handle_check_dm(handle, dm_id))
                     handle_list.append(handle)
 
+# Update timestamps data store whenever a user sends a message
+def timestamps_update_sent_message(auth_user_id):
+    data = data_store.get()
+    time_sent = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+    workspace = data['timestamps']['workspace']
+    # update users
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_messages_sent = users[i]['messages_sent'][-1]['num_messages_sent'] + 1
+            messages_sent_dict = {
+                'num_messages_sent': num_messages_sent,
+                'time_stamp': time_sent
+            }
+            users[i]['messages_sent'].append(messages_sent_dict)
+    # update workspace
+    num_messages_sent = workspace['messages_exist'][-1]['num_messages_exist'] + 1
+    messages_sent_dict = {
+        'num_messages_exist': num_messages_sent,
+        'time_stamp': time_sent
+    }
+    workspace['messages_exist'].append(messages_sent_dict)
+
+    data_store.set(data)
+
+# Update timestamps data store whenever a user removes a message
+def timestamps_update_removed_message():
+    data = data_store.get()
+    time_removed = int(datetime.now().timestamp())
+    workspace = data['timestamps']['workspace']
+
+    # update workspace
+    num_messages_sent = workspace['messages_exist'][-1]['num_messages_exist'] - 1
+    messages_sent_dict = {
+        'num_messages_exist': num_messages_sent,
+        'time_stamp': time_removed
+    }
+    workspace['messages_exist'].append(messages_sent_dict)
+    
+    data_store.set(data)
+
 # ================================================
 # ================= FUNCTIONS ====================
 # ================================================
@@ -618,6 +659,9 @@ def message_senddm_v1(token, dm_id, message):
                     add_notification(notification_dict, handle_check_dm(handle, dm_id))
                     handle_list.append(handle)
 
+    # updating timestamps store
+    timestamps_update_sent_message(auth_user_id)
+
     return {"message_id": message_id}
 
 def message_send_v1(token, channel_id, message):
@@ -696,6 +740,9 @@ def message_send_v1(token, channel_id, message):
                     add_notification(notification_dict, handle_check_channel(handle, channel_id))
                     handle_list.append(handle)
 
+    # updating timestamps store
+    timestamps_update_sent_message(auth_user_id)
+
     return {"message_id": message_id}
 
 def message_edit_v1(token, message_id, message):
@@ -770,6 +817,9 @@ def message_remove_v1(token, message_id):
     # removing the message from a channel
     else:
         remove_message_channel(message_id)
+
+    # updating timestamps store
+    timestamps_update_removed_message()
 
     return {} 
 
@@ -850,7 +900,8 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                 data_store.set(data)
                 tags_in_shared_message_dm(token, message, name, dm_id)
 
+    # updating timestamps store
+    timestamps_update_sent_message(auth_user_id)
     
-
     return {'shared_message_id': shared_message_id}
 

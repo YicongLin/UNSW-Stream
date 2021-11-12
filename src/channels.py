@@ -2,7 +2,8 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.dm import decode_token, is_valid_token
-from src.channel import check_valid_token, channels_joined_num_join
+from src.channel import check_valid_token, channels_joined_num_join, timestamps_update_create_channel
+
 from src.token_helpers import decode_JWT
 
 def channels_list_v2(token):
@@ -140,6 +141,7 @@ def channels_create_v2(token, name, is_public):
 
     # Update channels_joined
     channels_joined_num_join(auth_user_id)
+    timestamps_update_create_channel()
 
     data_store.set(data)
     return { "channel_id": new_channel_id }

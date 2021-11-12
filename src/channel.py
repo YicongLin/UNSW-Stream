@@ -200,6 +200,7 @@ def start_greater_than_total(channel_id, start):
             if int(start) > len(messages):
                 raise InputError(description="Exceeded total number of messages in this channel") 
 # Finish messages check
+# ==================================
 
 # ==================================
 # Checking channel status
@@ -215,69 +216,82 @@ def channel_status(channel_id):
 # ==================================
 
 # ==================================
-# Update 'channels_joined' when a user leave a channel
-def channels_joined_num_leave(auth_user_id):
+# Update timestamps data store whenever a user joins a channel
+def timestamps_update_channel_join(auth_user_id):
+
     data = data_store.get()
+    time_joined = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
 
-    # "normal" timestamp for changing number of channels that user is member to
-    now_time = datetime.now().timestamp()
-
-    # Pick out user's index in ['timestamps']['users']
-    timestamps_user_index = 0
-    while True:
-        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
-            break
-        timestamps_user_index += 1
-
-    # Obtain user's lately channel info
-    lately_channels_joined_index = len(data['timestamps']['users'][timestamps_user_index]['channels_joined']) - 1
-    lately_channels_joined_num = data['timestamps']['users'][timestamps_user_index]['channels_joined'][lately_channels_joined_index]['num_channels_joined']
-    
-    # Update channel user's channel info
-    new_channels_joined = {
-        "num_channels_joined" : (lately_channels_joined_num - 1), 
-        "time_stamp" : int(now_time)
-    }
-    data['timestamps']['users'][timestamps_user_index]['channels_joined'].append(new_channels_joined )
-
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] + 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_joined
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
     data_store.set(data)
 
-    pass
-# Finish function
+# Finish timestamps data store update
 # ==================================
 
 # ==================================
-# Update 'channels_joined' when a user leave a channel
+# Update 'channels_joined' when a user joins a channel
 def channels_joined_num_join(auth_user_id):
+
     data = data_store.get()
+    time_joined = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
 
-    # "normal" timestamp for changing number of channels that user is member to
-    now_time = datetime.now().timestamp()
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] + 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_joined
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+# Finish timestamps data store update
+# ==================================
 
-    # Pick out user's index in ['timestamps']['users']
-    timestamps_user_index = 0
-    while True:
-        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
-            break
-        timestamps_user_index += 1
+# ==================================
+# Update workspace data store when a user creates a channel
+def timestamps_update_create_channel():
+    data = data_store.get()
+    time_created = int(datetime.now().timestamp())
+    workspace = data['timestamps']['workspace']
 
-    # Obtain user's lately channel info
-    lately_channels_joined_index = len(data['timestamps']['users'][timestamps_user_index]['channels_joined']) - 1
-    lately_channels_joined_num = data['timestamps']['users'][timestamps_user_index]['channels_joined'][lately_channels_joined_index]['num_channels_joined']
-    
-    # Update channel user's channel info
-    new_channels_joined = {
-        "num_channels_joined" : (lately_channels_joined_num + 1), 
-        "time_stamp" : int(now_time)
+    num_channels = workspace['channels_exist'][-1]['num_channels_exist'] + 1
+    channels_dict = {
+        'num_channels_exist': num_channels,
+        'time_stamp': time_created
     }
-    data['timestamps']['users'][timestamps_user_index]['channels_joined'].append(new_channels_joined)
+    workspace['channels_exist'].append(channels_dict)
 
     data_store.set(data)
 
-    pass
-# Finish function
+# Finish timestamps data store update
 # ==================================
 
+# ==================================
+# Update timestamps data store whenever a user leaves a channel
+def timestamps_update_channel_leave(auth_user_id):
+    data = data_store.get()
+    time_left = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+    
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] - 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_left
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+# ==================================
 
 # ============================================================
 # =====================(Actual functions)=====================
@@ -300,7 +314,6 @@ def channel_invite_v2(token, channel_id, u_id):
     
     Return Value:
         Empty dictionary on all valid conditions
-
     """
 
     # obtaining data
@@ -347,6 +360,10 @@ def channel_invite_v2(token, channel_id, u_id):
     }   
     # adding the notification
     add_notification(notification_dict, u_id)
+
+    # updating timestamps store
+    timestamps_update_channel_join(u_id)
+
     return {}
 
 def channel_details_v2(token, channel_id):
@@ -521,6 +538,10 @@ def channel_join_v2(token, channel_id):
     channels_joined_num_join(auth_user_id)
 
     data_store.set(data)
+
+    # updating timestamps store
+    timestamps_update_channel_join(auth_user_id)
+
     return {}
 
 def channel_addowner_v1(token, channel_id, u_id):
@@ -704,7 +725,7 @@ def channel_leave_v1(token, channel_id):
                     data_store.set(data)
                     break
 
-    # Update channels_joined
-    channels_joined_num_leave(auth_user_id)
+    # updating timestamps store
+    timestamps_update_channel_leave(auth_user_id)
 
     return {}

@@ -230,7 +230,7 @@ def user_profile_sethandle_v1(token, handle_str):
 
 
 def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
-    data = data_store.get()
+    # data = data_store.get()
     
     # Raise an AccessError if authorised user login with an invalid token
     token_check(token)
@@ -269,8 +269,8 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
         # Obtain index of authorised user's user dict store in users list
         # Update image url to authorised user's user dict
-        user_index = users_index(auth_user_id)
-        data['users'][user_index]['profile_img_url'] = url_for('static', filename=f'{auth_user_id}.jpg', _external=True)
+        # user_index = users_index(auth_user_id)
+        # data['users'][user_index]['profile_img_url'] = url_for('static', filename=f'{auth_user_id}.jpg', _external=True)
 
     except (HTTPError, URLError):
         # if urllib.request.urlopen(img_url).status != 200 or urllib.request.urlretrieve.status != 200:

@@ -126,5 +126,5 @@ dmypy.json
 # Other
 *.py~
 
-# # Image folder
-# static
+# Image floder
+static

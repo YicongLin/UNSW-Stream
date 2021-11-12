@@ -193,8 +193,8 @@ def standup_send_v1(token, channel_id, message):
     standup_starter_uid = get_standup_starter_id(channel_id)
 
     
-    time_now = datetime.now()
-    time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    #time_now = datetime.now()
+    # time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
     
     time_finish = standup['time_finish']
     # waiting_time = int(time_finish) - time_created

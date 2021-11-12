@@ -428,11 +428,11 @@ def test_user_timestamps():
         'time_stamp' : user1_time
         }, 
         {
-        ' num_messages_sent' : 1, 
+        'num_messages_sent' : 1, 
         'time_stamp' : message1_time
         },
         {
-        ' num_messages_sent' : 2, 
+        'num_messages_sent' : 2, 
         'time_stamp' : message2_time
         }
     ]

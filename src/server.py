@@ -484,13 +484,6 @@ def message_share_http():
     result = message_share_v1(token, og_message_id, message, channel_id, dm_id)
     return dumps(result)
 
-@APP.route('/user/stats/v1', methods=['GET'])
-def user_stats_http():
-    token = request.args.get('token')
-
-    result = user_stats_v1(token)
-    return dumps(result)
-
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

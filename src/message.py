@@ -579,7 +579,6 @@ def timestamps_update_removed_message(auth_user_id):
     workspace['messages_exist'].append(messages_sent_dict)
 
     data_store.set(data)
-    print(workspace['messages_exist'])
 
 # ================================================
 # ================= FUNCTIONS ====================

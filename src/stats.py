@@ -167,21 +167,21 @@ def users_stats_v1(token):
     i = 0
     while i < len(store['dms_details']):
         j = 0
-        while j < len(store['dms_details']['members']):
-            current_id = store['dms_details']['members'][j]['u_id'] 
+        while j < len(store['dms_details'][i]['members']):
+            current_id = store['dms_details'][i]['members'][j]['u_id'] 
             dms_list.append(current_id)
-        j += 1
-    i += 1
+            j += 1
+        i += 1
 
     channels_list = [ ]
     i = 0
     while i < len(store['channels_details']):
         j = 0
-        while j < len(store['channels_details']['channel_members']):
-            current_id = store['channels_details']['channel_members'][j]['u_id'] 
+        while j < len(store['channels_details'][i]['channel_members']):
+            current_id = store['channels_details'][i]['channel_members'][j]['u_id'] 
             channels_list.append(current_id)
-        j += 1
-    i += 1
+            j += 1
+        i += 1
 
     dms_list_set = set(dms_list)
     common = dms_list_set.intersection(channels_list)
@@ -190,7 +190,10 @@ def users_stats_v1(token):
     num_users_who_have_joined_at_least_one_channel_or_dm = len(common_list)
 
     # utilization rate 
-    utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
+    if num_users == 0:
+        utilization_rate = 0
+    else:
+        utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
     return {
         'workplace_stats' : 

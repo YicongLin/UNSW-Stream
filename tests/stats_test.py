@@ -522,8 +522,8 @@ def test_users_stats_utilization():
     r = requests.get(f'{BASE_URL}/users/stats/v1', params = payload)
     assert r.status_code == 200 
     resp = r.json()
-    # assert utilisation rate = 2/3
-    # assert resp['workspace_stats']['utilization_rate'] == 2/3
+    # assert utilization_rate == 2/3
+    assert resp['workspace_stats']['utilization_rate'] == 2/3
 
     # user 1 sends message to channel 1 
     payload = {

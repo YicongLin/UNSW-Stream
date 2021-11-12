@@ -155,9 +155,10 @@ def users_stats_v1(token):
         i += 1
 
     dms_list_set = set(dms_list)
-    common = dms_list_set.intersection(channels_list)
+    common = dms_list_set.union(channels_list)
 
     common_list = list(common)
+
     num_users_who_have_joined_at_least_one_channel_or_dm = len(common_list)
 
     # utilization rate 

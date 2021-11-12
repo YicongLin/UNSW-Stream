@@ -468,7 +468,7 @@ def dm_remove_v1(token, dm_id):
     while dms_index < len(data['dms_details']):
         if data['dms_details'][dms_index]['dm_id'] == dm_id:
             break
-    dms_index += 1
+        dms_index += 1
 
     # Recursion to update dms_joined
     dm_members_index = 0

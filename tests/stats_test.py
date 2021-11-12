@@ -462,11 +462,7 @@ def test_users_stats_utilization():
         "name_last": "user"
         }
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    # get time 
-    time = datetime.now()
-    user2_time = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     resp = r.json()
-    token2 = resp['token']
     u_id2 = resp['auth_user_id']
 
     # user1 creates & joins public channel 1
@@ -495,9 +491,7 @@ def test_users_stats_utilization():
     channel2_time = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     assert r.status_code == 200 
     resp = r.json()
-    channel_two_id = resp['channel_id']
 
-    # add user1 and user2 into dm 
     # create dm with user1 and user2 
     payload = {
         "token" : token1,
@@ -519,22 +513,17 @@ def test_users_stats_utilization():
         "name_last": "user"
         }
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
-    # get time 
-    time = datetime.now()
-    user3_time = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     resp = r.json()
-    token3 = resp['token']
-    u_id3 = resp['auth_user_id']
 
     # assert utilization rate 
     payload = {
         "token" : token1
     }
-    # r = requests.get(f'{BASE_URL}/users/stats/v1', params = payload)
-    # assert r.status_code == 200 
-    # resp = r.json()
-    # # assert involvement rate = 2/3
-    # assert resp['user_stats']['involvement_rate'] == 2/3
+    r = requests.get(f'{BASE_URL}/users/stats/v1', params = payload)
+    assert r.status_code == 200 
+    resp = r.json()
+    # assert utilisation rate = 2/3
+    # assert resp['workspace_stats']['utilization_rate'] == 2/3
 
     # user 1 sends message to channel 1 
     payload = {
@@ -583,59 +572,57 @@ def test_users_stats_utilization():
     message4_time = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
     assert r.status_code == 200 
 
-    # # assert timestamps are correct 
-    # payload = {
-    #     "token" : token1
-    # }
-    # r = requests.get(f'{BASE_URL}/users/stats/v1', params = payload)
-    # assert r.status_code == 200 
-    # resp = r.json()
+    # assert timestamps are correct 
+    payload = {
+        "token" : token1
+    }
+    r = requests.get(f'{BASE_URL}/users/stats/v1', params = payload)
+    assert r.status_code == 200 
+    resp = r.json()
 
-    # assert resp['workplace_stats']['channels_exist'] == {
-    #     [{
-    #         'num_channels_exist' : 0,
-    #         'time_stamp' : user1_time 
-    #     },
-    #     {
-    #         'num_channels_exist' : 1,
-    #         'time_stamp' : channel1_time
-    #     },
-    #     {
-    #         'num_channels_exist' : 2,
-    #         'time_stamp' : channel2_time
-    #     }]
-    # }
+    assert resp['workspace_stats']['channels_exist'] == [
+        {
+            'num_channels_exist' : 0,
+            'time_stamp' : user1_time 
+        },
+        {
+            'num_channels_exist' : 1,
+            'time_stamp' : channel1_time
+        },
+        {
+            'num_channels_exist' : 2,
+            'time_stamp' : channel2_time
+        }]
 
-    # assert resp['workplace_stats']['dms_exist'] == {
-    #     [{
-    #         'num_dms_exist' : 0, 
-    #         'time_stamp' : user1_time
-    #     },
-    #     {
-    #         'num_dms_exist' : 1, 
-    #         'time_stamp' : dm1_time
-    #     }]   
-    # }
+    assert resp['workspace_stats']['dms_exist'] == [
+        {
+            'num_dms_exist' : 0, 
+            'time_stamp' : user1_time
+        },
+        {
+            'num_dms_exist' : 1, 
+            'time_stamp' : dm1_time
+        }]   
     
-    # assert resp['workplace_stats']['messages_exist'] == {
-    #     [{
-    #         'num_messages_exist' : 0, 
-    #         'time_stamp' : user1_time
-    #     }, 
-    #     {
-    #         'num_messages_exist' : 1, 
-    #         'time_stamp' : message1_time 
-    #     },
-    #     {
-    #         'num_messages_exist' : 2, 
-    #         'time_stamp' : message2_time 
-    #     },
-    #     {
-    #         'num_messages_exist' : 3, 
-    #         'time_stamp' : message3_time  
-    #     },
-    #     {
-    #         'num_messages_exist' : 2, 
-    #         'time_stamp' : message4_time  
-    #     }]
-    # }
+    assert resp['workspace_stats']['messages_exist'] == [
+        {
+            'num_messages_exist' : 0, 
+            'time_stamp' : user1_time
+        }, 
+        {
+            'num_messages_exist' : 1, 
+            'time_stamp' : message1_time 
+        },
+        {
+            'num_messages_exist' : 2, 
+            'time_stamp' : message2_time 
+        },
+        {
+            'num_messages_exist' : 3, 
+            'time_stamp' : message3_time  
+        },
+        {
+            'num_messages_exist' : 2, 
+            'time_stamp' : message4_time  
+        }]
+    

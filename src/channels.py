@@ -141,7 +141,7 @@ def channels_create_v2(token, name, is_public):
 
     # Update channels_joined
     channels_joined_num_join(auth_user_id)
-    timestamps_update_create_channel(auth_user_id)
+    timestamps_update_create_channel()
 
 
     data_store.set(data)

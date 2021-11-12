@@ -258,7 +258,7 @@ def channels_joined_num_join(auth_user_id):
 
 # ==================================
 # Update workspace data store when a user creates a channel
-def timestamps_update_create_channel(auth_user_id):
+def timestamps_update_create_channel():
     data = data_store.get()
     time_created = int(datetime.now().timestamp())
     workspace = data['timestamps']['workspace']
@@ -269,7 +269,7 @@ def timestamps_update_create_channel(auth_user_id):
         'time_stamp': time_created
     }
     workspace['channels_exist'].append(channels_dict)
-    
+
     data_store.set(data)
 
 # Finish timestamps data store update

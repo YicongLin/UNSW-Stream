@@ -188,7 +188,6 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
     r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload3)
     assert r.status_code == 200 
     
-
 # Test for a successful removal in a channel
 def test_successful_removal_channel(setup_clear, registered_second, channel_one, channel_two, dm_one):
     # second user registers; obtain token and u_id

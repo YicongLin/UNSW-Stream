@@ -6,7 +6,10 @@ from src.auth import auth_register_v2, auth_login_v2, auth_logout_v1
 from src.error import AccessError
 from src.dm import dm_create_v1, dm_list_v1
 import json
-BASE_URL = 'http://127.0.0.1:2000'
+from src.config import url
+
+BASE_URL = url
+
 # checking for invalid token, if a user is logged out that token is invalid
 def test_invalid_token_list():
     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")

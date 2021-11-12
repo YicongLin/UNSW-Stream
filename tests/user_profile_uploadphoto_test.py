@@ -9,6 +9,7 @@ import os
 
 BASE_URL = url
 
+
 BROKEN_URL = 'http://asdqwdasfcscd.com'
 
 # Image with width 3958 and height 3030
@@ -58,8 +59,8 @@ def test_uploadphoto():
     assert (curr_img_url[len(curr_img_url) - 1] == f'{uid_1}.jpg')
 
     # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')    
-    os.unlink(f'/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/{uid_1}.jpg')
+    requests.delete(f'{BASE_URL}/clear/v1')
+    os.unlink(f'/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/{uid_1}.jpg')    
 
 def test_uploadphoto_errors():
     # Clear
@@ -119,3 +120,4 @@ def test_uploadphoto_errors():
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
+

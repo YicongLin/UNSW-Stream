@@ -161,7 +161,7 @@ def dms_joined_num_join(auth_user_id):
     data = data_store.get()
 
     # "normal" timestamp for changing number of dms that user is member to
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
 
     # Pick out user's index in ['timestamps']['users']
     timestamps_user_index = 0
@@ -170,13 +170,8 @@ def dms_joined_num_join(auth_user_id):
             break
         timestamps_user_index += 1
 
-     # Obtain user's lately dm info
-    if len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) == 0:
-        lately_dms_joined_num = 0
-
-    elif len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) > 0:  
-        lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
-        lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
+    lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
+    lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
     
     # Update dm user's dm info
     new_dms_joined = {

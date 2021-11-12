@@ -4,6 +4,7 @@ from src.channel import check_valid_token, check_valid_channel_id, check_member_
 from datetime import datetime, timezone
 from src.token_helpers import decode_JWT
 
+
 # ============================================================
 # ===========(Raise errors and associate functions)===========
 # ============================================================
@@ -25,7 +26,7 @@ def check_valid_length(length):
 # If an active standup is currently running in the channel then return the dict of running standup
 # If no a standup is running in the channel then return True
 def check_active_standup(channel_id_element):
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
 
     data = data_store.get()
 
@@ -78,7 +79,7 @@ def standup_start_v1(token, channel_id, length):
     auth_user_id = decode_JWT(token)['u_id']
 
     # Obtaining the time right now to calculate time_finish
-    time_finish = datetime.now().replace(tzinfo=timezone.utc).timestamp() + int(length)
+    time_finish = datetime.now().timestamp() + int(length)
 
     # Store basic info of this standup into a dict
     new_standup = {

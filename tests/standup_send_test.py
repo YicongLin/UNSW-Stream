@@ -131,11 +131,11 @@ def test_valid_stand_up():
     # user login and obtain token
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login1@gmail.com", "password": "password454643"})
     token1 = json.loads(response.text)['token']
-    u_id1 = json.loads(response.text)['auth_user_id']
+    # u_id1 = json.loads(response.text)['auth_user_id']
 
 
     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login2@gmail.com", "password": "password454643"})
-    token2 = json.loads(response.text)['token']
+    # token2 = json.loads(response.text)['token']
     u_id2 = json.loads(response.text)['auth_user_id']
 
     # user create a channel

@@ -2,9 +2,9 @@
 from src.data_store import data_store
 from src.error import AccessError, InputError
 from src.dm import decode_token, is_valid_token
-from src.channel import check_valid_token
+from src.channel import check_valid_token, channels_joined_num_join
+from src.token_helpers import decode_JWT
 
-    
 def channels_list_v2(token):
     
     """ An authorised user to all the channels that they joined
@@ -96,6 +96,7 @@ def channels_create_v2(token, name, is_public):
 
     # check is the token passed in is valid, if not it will raise an access error
     is_valid_token(token)
+    auth_user_id = decode_JWT(token)['u_id']
     
     # check for invalid name
     if len(name) > 20:
@@ -136,5 +137,9 @@ def channels_create_v2(token, name, is_public):
     # append all data and return
     data['channels'].append(channels_dict)
     data['channels_details'].append(channels_detail_dict)
+
+    # Update channels_joined
+    channels_joined_num_join(auth_user_id)
+
     data_store.set(data)
     return { "channel_id": new_channel_id }

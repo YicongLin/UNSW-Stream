@@ -29,7 +29,7 @@ def check_valid_length(length):
 # If an active standup is currently running in the channel then return the dict of running standup
 # If no a standup is running in the channel then return True
 def check_active_standup(channel_id_element):
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
 
     data = data_store.get()
 
@@ -82,7 +82,7 @@ def standup_start_v1(token, channel_id, length):
     auth_user_id = decode_JWT(token)['u_id']
 
     # Obtaining the time right now to calculate time_finish
-    time_finish = datetime.now().replace(tzinfo=timezone.utc).timestamp() + int(length)
+    time_finish = datetime.now().timestamp() + int(length)
 
     # Store basic info of this standup into a dict
     new_standup = {
@@ -159,8 +159,11 @@ def standup_send_v1(token, channel_id, message):
         raise InputError(description="Message is too long")
 
     # an active standup is not currently running in the channel
-    # if check_active_standup(channel_id) == True:
-    #     raise InputError(description="Stand up is not currently running")
+    standup = standup_active_v1(token, channel_id)
+    is_active = standup['is_active']
+
+    if is_active == False:
+        raise InputError(description="Stand up is not currently running")
     
     # if type(check_active_standup(channel_id_element)) is dict:
     #     raise InputError(description="Stand up is not currently running")
@@ -189,25 +192,30 @@ def standup_send_v1(token, channel_id, message):
     # find the id of the user who start this standup
     standup_starter_uid = get_standup_starter_id(channel_id)
 
-
+    
     time_now = datetime.now()
     time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
     
-    time_finish = standup_active_v1(token, channel_id)['time_finish']
-    waiting_time = int(time_finish) - time_created
+    time_finish = standup['time_finish']
+    # waiting_time = int(time_finish) - time_created
 
-    sending = threading.Timer(waiting_time, standup_message_send, [standup_starter_uid, channel_id_element, message_list])
-    sending.start()
-    # while True:
+    # sending = threading.Timer(waiting_time, standup_message_send, [standup_starter_uid, channel_id_element, message_list])
+    # sending.start()
+    
+    while True:
+        time_now = datetime.now()
+        time_create = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
         
-    #     time_create = threading.Timer(1, int(datetime.now().timestamp()))
+        if (time_create == time_finish):
+            standup_message_send(standup_starter_uid, channel_id_element, message_list)
+            break
+    
         
-    #     if (time_create == time_finish):
-    #         standup_message_send(standup_starter_uid, channel_id, message_list)
-    #         break
+    
     data_store.set(data)
 
     return {}
+
 
 # check if the user is the person who start the standup
 def get_standup_starter_id(channel_id):
@@ -230,7 +238,6 @@ def get_standup_starter_id(channel_id):
 
 def standup_message_send(auth_user_id, channel_id_position, message):
     data = data_store.get()
-    
 
     message_id = number_of_messages() + 1
 
@@ -250,10 +257,11 @@ def standup_message_send(auth_user_id, channel_id_position, message):
         'message': f"{message}",
         'time_created': time_created
     }
-
+    
     data['channels_details'][channel_id_position]['messages'].append(message_dict)
     data_store.set(data)
 
+    
     # for i in range(len(channel_details)):
     #     if int(channel_details[i]['channel_id']) == int(channel_id):
     #         data['channels_details'][i]['messages'].append(message_dict)

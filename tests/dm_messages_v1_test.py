@@ -10,8 +10,9 @@ from src.token_helpers import decode_JWT
 from src.other import clear_v1
 import math
 from datetime import datetime, timezone
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:48005'
+BASE_URL = url
 
 # ================================================
 # ================= FIXTURES =====================

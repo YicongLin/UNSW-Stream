@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import math
-BASE_URL = 'http://127.0.0.1:48005'
+from src.config import url
+BASE_URL = url
 import json
 import requests
 import time
@@ -104,6 +105,23 @@ def test_invalid_message_length():
     response = requests.post(f'{BASE_URL}/standup/send/v1', json= payload)
     assert (response.status_code) == 400
 
+def test_standup_inactive():
+    requests.delete(f'{BASE_URL}/clear/v1')
+    
+    # user register
+    requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "login1@gmail.com", "password": "password454643", "name_first": "kevin", "name_last": "liu"})
+
+    # user login and obtain token
+    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "login1@gmail.com", "password": "password454643"})
+    token = json.loads(response.text)['token']
+
+    # user create a channel
+    create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token, "name": "channel1", "is_public": True})
+    channel_id = json.loads(create_return.text)['channel_id']
+
+    response = requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token, "channel_id": channel_id, "message": "helloworld"})
+    assert (response.status_code) == 400
+
 def test_valid_stand_up():
     requests.delete(f'{BASE_URL}/clear/v1')
     
@@ -124,19 +142,29 @@ def test_valid_stand_up():
     create_return = requests.post(f'{BASE_URL}/channels/create/v2', json={"token": token1, "name": "channel1", "is_public": True})
     channel_id = json.loads(create_return.text)['channel_id']
 
+    requests.post(f'{BASE_URL}/channel/invite/v2', json = {"token": token1, "channel_id": channel_id, "u_id": u_id2})
     requests.post(f'{BASE_URL}/standup/start/v1', json={"token": token1, "channel_id": channel_id, "length": 3})
 
-    active_return = resp = requests.get(f'{BASE_URL}/standup/active/v1', params={"token": token1, "channel_id": channel_id})
+    active_return = requests.get(f'{BASE_URL}/standup/active/v1', params={"token": token1, "channel_id": channel_id})
     time_finish = json.loads(active_return.text)['time_finish']
 
     response = requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token1, "channel_id": channel_id, "message": "hello"})
     assert (response.status_code) == 200
 
+    requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token2, "channel_id": channel_id, "message": "world"})
+    assert (response.status_code) == 200
+    
+    requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token2, "channel_id": channel_id, "message": "12345"})
+    assert (response.status_code) == 200
+    
+    
+    time_now = datetime.now()
+    time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    waiting_time = time_finish - time_created
+    time.sleep(waiting_time)
 
     time_now = datetime.now()
     time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    # waiting_time = time_finish - time_created
-    # time.sleep(waiting_time)
     payload = {
         "token": token1,
         "channel_id": channel_id,
@@ -146,12 +174,11 @@ def test_valid_stand_up():
     message = {
         "message_id": 1,
         "u_id": u_id1,
-        "message": "hello",
+        "message": "kevinlin: hello\nkangliu: world\nkangliu: 12345",
         "time_created": time_created
     }
     
     assert json.loads(r.text) == {"messages": [message], "start": 0, "end": -1}
-    # requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token2, "channel_id": channel_id, "message": "world"})
-    # requests.post(f'{BASE_URL}/standup/send/v1', json={"token": token2, "channel_id": channel_id, "message": "12345"})
+    
 
     

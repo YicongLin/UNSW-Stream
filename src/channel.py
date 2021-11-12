@@ -6,6 +6,7 @@ import jwt
 from src.token_helpers import decode_JWT
 from src.users import token_check
 from src.message import check_channel, not_a_member, add_notification
+from datetime import datetime, timezone
 
 # ============================================================
 # ===========(Raise errors and associate functions)===========
@@ -213,6 +214,71 @@ def channel_status(channel_id):
 # Finish channel status check
 # ==================================
 
+# ==================================
+# Update 'channels_joined' when a user leave a channel
+def channels_joined_num_leave(auth_user_id):
+    data = data_store.get()
+
+    # "normal" timestamp for changing number of channels that user is member to
+    now_time = datetime.now().timestamp()
+
+    # Pick out user's index in ['timestamps']['users']
+    timestamps_user_index = 0
+    while True:
+        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
+            break
+        timestamps_user_index += 1
+
+    # Obtain user's lately channel info
+    lately_channels_joined_index = len(data['timestamps']['users'][timestamps_user_index]['channels_joined']) - 1
+    lately_channels_joined_num = data['timestamps']['users'][timestamps_user_index]['channels_joined'][lately_channels_joined_index]['num_channels_joined']
+    
+    # Update channel user's channel info
+    new_channels_joined = {
+        "num_channels_joined" : (lately_channels_joined_num - 1), 
+        "time_stamp" : int(now_time)
+    }
+    data['timestamps']['users'][timestamps_user_index]['channels_joined'].append(new_channels_joined )
+
+    data_store.set(data)
+
+    pass
+# Finish function
+# ==================================
+
+# ==================================
+# Update 'channels_joined' when a user leave a channel
+def channels_joined_num_join(auth_user_id):
+    data = data_store.get()
+
+    # "normal" timestamp for changing number of channels that user is member to
+    now_time = datetime.now().timestamp()
+
+    # Pick out user's index in ['timestamps']['users']
+    timestamps_user_index = 0
+    while True:
+        if data['timestamps']['users'][timestamps_user_index]['u_id'] == auth_user_id:
+            break
+        timestamps_user_index += 1
+
+    # Obtain user's lately channel info
+    lately_channels_joined_index = len(data['timestamps']['users'][timestamps_user_index]['channels_joined']) - 1
+    lately_channels_joined_num = data['timestamps']['users'][timestamps_user_index]['channels_joined'][lately_channels_joined_index]['num_channels_joined']
+    
+    # Update channel user's channel info
+    new_channels_joined = {
+        "num_channels_joined" : (lately_channels_joined_num + 1), 
+        "time_stamp" : int(now_time)
+    }
+    data['timestamps']['users'][timestamps_user_index]['channels_joined'].append(new_channels_joined)
+
+    data_store.set(data)
+
+    pass
+# Finish function
+# ==================================
+
+
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
@@ -270,6 +336,9 @@ def channel_invite_v2(token, channel_id, u_id):
     channels[channel_index]["channel_members"].append(users[user_index])
     data_store.set(data)
 
+    # Update channels_joined
+    channels_joined_num_join(u_id)
+
     # adding a notification to the user's notification list
     notification_dict = {
         'channel_id': channel_id,
@@ -278,7 +347,6 @@ def channel_invite_v2(token, channel_id, u_id):
     }   
     # adding the notification
     add_notification(notification_dict, u_id)
-
     return {}
 
 def channel_details_v2(token, channel_id):
@@ -448,6 +516,10 @@ def channel_join_v2(token, channel_id):
 
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
+
+    # Update channels_joined
+    channels_joined_num_join(auth_user_id)
+
     data_store.set(data)
     return {}
 
@@ -631,5 +703,8 @@ def channel_leave_v1(token, channel_id):
                     owner_members.remove(owner_members[j])
                     data_store.set(data)
                     break
+
+    # Update channels_joined
+    channels_joined_num_leave(auth_user_id)
 
     return {}

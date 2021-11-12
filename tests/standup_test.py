@@ -4,8 +4,9 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 from datetime import datetime, timezone
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:48005'
+BASE_URL = url
 
 # ==================================
 # Test both start and active
@@ -17,7 +18,7 @@ def test_start_active():
     
     # Possible time for running routes
     length = 10 # Assume start standup in 10 secs
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
     possible_time = [int(now_time + length), int(now_time + length + 1), int(now_time + length + 2)]
 
     # user_two ----> channel creator

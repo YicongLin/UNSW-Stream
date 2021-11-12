@@ -171,13 +171,8 @@ def dms_joined_num_join(auth_user_id):
             break
         timestamps_user_index += 1
 
-     # Obtain user's lately dm info
-    if len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) == 0:
-        lately_dms_joined_num = 0
-
-    elif len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) > 0:  
-        lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
-        lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
+    lately_dms_joined_index = len(data['timestamps']['users'][timestamps_user_index]['dms_joined']) - 1
+    lately_dms_joined_num = data['timestamps']['users'][timestamps_user_index]['dms_joined'][lately_dms_joined_index]['num_dms_joined']
     
     # Update dm user's dm info
     new_dms_joined = {
@@ -467,6 +462,19 @@ def dm_remove_v1(token, dm_id):
     # the user passed in is not the creator of this dm
     if (access == 0):
         raise AccessError(description="Access denied, user is not a creator of this DM")
+
+    # Find the dm's index in dms_details
+    dms_index = 0
+    while dms_index < len(data['dms_details']):
+        if data['dms_details'][dms_index]['dm_id'] == dm_id:
+            break
+        dms_index += 1
+
+    # Recursion to update dms_joined
+    dm_members_index = 0
+    while dm_members_index < len(data['dms_details'][dms_index]['members']):
+        dms_joined_num_leave(data['dms_details'][dms_index]['members'][dm_members_index]['u_id'])
+        dm_members_index += 1
     
     j = 0
     while j < len(dm_detail_info):

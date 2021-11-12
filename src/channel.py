@@ -218,6 +218,48 @@ def channel_status(channel_id):
 # ==================================
 # Update timestamps data store whenever a user joins a channel
 def timestamps_update_channel_join(auth_user_id):
+
+    data = data_store.get()
+    time_joined = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] + 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_joined
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+
+# Finish timestamps data store update
+# ==================================
+
+# ==================================
+# Update timestamps data store whenever a user leaves a channel
+def timestamps_update_channel_leave(auth_user_id):
+    data = data_store.get()
+    time_left = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+    
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] - 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_left
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+
+    data_store.set(data)
+# Finish timestamps data store update
+# ==================================
+
+# ==================================
+# Update 'channels_joined' when a user joins a channel
+def channels_joined_num_join(auth_user_id):
+
     data = data_store.get()
     time_joined = int(datetime.now().timestamp())
     users = data['timestamps']['users']
@@ -251,11 +293,7 @@ def timestamps_update_channel_leave(auth_user_id):
             }
             users[i]['channels_joined'].append(channels_joined_dict)
     data_store.set(data)
-    print(users)
-    print('helloooo')
-
 # ==================================
-# Finish timestamps data store update
 
 # ============================================================
 # =====================(Actual functions)=====================
@@ -312,6 +350,9 @@ def channel_invite_v2(token, channel_id, u_id):
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
     data_store.set(data)
+
+    # Update channels_joined
+    channels_joined_num_join(u_id)
 
     # adding a notification to the user's notification list
     notification_dict = {
@@ -494,6 +535,10 @@ def channel_join_v2(token, channel_id):
 
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
+
+    # Update channels_joined
+    channels_joined_num_join(auth_user_id)
+
     data_store.set(data)
 
     # updating timestamps store

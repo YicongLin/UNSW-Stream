@@ -13,6 +13,25 @@ import re
 # ================== HELPERS =====================
 # ================================================
 
+# A function that returns data from the data store
+def return_data():
+    global DATA
+    return DATA
+
+# A function that returns the message dictionary for channels
+def return_message_channel(return_data):
+    for channels_details in get_data()['channels_details']:
+        for message in channels_details['messages']:
+            if message['message_id'] == int('message_id'):
+                return message
+
+# A function that returns the message dictionary for dms
+def return_message_dm(returns_data):
+    for dms_details in get_data()['dms_details']:
+        for message in dm_details['messages']:
+            if message['message_id'] == int('message_id'):
+                return message
+
 # Raises an error if the dm_id is invalid
 def valid_dm_id(dm_id):
     # obtaining data
@@ -150,7 +169,7 @@ def owner_permissions(token, message_id):
                 if creator[0]['u_id'] != decoded_token['u_id']:
                     return False
 
-# Raises an error if none of the following conditions are true:
+# Raises an error if none of the following conditions are true for message_edit:
 # - the message was sent by the authorised user
 # - the authorised user has owner permisisons in the channel/DM
 def conditional_edit(token, message_id):
@@ -164,6 +183,37 @@ def conditional_edit(token, message_id):
     # raising the error 
     if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
         raise AccessError(description="You do not have access to edit the message")
+
+# Raises an error if none of the following conditions are true for message_remove:
+# - the message was sent by the authorised user
+# - the authorised user has owner permisisons in the channel/DM
+def conditional_remove(token, message_id):
+    # obtaining data
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
+
+    # determining what channel/DM the message is in and obtaining information
+    _, _, c = return_info(message_id)
+
+    # raising the error 
+    if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
+        raise AccessError(description="You do not have access to remove the message")
+
+
+# Raises an error if none of the following conditions are true for message_pin:
+# - the message was sent by the authorised user
+# - the authorised user has owner permisisons in the channel/DM
+def conditional_pin(token, message_id):
+    # obtaining data
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
+
+    # determining what channel/DM the message is in and obtaining information
+    _, _, c = return_info(message_id)
+
+    # raising the error 
+    if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
+        raise AccessError(description="You do not have access to the message")
 
 # Editing a message in a DM
 def edit_message_dm(message, message_id, token):
@@ -463,6 +513,34 @@ def not_a_member(u_id, channel_id):
     if is_member == False:
         raise AccessError("You are not a member of the channel")
 
+# function to check reacts for DMS
+def check_react_dm(react_id, message_id, user_id):
+    data = data_store.get()
+
+    for dms_details in get_data()['dms_details']:
+        for message in dms_details['messages']:
+            if message['message_id'] == int('message_id'):
+                for reacts in message['reacts']:
+                    if int(react_id) == int(reacts['react_id']):
+                        for users in reacts['u_ids']:
+                            if user_id == int(users):
+                                return True
+    return False
+    
+# function to check reacts for channels
+def check_react_channel(react_id, message_id, user_id):
+    data = data_store.get()
+
+    for channels_details in get_data()['channels_details']:
+        for message in channels_details['messages']:
+            if message['message_id'] == int('message_id'):
+                for reacts in message['reacts']:
+                    if int(react_id) == int(reacts['react_id']):
+                        for users in reacts['u_ids']:
+                            if user_id == int(users):
+                                return True
+    return False
+
 # ================================================
 # ================= FUNCTIONS ====================
 # ================================================
@@ -682,7 +760,7 @@ def message_remove_v1(token, message_id):
     # checks for exceptions
     token_check(token)
     valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
+    conditional_remove(token, message_id)
     
     # obtaining what channel/DM the message is in 
     _, b, _ = return_info(message_id)
@@ -700,63 +778,136 @@ def message_remove_v1(token, message_id):
 def message_react_v1(token, message_id, react_id ):
     # obtaining data
     data = data_store.get()
+    message_channel = return_message_channel()
+    message_dm = return_message_dm()
     dm_details = data['dms_details']
     channel_details = data['channels_details']
-    is_this_user_reacted 
+    react_id = int(react_id)
 
     # checks for exceptions
     token_check(token)
     valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
     
+    # checking for valid react_id
+    if react_id != 1:
+        raise InputError("Invalid react_id")
+
     # obtaining what channel/DM the message is in 
     a, b, _ = return_info(message_id)
+
+    # checking if the message from channels already has a react
+    if check_react_channel(react_id, message_id, user_id, user['u_id']) == True:
+        raise InputError("Message already has a react.")
+
+    # checking if the message from DMS already has a react
+    if check_react_dm(react_id, message_id, user_id, user['u_id']) == True:
+        raise InputError("Message already has a react.")
+
+    # checking the user has not already reacted 
+    is_this_user_reacted == False;
+
+    # adding a react to a message from a DM
+    
+    # adding a react to a message from a channel
 
     return {}
 
 def message_unreact_v1(token, message_id, react_id ):
     # obtaining data
+    data = data_store.get()
+    message_channel = return_message_channel()
+    message_dm = return_message_dm()
+    dm_details = data['dms_details']
+    channel_details = data['channels_details']
+    react_id = int(react_id)
+
+    # checks for exceptions
     token_check(token)
     valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
     
-    # checks for exceptions
-    valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
-    
+    # checking for valid react_id
+    if react_id != 1:
+        raise InputError("Invalid react_id")
+        
     # obtaining what channel/DM the message is in 
     a, b, _ = return_info(message_id)
+
+    # checking if the message from channels has a react
+    if check_react_dm(react_id, message_id, user_id, user['u_id']) == False:
+        raise InputError("Message does not have a react.")
+
+    # checking if the message from DMS has a react
+    if check_react_channel(react_id, message_id, user_id, user['u_id']) == False:
+        raise InputError("Message does not have a react.")
+    
+    # unreact to a message from a DM
+    
+    
+    # unreact to a message from a channel
+
+
     return {}
 
 def message_pin_v1(token, message_id):
     # obtaining data
     data = data_store.get()
+    message_channel = return_message_channel()
+    message_dm = return_message_dm()
     dm_details = data['dms_details']
     channel_details = data['channels_details']
-    is_pinned
 
     # checks for exceptions
     token_check(token)
     valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
+    conditional_pin(token, message_id)
     
     # obtaining what channel/DM the message is in 
     a, b, _ = return_info(message_id)
+
+    # check to see if message from channels is already pinned 
+    if message_channel['is_pinned'] == True:
+        raise InputError("Message is already pinned")
+
+    # check to see if message from DMS is already pinned 
+    if message_dm['is_pinned'] == True:
+        raise InputError("Message is already pinned")
+
+    # unpin a message from a DM
+    message_dm['is_pinned'] == True
+    
+    # unpin a message from a channel
+    message_channel['is_pinned'] == True
 
     return {}
 
 def message_unpin_v1(token, message_id):
     # obtaining data
     data = data_store.get()
+    message_channel = return_message_channel()
+    message_dm = return_message_dm()
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
     # checks for exceptions
     valid_message_id(token, message_id)
-    conditional_edit(token, message_id)
+    conditional_pin(token, message_id)
     
     # obtaining what channel/DM the message is in 
     a, b, _ = return_info(message_id)
+
+    # check to see if message from channels is pinned 
+    if message_channel['is_pinned'] == False:
+        raise InputError("Message is not already pinned")
+
+    # check to see if message from DMS is pinned 
+    if message_dm['is_pinned'] == False:
+        raise InputError("Message is not already pinned")
+
+    # unpin a message from a DM
+    message_dm['is_pinned'] == False
+    
+    # unpin a message from a channel
+    message_channel['is_pinned'] == False
 
     return {}
 

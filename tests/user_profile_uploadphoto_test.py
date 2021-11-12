@@ -1,151 +1,151 @@
-import pytest
-import requests
-import json
-from src import config
-from src.token_helpers import decode_JWT
-from datetime import datetime, timezone
-from src.config import url
+# import pytest
+# import requests
+# import json
+# from src import config
+# from src.token_helpers import decode_JWT
+# from datetime import datetime, timezone
+# from src.config import url
 
-BASE_URL = url
+# BASE_URL = url
 
-BROKEN_URL = 'http://asdqwdasfcscd.com'
+# BROKEN_URL = 'http://asdqwdasfcscd.com'
 
-# Image with width 3958 and height 3030
-VALID_JPEG_URL = 'http://cgi.cse.unsw.edu.au/~morri/morriphoto.jpg'
+# # Image with width 3958 and height 3030
+# VALID_JPEG_URL = 'http://cgi.cse.unsw.edu.au/~morri/morriphoto.jpg'
 
-# Image with width 159 and height 200
-VALID_PNG_URL = 'http://www.cse.unsw.edu.au/~richardb/index_files/RichardBuckland-200.png'
+# # Image with width 159 and height 200
+# VALID_PNG_URL = 'http://www.cse.unsw.edu.au/~richardb/index_files/RichardBuckland-200.png'
 
-# ==================================
-# Test uploadphoto
-# ==================================
-def test_uploadphoto():
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')
+# # ==================================
+# # Test uploadphoto
+# # ==================================
+# def test_uploadphoto():
+#     # Clear
+#     requests.delete(f'{BASE_URL}/clear/v1')
 
-    # user_one 
-    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
-    decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
-    uid_1 = decoded_token_1['u_id']
+#     # user_one 
+#     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+#     decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
+#     uid_1 = decoded_token_1['u_id']
 
-    # Login in user_one
-    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
-    token_1 = json.loads(response.text)['token']
+#     # Login in user_one
+#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+#     token_1 = json.loads(response.text)['token']
 
-    # Implement uploadphoto(maximum bound) -----> successful implement
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 0, "y_start": 0, "x_end": 3958, "y_end": 3030})
-    assert (resp.status_code == 200)
+#     # Implement uploadphoto(maximum bound) -----> successful implement
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 0, "y_start": 0, "x_end": 3958, "y_end": 3030})
+#     assert (resp.status_code == 200)
 
-    response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
-    assert (json.loads(response.text) ==  {
-        'users': [{
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }],
-    })
+#     response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
+#     assert (json.loads(response.text) ==  {
+#         'users': [{
+#             'email': 'testperson@email.com',
+#             'handle_str': 'testperson',
+#             'name_first': 'Test',
+#             'name_last': 'Person',
+#             'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
+#             'u_id': uid_1
+#             }],
+#     })
 
-    response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
-    assert (json.loads(response.text) ==  {
-        'user': {
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }
-    })
+#     response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
+#     assert (json.loads(response.text) ==  {
+#         'user': {
+#             'email': 'testperson@email.com',
+#             'handle_str': 'testperson',
+#             'name_first': 'Test',
+#             'name_last': 'Person',
+#             'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
+#             'u_id': uid_1
+#             }
+#     })
 
-    # Implement uploadphoto(normal bound) -----> successful implement
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 150, "y_start": 150, "x_end": 2000, "y_end": 2000})
-    assert (resp.status_code == 200)
+#     # Implement uploadphoto(normal bound) -----> successful implement
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 150, "y_start": 150, "x_end": 2000, "y_end": 2000})
+#     assert (resp.status_code == 200)
 
-    response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
-    assert (json.loads(response.text) ==  {
-        'users': [{
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }],
-    })
+#     response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
+#     assert (json.loads(response.text) ==  {
+#         'users': [{
+#             'email': 'testperson@email.com',
+#             'handle_str': 'testperson',
+#             'name_first': 'Test',
+#             'name_last': 'Person',
+#             'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
+#             'u_id': uid_1
+#             }],
+#     })
 
-    response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
-    assert (json.loads(response.text) ==  {
-        'user': {
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }
-    })
+#     response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
+#     assert (json.loads(response.text) ==  {
+#         'user': {
+#             'email': 'testperson@email.com',
+#             'handle_str': 'testperson',
+#             'name_first': 'Test',
+#             'name_last': 'Person',
+#             'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
+#             'u_id': uid_1
+#             }
+#     })
 
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')    
+#     # Clear
+#     requests.delete(f'{BASE_URL}/clear/v1')    
 
-def test_uploadphoto_errors():
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')
+# def test_uploadphoto_errors():
+#     # Clear
+#     requests.delete(f'{BASE_URL}/clear/v1')
 
-    # user_one 
-    response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
+#     # user_one 
+#     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
 
-    # Login in user_one
-    response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
-    token_1 = json.loads(response.text)['token']
+#     # Login in user_one
+#     response = requests.post(f'{BASE_URL}/auth/login/v2', json={"email": "testperson@email.com", "password": "password"})
+#     token_1 = json.loads(response.text)['token']
 
-    # Implement uploadphoto with a broken URL (InputError 400)
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": BROKEN_URL, "x_start": 10, "y_start": 10, "x_end": 15, "y_end": 15})
-    assert (resp.status_code == 400)
+#     # Implement uploadphoto with a broken URL (InputError 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": BROKEN_URL, "x_start": 10, "y_start": 10, "x_end": 15, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    # Implement uploadphoto with a valid .jpg image URL but any image crop bound out of image dimensions (InputError 400)
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": -1, "y_start": 10, "x_end": 15, "y_end": 15})
-    assert (resp.status_code == 400)
+#     # Implement uploadphoto with a valid .jpg image URL but any image crop bound out of image dimensions (InputError 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": -1, "y_start": 10, "x_end": 15, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 4000, "y_start": 10, "x_end": 4015, "y_end": 15})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 4000, "y_start": 10, "x_end": 4015, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": -1, "x_end": 15, "y_end": 15})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": -1, "x_end": 15, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": -1, "y_start": 5000, "x_end": 15, "y_end": 5015})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": -1, "y_start": 5000, "x_end": 15, "y_end": 5015})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": -15, "y_end": 15})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": -15, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": 3959, "y_end": 15})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": 3959, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": 15, "y_end": 3031})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 10, "x_end": 15, "y_end": 3031})
+#     assert (resp.status_code == 400)
 
-    # Implement uploadphoto with a valid .jpg image URL but start crop bound less than end's (InputError 400)
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 100, "y_start": 10, "x_end": 15, "y_end": 15})
-    assert (resp.status_code == 400)
+#     # Implement uploadphoto with a valid .jpg image URL but start crop bound less than end's (InputError 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 100, "y_start": 10, "x_end": 15, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 100, "x_end": 4015, "y_end": 15})
-    assert (resp.status_code == 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 10, "y_start": 100, "x_end": 4015, "y_end": 15})
+#     assert (resp.status_code == 400)
 
-    # Implement uploadphoto with a valid .png image URL (InputError 400)
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_PNG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
-    assert (resp.status_code == 400)
+#     # Implement uploadphoto with a valid .png image URL (InputError 400)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_PNG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
+#     assert (resp.status_code == 400)
 
-    # Logout user_two
-    requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
+#     # Logout user_two
+#     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
-    # User with invalid token to start uploadphoto (AccessError 403)
-    # token_2 is invalid already (same token formation)
-    resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
-    assert (resp.status_code == 403)
+#     # User with invalid token to start uploadphoto (AccessError 403)
+#     # token_2 is invalid already (same token formation)
+#     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
+#     assert (resp.status_code == 403)
 
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')
+#     # Clear
+#     requests.delete(f'{BASE_URL}/clear/v1')

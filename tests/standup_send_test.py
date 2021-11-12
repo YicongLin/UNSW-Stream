@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import math
-BASE_URL = 'http://127.0.0.1:7777'
+from src.config import url
+BASE_URL = url
 import json
 import requests
 

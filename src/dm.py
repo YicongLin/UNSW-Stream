@@ -185,6 +185,27 @@ def dms_joined_num_join(auth_user_id):
 # Finish function
 # ==================================
 
+# ==================================
+# Update workspace data store when a user creates a DM
+def timestamps_update_create_dm():
+    data = data_store.get()
+    time_created = int(datetime.now().timestamp())
+    workspace = data['timestamps']['workspace']
+
+    num_dms = workspace['dms_exist'][-1]['num_dms_exist'] + 1
+    dms_dict = {
+        'num_dms_exist': num_dms,
+        'time_stamp': time_created
+    }
+    workspace['dms_exist'].append(dms_dict)
+    
+    data_store.set(data)
+
+# Finish timestamps data store update
+# ==================================
+
+
+
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
@@ -346,6 +367,8 @@ def dm_create_v1(token, u_ids):
         uids_index += 1
 
     data_store.set(data)
+
+    timestamps_update_create_dm()
 
     return {
         'dm_id': new_dm_id

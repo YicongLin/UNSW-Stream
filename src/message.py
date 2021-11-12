@@ -565,7 +565,7 @@ def timestamps_update_sent_message(auth_user_id):
     data_store.set(data)
 
 # Update timestamps data store whenever a user removes a message
-def timestamps_update_removed_message(auth_user_id):
+def timestamps_update_removed_message():
     data = data_store.get()
     time_removed = int(datetime.now().timestamp())
     workspace = data['timestamps']['workspace']
@@ -819,7 +819,7 @@ def message_remove_v1(token, message_id):
         remove_message_channel(message_id)
 
     # updating timestamps store
-    timestamps_update_removed_message(decode_JWT(token)['u_id'])
+    timestamps_update_removed_message()
 
     return {} 
 

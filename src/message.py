@@ -899,7 +899,7 @@ def message_react_v1(token, message_id, react_id ):
             reacts['is_this_user_reacted'] = True
             reacts['u_ids'].append(int(user['u_id']))
 
-    # creating a dictionary with the message and corresponding information
+    # creating a dictionary with the reacts and corresponding information
     reacts_dict = {
         'reacts': react_id,     
         'u_id': auth_user_id,

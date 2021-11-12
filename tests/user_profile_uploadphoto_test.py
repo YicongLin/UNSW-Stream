@@ -107,7 +107,7 @@ def test_uploadphoto_errors():
     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_PNG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
     assert (resp.status_code == 400)
 
-    # Logout user_two
+    # Logout user_one
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # User with invalid token to start uploadphoto (AccessError 403)

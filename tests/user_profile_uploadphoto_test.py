@@ -5,8 +5,7 @@ from src import config
 from src.token_helpers import decode_JWT
 from datetime import datetime, timezone
 from src.config import url
-#import shutil
-#import os
+import os
 
 BASE_URL = url
 
@@ -60,8 +59,7 @@ def test_uploadphoto():
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')    
-    # shutil.rmtree('/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static')
-    #os.unlink('/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/1_temp.jpg')
+    os.unlink(f'/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/{uid_1}.jpg')
 
 def test_uploadphoto_errors():
     # Clear

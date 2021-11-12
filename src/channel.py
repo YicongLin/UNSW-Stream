@@ -6,6 +6,7 @@ import jwt
 from src.token_helpers import decode_JWT
 from src.users import token_check
 from src.message import check_channel, not_a_member, add_notification
+from datetime import datetime, timezone
 
 # ============================================================
 # ===========(Raise errors and associate functions)===========
@@ -335,6 +336,9 @@ def channel_invite_v2(token, channel_id, u_id):
     channels[channel_index]["channel_members"].append(users[user_index])
     data_store.set(data)
 
+    # Update channels_joined
+    channels_joined_num_join(u_id)
+
     # adding a notification to the user's notification list
     notification_dict = {
         'channel_id': channel_id,
@@ -343,7 +347,6 @@ def channel_invite_v2(token, channel_id, u_id):
     }   
     # adding the notification
     add_notification(notification_dict, u_id)
-
     return {}
 
 def channel_details_v2(token, channel_id):
@@ -513,6 +516,10 @@ def channel_join_v2(token, channel_id):
 
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
+
+    # Update channels_joined
+    channels_joined_num_join(auth_user_id)
+
     data_store.set(data)
     return {}
 
@@ -696,5 +703,8 @@ def channel_leave_v1(token, channel_id):
                     owner_members.remove(owner_members[j])
                     data_store.set(data)
                     break
+
+    # Update channels_joined
+    channels_joined_num_leave(auth_user_id)
 
     return {}

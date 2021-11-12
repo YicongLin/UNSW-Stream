@@ -21,6 +21,8 @@ def clear_v1():
     store['deleted_users'] = []
     store['notifications_details'] = []
     store['removed_messages'] = []
+    store['timestamps']['users'] = []
+    store['timestamps']['workspace'] = []
 
     data_store.set(store)
     

@@ -4,7 +4,7 @@ import json
 from src import config
 from src.token_helpers import decode_JWT
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = 'http://127.0.0.1:48005'
 
 # ==================================
 # Test dm_leave

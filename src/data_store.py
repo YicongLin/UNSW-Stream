@@ -183,7 +183,8 @@ initial_object = {
         #     'channel_standup': [
         #         {
         #           'start_uid': 1,
-        #           'time_finish': 1636262035
+        #           'time_finish': 1636262035,
+        #           'standup_message': []
         #        },    
         #    ] 
         # },

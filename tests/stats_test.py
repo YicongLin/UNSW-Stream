@@ -316,7 +316,6 @@ def test_user_timestamps():
         }
     r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
     resp = r.json()
-    token2 = resp['token']
     u_id2 = resp['auth_user_id']
 
     # user1 creates & joins public channel 1

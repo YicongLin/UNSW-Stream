@@ -778,6 +778,21 @@ def message_remove_v1(token, message_id):
     return {}
 
 def message_pin_v1(token, message_id):
+    """
+    Given a message, a react is added to that message.
+
+    Arguments:
+            token (string) - the token of a authorised user
+            message_id (integer) - the ID of a message
+
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - the message is already pinned
+        AccessError - the authorised user does not have owner permissions in the channel/DM
+
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
     # obtaining data
     data = data_store.get()
     message_channel = return_message_channel()
@@ -831,6 +846,21 @@ def message_pin_v1(token, message_id):
     return {}
 
 def message_unpin_v1(token, message_id):
+    """
+    Given a message, a react is added to that message.
+
+    Arguments:
+            token (string) - the token of a authorised user
+            message_id (integer) - the ID of a message
+
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - the message is not already pinned
+        AccessError - the authorised user does not have owner permissions in the channel/DM
+
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
     # obtaining data
     data = data_store.get()
     message_channel = return_message_channel()
@@ -859,6 +889,22 @@ def message_unpin_v1(token, message_id):
     return {}
 
 def message_react_v1(token, message_id, react_id ):
+    """
+    Given a message, a react is added to that message.
+
+    Arguments:
+            token (string) - the token of a authorised user
+            message_id (integer) - the ID of a message
+            react_id (integer) - the ID of a react 
+
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - react_id is not a valid react ID
+        InputError -  the message already contains a react from the authorised user
+
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
     # obtaining data
     data = data_store.get()
     message_channel = return_message_channel()
@@ -923,6 +969,22 @@ def message_react_v1(token, message_id, react_id ):
     return {}
 
 def message_unreact_v1(token, message_id, react_id ):
+    """
+    Given a message with a react, the react is removed.
+
+    Arguments:
+            token (string) - the token of a authorised user
+            message_id (integer) - the ID of a message
+            react_id (integer) - the ID of a react 
+
+    Exceptions: 
+        InputError - message_id does not refer to a valid message within a channel/DM
+        InputError - react_id is not a valid react ID
+        InputError -  the message does not already contain a react from the authorised user
+
+    Return Value:
+        Returns an empty dictionary on all valid conditions. 
+    """
     # obtaining data
     data = data_store.get()
     message_channel = return_message_channel()

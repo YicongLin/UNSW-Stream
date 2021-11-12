@@ -59,7 +59,10 @@ def test_uploadphoto():
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
-    os.unlink(f'/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/{uid_1}.jpg')    
+    try:
+        os.unlink(f'/tmp_amd/adams/export/adams/4/z5346398/COMP1531/project-backend/src/static/{uid_1}.jpg')    
+    except OSError:
+        pass
 
 def test_uploadphoto_errors():
     # Clear

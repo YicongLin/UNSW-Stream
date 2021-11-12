@@ -43,7 +43,7 @@ def test_uploadphoto():
             'handle_str': 'testperson',
             'name_first': 'Test',
             'name_last': 'Person',
-            'profile_img_url': f'src/static/{uid_1}.jpg',
+            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
             'u_id': uid_1
             }],
     })
@@ -55,7 +55,7 @@ def test_uploadphoto():
             'handle_str': 'testperson',
             'name_first': 'Test',
             'name_last': 'Person',
-            'profile_img_url': f'src/static/{uid_1}.jpg',
+            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
             'u_id': uid_1
             }
     })
@@ -71,7 +71,7 @@ def test_uploadphoto():
             'handle_str': 'testperson',
             'name_first': 'Test',
             'name_last': 'Person',
-            'profile_img_url': f'src/static/{uid_1}.jpg',
+            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
             'u_id': uid_1
             }],
     })
@@ -83,7 +83,7 @@ def test_uploadphoto():
             'handle_str': 'testperson',
             'name_first': 'Test',
             'name_last': 'Person',
-            'profile_img_url': f'src/static/{uid_1}.jpg',
+            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
             'u_id': uid_1
             }
     })

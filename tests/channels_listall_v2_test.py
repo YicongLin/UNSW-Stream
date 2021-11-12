@@ -2,8 +2,9 @@ import pytest
 import requests
 import json
 from src import config
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = url
 
 # ==================================
 # Test listall function

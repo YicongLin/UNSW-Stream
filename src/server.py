@@ -387,7 +387,6 @@ def user_uploadphoto():
 def send_js(path):
     return send_from_directory('', path)
 
-
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     clear_v1()

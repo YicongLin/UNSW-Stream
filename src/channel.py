@@ -237,26 +237,6 @@ def timestamps_update_channel_join(auth_user_id):
 # ==================================
 
 # ==================================
-# Update timestamps data store whenever a user leaves a channel
-def timestamps_update_channel_leave(auth_user_id):
-    data = data_store.get()
-    time_left = int(datetime.now().timestamp())
-    users = data['timestamps']['users']
-    
-    for i in range(len(users)):
-        if users[i]['u_id'] == auth_user_id:
-            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] - 1
-            channels_joined_dict = {
-                'num_channels_joined': num_channels_joined,
-                'time_stamp': time_left
-            }
-            users[i]['channels_joined'].append(channels_joined_dict)
-
-    data_store.set(data)
-# Finish timestamps data store update
-# ==================================
-
-# ==================================
 # Update 'channels_joined' when a user joins a channel
 def channels_joined_num_join(auth_user_id):
 
@@ -272,6 +252,24 @@ def channels_joined_num_join(auth_user_id):
                 'time_stamp': time_joined
             }
             users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+# Finish timestamps data store update
+# ==================================
+
+# ==================================
+# Update workspace data store when a user creates a channel
+def timestamps_update_create_channel(auth_user_id):
+    data = data_store.get()
+    time_created = int(datetime.now().timestamp())
+    workspace = data['timestamps']['workspace']
+
+    num_channels = workspace['channels_exist'][-1]['num_channels_exist'] + 1
+    channels_dict = {
+        'num_channels_exist': num_channels,
+        'time_stamp': time_created
+    }
+    workspace['channels_exist'].append(channels_dict)
+    
     data_store.set(data)
 
 # Finish timestamps data store update

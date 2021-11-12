@@ -1,6 +1,8 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
 import re 
+import math
+from datetime import datetime, timezone
 import hashlib
 from src.token_helpers import generate_new_session_id, generate_JWT, decode_JWT
 from src.users import token_check, check_name_length, check_valid_email, check_duplicate_email, check_password_length, u_id_check
@@ -154,13 +156,57 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # create dictionary of users' timestamp
     # and store them in store['timestamps']['users']
+
+    # append register time as intial values in datastore 
+    time = datetime.now()
+    register_time = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+
     store['timestamps']['users'].append({
         "u_id": new_id,
-        'channels_joined': [],
-        'dms_joined': [],
-        'messages_sent': [],
+        'channels_joined': [
+            {
+            'num_channels_joined' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'dms_joined': [
+            {
+            'num_dms_joined' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'messages_sent': [
+            {
+            'num_messages_sent' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
         'involvement_rate': -1 # Need to be updated
         })
+    
+    store['timestamps']['workspace'] = {
+        'channels_exist': [
+            {
+            'num_channels_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'dms_exist': [
+            {
+            'num_dms_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'messages_exist': [
+            {
+            'num_messages_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'utilization_rate': -1 # Need to be updated
+        }
+    
+
     
     # add email+password dictionary into the list 'emailpw'
     store['emailpw'].append(email_password)

@@ -705,6 +705,7 @@ def message_react_v1(token, message_id, react_id ):
     is_this_user_reacted 
 
     # checks for exceptions
+    token_check(token)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     
@@ -715,9 +716,9 @@ def message_react_v1(token, message_id, react_id ):
 
 def message_unreact_v1(token, message_id, react_id ):
     # obtaining data
-    data = data_store.get()
-    dm_details = data['dms_details']
-    channel_details = data['channels_details']
+    token_check(token)
+    valid_message_id(token, message_id)
+    conditional_edit(token, message_id)
     
     # checks for exceptions
     valid_message_id(token, message_id)
@@ -735,6 +736,7 @@ def message_pin_v1(token, message_id):
     is_pinned
 
     # checks for exceptions
+    token_check(token)
     valid_message_id(token, message_id)
     conditional_edit(token, message_id)
     
@@ -757,9 +759,4 @@ def message_unpin_v1(token, message_id):
     a, b, _ = return_info(message_id)
 
     return {}
-    
-=======
-        remove_message_channel(message_id)
 
-    return {} 
->>>>>>> master

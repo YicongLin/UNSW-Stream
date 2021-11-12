@@ -342,6 +342,9 @@ def channel_invite_v2(token, channel_id, u_id):
     channels[channel_index]["channel_members"].append(users[user_index])
     data_store.set(data)
 
+    # Update channels_joined
+    channels_joined_num_join(u_id)
+
     # adding a notification to the user's notification list
     notification_dict = {
         'channel_id': channel_id,
@@ -523,6 +526,10 @@ def channel_join_v2(token, channel_id):
 
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
+
+    # Update channels_joined
+    channels_joined_num_join(auth_user_id)
+
     data_store.set(data)
 
     # updating timestamps store

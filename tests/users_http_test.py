@@ -6,8 +6,9 @@ from src import config
 from src.other import clear_v1
 from src.auth import auth_register_v2, auth_logout_v1, auth_login_v2
 from src.users import token_check, u_id_check
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:7777'
+BASE_URL = url
 
 # USERS ALL 
 def test_users_all():

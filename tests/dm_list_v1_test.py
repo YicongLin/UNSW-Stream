@@ -6,7 +6,10 @@ from src.channels import channels_create_v2
 from src.auth import auth_logout_v1, auth_register_v2, auth_login_v2
 from src.error import AccessError
 from src.dm import dm_create_v1, dm_list_v1
-BASE_URL = 'http://127.0.0.1:7777'
+from src.config import url
+
+BASE_URL = url
+
 # checking for invalid token, if a user is logged out that token is invalid
 def test_invalid_token_dm_list():
     """ auth_register_v2("login@gmail.com", "password454643", "tom", "liu")

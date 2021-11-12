@@ -184,6 +184,30 @@ def auth_register_v2(email, password, name_first, name_last):
         'involvement_rate': -1 # Need to be updated
         })
     
+    store['timestamps']['workspace'].append({
+        'channels_exist': [
+            {
+            'num_channels_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'dms_exist': [
+            {
+            'num_dms_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'messages_exist': [
+            {
+            'num_messages_exist' : 0, 
+            'time_stamp' : register_time
+            }
+        ],
+        'utilization_rate': -1 # Need to be updated
+        })
+    
+
+    
     # add email+password dictionary into the list 'emailpw'
     store['emailpw'].append(email_password)
     

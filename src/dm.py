@@ -8,6 +8,7 @@ from src.token_helpers import decode_JWT
 from src.channel import check_valid_token
 from src.message import add_notification
 from datetime import datetime, timezone
+import math
 
 secret = 'COMP1531'
 
@@ -129,7 +130,7 @@ def dms_joined_num_leave(auth_user_id):
     data = data_store.get()
 
     # "normal" timestamp for changing number of dms that user is member to
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
 
     # Pick out user's index in ['timestamps']['users']
     timestamps_user_index = 0
@@ -161,7 +162,7 @@ def dms_joined_num_join(auth_user_id):
     data = data_store.get()
 
     # "normal" timestamp for changing number of dms that user is member to
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
 
     # Pick out user's index in ['timestamps']['users']
     timestamps_user_index = 0

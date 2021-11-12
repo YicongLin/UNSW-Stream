@@ -125,6 +125,3 @@ dmypy.json
 
 # Other
 *.py~
-
-# Image floder
-static

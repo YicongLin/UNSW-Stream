@@ -98,70 +98,37 @@ def dm_two(registered_first, registered_second):
 # ================================================
 # =================== TESTS ======================
 # ================================================
-
 # Testing for when message_id does not refer to a valid message 
-def test_invalid_message_id(setup_clear, registered_first, registered_second, channel_two):
-    # first user registers; obtain token
-    token_1 = registered_first['token']
+def test_invalid_message_id(setup_clear, registered_second, channel_two):
     # second user registers; obtain token
-    token_2 = registered_second['token']
-    # first user creates channel
-    channel_one
+    token = registered_second['token']
     # second user creates channel; obtain channel_id
     channel_id = channel_two['channel_id']
-    # first user joins second channel
+    # second user attempts to remove the react of a message with an invalid message_id
     payload = {
-        "token": token_1,
-        "channel_id": channel_id
-    }
-    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
-    # second user sends a message to the channel
-    payload1 = {
-        "token": token_2,
+        "token": token,
         "channel_id": channel_id,
-        "message_id": 187,
+        "message_id": 1,
         "react_id": 1
     }
-    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
-    # second user removes the react of the message
-    payload2 = {
-        "token": token_2,
-        "message_id": 187,
-    }
-    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
-    assert r.status_code == 400
-   
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload)
+    assert r.status_code == 400 
+
 # Testing for when react_id does not refer to a valid react ID
-def test_invalid_react_id(setup_clear, registered_first, registered_second, channel_two):
-    # first user registers; obtain token
-    token_1 = registered_first['token']
+def test_invalid_react_id(setup_clear, registered_second, channel_two):
     # second user registers; obtain token
-    token_2 = registered_second['token']
-    # first user creates channel
-    channel_one
+    token = registered_second['token']
     # second user creates channel; obtain channel_id
     channel_id = channel_two['channel_id']
-    # first user joins second channel
+    # second user attempts to remove the react of a message with an invalid react_id
     payload = {
-        "token": token_1,
-        "channel_id": channel_id
-    }
-    requests.post(f'{BASE_URL}/channel/join/v2', json = payload)
-    # second user sends a message to the channel
-    payload1 = {
-        "token": token_2,
+        "token": token,
         "channel_id": channel_id,
         "message_id": 1,
         "react_id": 111
     }
-    requests.post(f'{BASE_URL}/message/send/v1', json = payload1)
-    # second user attempts to remove the react of the message
-    payload2 = {
-        "token": token_2,
-        "message_id": 1,
-    }
-    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
-    assert r.status_code == 400
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload)
+    assert r.status_code == 400 
 
 # Testing for a case where the authorised user did not send the original message,
 # and doesn't have owner permissions in the channel

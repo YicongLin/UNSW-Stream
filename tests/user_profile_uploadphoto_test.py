@@ -37,56 +37,24 @@ def test_uploadphoto():
     assert (resp.status_code == 200)
 
     response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
-    assert (json.loads(response.text) ==  {
-        'users': [{
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }],
-    })
+    img_url = json.loads(response.text)['users'][0]['profile_img_url'].split("/")
+    assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
     response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
-    assert (json.loads(response.text) ==  {
-        'user': {
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }
-    })
+    img_url = json.loads(response.text)['user']['profile_img_url'].split("/")
+    assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
     # Implement uploadphoto(normal bound) -----> successful implement
     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_JPEG_URL, "x_start": 150, "y_start": 150, "x_end": 2000, "y_end": 2000})
     assert (resp.status_code == 200)
 
     response = requests.get(f'{BASE_URL}/users/all/v1', params = {"token" : token_1})
-    assert (json.loads(response.text) ==  {
-        'users': [{
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }],
-    })
+    img_url = json.loads(response.text)['users'][0]['profile_img_url'].split("/")
+    assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
     response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
-    assert (json.loads(response.text) ==  {
-        'user': {
-            'email': 'testperson@email.com',
-            'handle_str': 'testperson',
-            'name_first': 'Test',
-            'name_last': 'Person',
-            'profile_img_url': f'{BASE_URL}static/{uid_1}.jpg',
-            'u_id': uid_1
-            }
-    })
+    img_url = json.loads(response.text)['user']['profile_img_url'].split("/")
+    assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')    

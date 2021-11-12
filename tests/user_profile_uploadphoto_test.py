@@ -9,7 +9,6 @@ import os
 
 BASE_URL = url
 
-
 BROKEN_URL = 'http://asdqwdasfcscd.com'
 
 # Image with width 3958 and height 3030

@@ -41,6 +41,7 @@ def test_uploadphoto():
     assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
     response = requests.get(f'{BASE_URL}/user/profile/v1', params = {"token" : token_1, "u_id": uid_1})
+
     img_url = json.loads(response.text)['user']['profile_img_url'].split("/")
     assert (img_url[len(img_url) - 1] == f'{uid_1}.jpg')
 
@@ -107,7 +108,7 @@ def test_uploadphoto_errors():
     resp = requests.post(f'{BASE_URL}/user/profile/uploadphoto/v1', json={"token": token_1, "img_url": VALID_PNG_URL, "x_start": 1, "y_start": 1, "x_end": 150, "y_end": 150})
     assert (resp.status_code == 400)
 
-    # Logout user_one
+    # Logout user_two
     requests.post(f'{BASE_URL}/auth/logout/v1', json={"token": token_1})
 
     # User with invalid token to start uploadphoto (AccessError 403)

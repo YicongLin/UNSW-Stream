@@ -18,7 +18,7 @@ def test_start_active():
     
     # Possible time for running routes
     length = 10 # Assume start standup in 10 secs
-    now_time = datetime.now().replace(tzinfo=timezone.utc).timestamp()
+    now_time = datetime.now().timestamp()
     possible_time = [int(now_time + length), int(now_time + length + 1), int(now_time + length + 2)]
 
     # user_two ----> channel creator

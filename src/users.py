@@ -271,7 +271,10 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
         # Obtain index of authorised user's user dict store in users list
         # Update image url to authorised user's user dict
         user_index = users_index(auth_user_id)
-        data['users'][user_index]['profile_img_url'] = f'{url}static/{auth_user_id}.jpg'
+        data['users'][user_index]['profile_img_url'] = f"src/static/{auth_user_id}.jpg"
+        
+        
+        # f'{url}static/{auth_user_id}.jpg'
 
     except (HTTPError, URLError):
         # if urllib.request.urlopen(img_url).status != 200 or urllib.request.urlretrieve.status != 200:

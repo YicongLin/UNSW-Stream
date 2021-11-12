@@ -6,6 +6,7 @@ import jwt
 from src.token_helpers import decode_JWT
 from src.users import token_check
 from src.message import check_channel, not_a_member, add_notification
+from datetime import datetime, timezone
 
 # ============================================================
 # ===========(Raise errors and associate functions)===========
@@ -199,6 +200,7 @@ def start_greater_than_total(channel_id, start):
             if int(start) > len(messages):
                 raise InputError(description="Exceeded total number of messages in this channel") 
 # Finish messages check
+# ==================================
 
 # ==================================
 # Checking channel status
@@ -212,6 +214,48 @@ def channel_status(channel_id):
                 raise AccessError(description="Channel is private and you are not a global owner")
 # Finish channel status check
 # ==================================
+
+# ==================================
+# Update timestamps data store whenever a user joins a channel
+def timestamps_update_channel_join(auth_user_id):
+    data = data_store.get()
+    time_joined = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] + 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_joined
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+
+# Finish timestamps data store update
+# ==================================
+
+# ==================================
+# Update timestamps data store whenever a user leaves a channel
+def timestamps_update_channel_leave(auth_user_id):
+    data = data_store.get()
+    time_left = int(datetime.now().timestamp())
+    users = data['timestamps']['users']
+    
+    for i in range(len(users)):
+        if users[i]['u_id'] == auth_user_id:
+            num_channels_joined = users[i]['channels_joined'][-1]['num_channels_joined'] - 1
+            channels_joined_dict = {
+                'num_channels_joined': num_channels_joined,
+                'time_stamp': time_left
+            }
+            users[i]['channels_joined'].append(channels_joined_dict)
+    data_store.set(data)
+    print(users)
+    print('helloooo')
+
+# ==================================
+# Finish timestamps data store update
 
 # ============================================================
 # =====================(Actual functions)=====================
@@ -234,7 +278,6 @@ def channel_invite_v2(token, channel_id, u_id):
     
     Return Value:
         Empty dictionary on all valid conditions
-
     """
 
     # obtaining data
@@ -278,6 +321,9 @@ def channel_invite_v2(token, channel_id, u_id):
     }   
     # adding the notification
     add_notification(notification_dict, u_id)
+
+    # updating timestamps store
+    timestamps_update_channel_join(u_id)
 
     return {}
 
@@ -449,6 +495,10 @@ def channel_join_v2(token, channel_id):
     # appending the user information to the channel
     channels[channel_index]["channel_members"].append(users[user_index])
     data_store.set(data)
+
+    # updating timestamps store
+    timestamps_update_channel_join(auth_user_id)
+
     return {}
 
 def channel_addowner_v1(token, channel_id, u_id):
@@ -631,5 +681,8 @@ def channel_leave_v1(token, channel_id):
                     owner_members.remove(owner_members[j])
                     data_store.set(data)
                     break
+
+    # updating timestamps store
+    timestamps_update_channel_leave(auth_user_id)
 
     return {}

@@ -184,7 +184,15 @@ def test_sent_messages(setup_clear, registered_first, create_channel):
         "message_id": 1,
         "u_id": u_id,
         "message": "Hello World",
-        "time_created": time_created
+        "time_created": time_created,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}

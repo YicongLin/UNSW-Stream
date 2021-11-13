@@ -646,7 +646,7 @@ def dm_messages_v1(token, dm_id, start):
 
     for i in range(len(message_list)):
         reacts = message_list[i]['reacts']
-        if auth_user_id in reacts[i]['u_ids']:
+        if auth_user_id in reacts[0]['u_ids']:
             reacts[0]['is_this_user_reacted'] = True
         else:
             reacts[0]['is_this_user_reacted'] = False

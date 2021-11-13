@@ -495,7 +495,7 @@ def test_duplicate_tags_dm(clear_setup, register_first, register_second, dm_one)
     response = r.json()
     assert response == {"notifications": [notification]}
 
-""" # Testing for a case where a message sent by a user in a channel gets a react;
+# Testing for a case where a message sent by a user in a channel gets a react;
 # the user should receive a notification
 def test_react_channel(clear_setup, register_first, register_second, channel_one):
     # first user registers; obtain token
@@ -565,4 +565,4 @@ def test_react_dm(clear_setup, register_first, register_second, dm_one):
         "notification_message": "seconduser reacted to your message in firstuser, seconduser"
     }
     response = r.json()
-    assert response == {"notifications": [notification]} """
+    assert response == {"notifications": [notification]}

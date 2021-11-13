@@ -108,7 +108,8 @@ def test_invalid_token(setup_clear, registered_first):
     # first user attempts to react to a message
     payload = {
         "token": token,
-        "message_id": 7
+        "message_id": 7,
+        "react_id": 1
     }
     r = requests.post(f'{BASE_URL}/message/react/v1', json = payload)
     assert r.status_code == 403

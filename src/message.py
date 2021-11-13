@@ -271,7 +271,7 @@ def handle_check_channel(handle, channel_id):
 
 # Determines if a handle belongs to a valid user in a given DM, 
 # and returns the u_id of the user if valid
-def handle_check_dm(handle, dm_id, channel_id):
+def handle_check_dm(handle, dm_id):
     # obtaining data
     data = data_store.get()
     dms = data['dms_details']
@@ -540,22 +540,14 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': auth_user_id,
         'message': message,
         'time_created': time_created,
-<<<<<<< HEAD
         'reacts': [
-=======
-        "reacts": [
->>>>>>> origin/kevin/iter3
             {
                 'react_id': 1,
                 'u_ids': [],
                 'is_this_user_reacted': False
             }
         ],
-<<<<<<< HEAD
         'is_pinned': False
-=======
-        "is_pinned": False
->>>>>>> origin/kevin/iter3
     }
 
     # finding the DM with given dm_id and appending the message to the DM's details
@@ -637,22 +629,14 @@ def message_send_v1(token, channel_id, message):
         'u_id': auth_user_id,
         'message': message,
         'time_created': time_created,
-<<<<<<< HEAD
         'reacts': [
-=======
-        "reacts": [
->>>>>>> origin/kevin/iter3
             {
                 'react_id': 1,
                 'u_ids': [],
                 'is_this_user_reacted': False
             }
         ],
-<<<<<<< HEAD
         'is_pinned': False
-=======
-        "is_pinned": False
->>>>>>> origin/kevin/iter3
     }
 
     # finding the channel with given channel_id and appending the message to the channel's details
@@ -939,6 +923,7 @@ def message_react_v1(token, message_id, react_id ):
     auth_user_id = decode_JWT(token)['u_id']
     channels = data['channels_details']
     dms = data['dms_details']
+    handle = find_handle(token)
 
     # checks for exceptions
     token_check(token)
@@ -947,18 +932,30 @@ def message_react_v1(token, message_id, react_id ):
         raise InputError(description="Invalid react")
 
     # obtaining what channel/DM the message is in 
-    a, b, *_ = return_info(message_id)
+    a, b, c, _ = return_info(message_id)
 
     # the message is in a channel
     if b == 'channel':
         for i in range(len(channels)):
             if channels[i]['channel_id'] == a:
                 messages = channels[i]['messages']
+                name = channels[i]['name']
+        notification_dict = {
+            'channel_id': a,
+            'dm_id': -1,
+            'notification_message': f'{handle} reacted to your message in {name}'
+        }   
     # the message is in a DM
     else:
         for i in range(len(dms)):
             if dms[i]['dm_id'] == a:
                 messages = dms[i]['messages']
+                name = dms[i]['name']
+        notification_dict = {
+            'channel_id': -1,
+            'dm_id': a,
+            'notification_message': f'{handle} reacted to your message in {name}'
+        }   
     # adding the user to the list of users who have reacted to the given message
     for j in range(len(messages)):
         if messages[j]['message_id'] == message_id:
@@ -966,6 +963,9 @@ def message_react_v1(token, message_id, react_id ):
                 raise InputError(description="You have already reacted to this message")
             else:
                 messages[j]['reacts'][0]['u_ids'].append(auth_user_id)
+    
+    # adding a notification for the user who sent the message
+    add_notification(notification_dict, c)
 
 def message_unreact_v1(token, message_id, react_id ):
     """
@@ -1071,7 +1071,15 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         'message_id': shared_message_id,
         'u_id': auth_user_id,
         'message': og_message + message ,
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
 
     # sharing the message to a channel
@@ -1092,6 +1100,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                 name = dm_details[i]['name']
                 dm_details[i]['messages'].append(message_dict)
                 data_store.set(data)
+                # checking if the additional message contains tags
                 tags_in_shared_message_dm(token, message, name, dm_id)
 
     # updating timestamps store

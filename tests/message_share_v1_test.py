@@ -396,13 +396,29 @@ def test_successful_share_channel(clear_setup, register_first, channel_one, chan
         'message_id': 2,
         'u_id': u_id,
         'message': "This is the original message",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         'message_id': 3,
         'u_id': u_id,
         'message': "This is the original messageThis is the additional message",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
@@ -459,13 +475,29 @@ def test_successful_share_dm(clear_setup, register_first, dm_one, dm_two):
         'message_id': 2,
         'u_id': u_id,
         'message': "This is the original message",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         'message_id': 3,
         'u_id': u_id,
         'message': "This is the original messageThis is the additional message",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
@@ -518,13 +550,29 @@ def test_additional_message_with_tags(clear_setup, register_first, register_seco
         'message_id': 1,
         'u_id': u_id,
         'message': "This is the original message",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         'message_id': 2,
         'u_id': u_id,
         'message': "This is the original messageLook @seconduser",
-        'time_created': time_shared
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}

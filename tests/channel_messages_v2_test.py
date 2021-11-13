@@ -172,13 +172,29 @@ def test_valid(clear_setup, register_first, channel_one):
         "message_id": 1,
         "u_id": u_id,
         "message": "Goodnight",
-        "time_created": time_created1
+        "time_created": time_created1,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         "message_id": 2,
         "u_id": u_id,
         "message": "Good morning",
-        "time_created": time_created2
+        "time_created": time_created2,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message2, message1], "start": 0, "end": -1}

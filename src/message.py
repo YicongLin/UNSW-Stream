@@ -19,7 +19,7 @@ import re
 #     return data
 
 # A function that returns the message dictionary for channels
-def return_message_channel():
+def return_message_channel(message_id):
     data = data_store.get()
     channels = data['channels_details']
 
@@ -36,7 +36,7 @@ def return_message_channel():
     # return None
 
 # A function that returns the message dictionary for dms
-def return_message_dm():
+def return_message_dm(message_id):
     data = data_store.get()
     dms = data['dms_details']
 

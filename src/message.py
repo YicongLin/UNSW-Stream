@@ -625,6 +625,14 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': auth_user_id,
         'message': message,
         'time_created': time_created,
+        "reacts": [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        "is_pinned": False
     }
 
     # finding the DM with given dm_id and appending the message to the DM's details
@@ -705,7 +713,15 @@ def message_send_v1(token, channel_id, message):
         'message_id': message_id,
         'u_id': auth_user_id,
         'message': message,
-        'time_created': time_created
+        'time_created': time_created,
+        "reacts": [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        "is_pinned": False
     }
 
     # finding the channel with given channel_id and appending the message to the channel's details

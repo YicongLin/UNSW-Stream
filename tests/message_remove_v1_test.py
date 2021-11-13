@@ -4,8 +4,9 @@ import json
 from src import config
 import math
 from datetime import datetime, timezone
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = url
 
 # ================================================
 # ================= FIXTURES =====================
@@ -187,7 +188,6 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
     r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload3)
     assert r.status_code == 200 
     
-
 # Test for a successful removal in a channel
 def test_successful_removal_channel(setup_clear, registered_second, channel_one, channel_two, dm_one):
     # second user registers; obtain token and u_id

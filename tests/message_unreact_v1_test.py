@@ -167,7 +167,7 @@ def test_no_user_permission_channel(setup_clear, registered_first, registered_se
         "message_id": 2,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for a valid case where the authorised user has owner permissions in the DM
@@ -195,7 +195,7 @@ def test_owner_permission_dm(setup_clear, registered_first, registered_second, d
         "message_id": 1,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for a valid case where the authorised user has owner permissions in the channel
@@ -229,7 +229,7 @@ def test_owner_permission_channel(setup_clear, registered_first, registered_seco
         "message_id": 1,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for an invalid case where the authorised user sent the message
@@ -260,7 +260,7 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
         "message_id": 1,
         "message": "Hi"
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for when the message does not already have a react in a channel
@@ -292,7 +292,7 @@ def test_message_no_react_channel(setup_clear, registered_first, registered_seco
         "message_id": 1,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
     assert r.status_code == 400
 
 # Testing for when the message does not already have a react in a DM
@@ -318,7 +318,7 @@ def test_already_reacted_dm(setup_clear, registered_first, registered_second, dm
         "message_id": 1,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
     assert r.status_code == 400
 
 # Testing for when there is a successful unreact in a channel
@@ -378,5 +378,5 @@ def test_successful_react_dm(setup_clear, registered_first, registered_second, d
         "message_id": 1,
         "message": "Hi",
     }
-    r = requests.put(f'{BASE_URL}/message/unreact/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/unreact/v1', json = payload2)
     assert r.status_code == 200 

@@ -4,8 +4,9 @@ import json
 from src import config
 import math
 from datetime import datetime, timezone
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = url
 
 # ================================================
 # ================= FIXTURES =====================
@@ -132,7 +133,7 @@ def test_private_and_not_global_owner(clear_setup, register_first, register_seco
     assert r.status_code == 403
 
 # Test valid case
-def test_valid(clear_setup, register_first, register_second, channel_one, channel_two):
+def test_valid_channel_join(clear_setup, register_first, register_second, channel_one, channel_two):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     id_1 = register_first['auth_user_id']

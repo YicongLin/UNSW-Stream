@@ -4,8 +4,9 @@ import json
 from src import config
 from src.auth import auth_register_v2
 from src.other import clear_v1
+from src.config import url
 
-BASE_URL = 'http://127.0.0.1:2000'
+BASE_URL = url
 
 # ================================================
 # ================= FIXTURES =====================

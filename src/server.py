@@ -9,7 +9,7 @@ from src.channel import channel_addowner_v1, channel_details_v2, channel_removeo
 from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
 from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1, message_pin_v1, message_unpin_v1, message_react_v1, message_unreact_v1
+from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1, message_share_v1, message_pin_v1, message_unpin_v1, message_react_v1, message_unreact_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
@@ -19,6 +19,7 @@ from src.token_helpers import decode_JWT
 from src.other import clear_v1, notifications_get_v1, search_v1
 from src.auth_pw import auth_passwordreset_request_v1, auth_passwordreset_reset_v1
 from src.iter3_message import message_sendlater_v1, message_sendlaterdm_v1
+from src.stats import user_stats_v1, users_stats_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -240,7 +241,7 @@ def pin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    message_pin_v1(token, message_id)
+    result = message_pin_v1(token, message_id)
 
     return dumps({})
 
@@ -250,7 +251,7 @@ def unpin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    message_unpin_v1(token, message_id)
+    result = message_unpin_v1(token, message_id)
 
     return dumps({})
 
@@ -427,7 +428,6 @@ def user_uploadphoto():
 def send_js(path):
     return send_from_directory('', path)
 
-
 @APP.route('/clear/v1', methods=['DELETE'])
 def clear():
     clear_v1()
@@ -497,6 +497,32 @@ def standup_send():
 
     standup_send_v1(token, channel_id, message)
     return dumps({})
+
+@APP.route('/user/stats/v1', methods=['GET'])
+def user_stats_http():
+    token = request.args.get('token')
+
+    result = user_stats_v1(token)
+    return dumps(result)
+
+@APP.route('/users/stats/v1', methods=['GET'])
+def users_stats_http():
+    token = request.args.get('token')
+
+    result = users_stats_v1(token)
+    return dumps(result)
+
+@APP.route('/message/share/v1', methods=['POST'])
+def message_share_http():
+    data = request.get_json()
+    token = data['token']
+    og_message_id = data['og_message_id']
+    message = data['message']
+    channel_id = data['channel_id']
+    dm_id = data['dm_id']
+
+    result = message_share_v1(token, og_message_id, message, channel_id, dm_id)
+    return dumps(result)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

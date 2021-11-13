@@ -169,7 +169,7 @@ def test_no_user_permission_channel(setup_clear, registered_first, registered_se
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for a valid case where the authorised user has owner permissions in the DM
@@ -197,7 +197,7 @@ def test_owner_permission_dm(setup_clear, registered_first, registered_second, d
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for a valid case where the authorised user has owner permissions in the channel
@@ -231,7 +231,7 @@ def test_owner_permission_channel(setup_clear, registered_first, registered_seco
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for an invalid case where the authorised user sent the message
@@ -262,7 +262,7 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for when the message is already reacted to in the channel
@@ -296,7 +296,7 @@ def test_message_already_reacted_channel(setup_clear, registered_first, register
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 400
 
 # Testing for when the message is already reacted to in the DM
@@ -324,7 +324,7 @@ def test_already_reacted_dm(setup_clear, registered_first, registered_second, dm
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 400
 
 # Testing for when there is a successful react in a channel
@@ -384,5 +384,5 @@ def test_successful_react_dm(setup_clear, registered_first, registered_second, d
         "message": "Hi",
         "react_id": 1
     }
-    r = requests.put(f'{BASE_URL}/message/react/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/react/v1', json = payload2)
     assert r.status_code == 200 

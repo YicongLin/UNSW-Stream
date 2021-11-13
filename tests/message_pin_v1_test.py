@@ -157,7 +157,7 @@ def test_no_user_permission_channel(setup_clear, registered_first, registered_se
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for a valid case where the authorised user has owner permissions in the DM
@@ -186,7 +186,7 @@ def test_owner_permission_dm(setup_clear, registered_first, registered_second, d
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for a valid case where the authorised user has owner permissions in the channel
@@ -221,7 +221,7 @@ def test_owner_permission_channel(setup_clear, registered_first, registered_seco
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload2)
     assert r.status_code == 200 
 
 # Testing for an invalid case where the authorised user sent the message
@@ -253,7 +253,7 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload3)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload3)
     assert r.status_code == 403
 
 # Testing for when the message is already pinned in the channel
@@ -287,7 +287,7 @@ def test_message_already_pinned_channel(setup_clear, registered_first, registere
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload2)
     assert r.status_code == 400
 
 def test_already_pinned_dm(setup_clear, registered_first, registered_second, dm_one, dm_two):
@@ -314,7 +314,7 @@ def test_already_pinned_dm(setup_clear, registered_first, registered_second, dm_
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload2)
     assert r.status_code == 400
 
 # Testing for when there is a successful pin in a channel
@@ -376,5 +376,5 @@ def test_successful_pin_dm(setup_clear, registered_first, registered_second, dm_
         "message": "Hi",
         "is_pinned": True
     }
-    r = requests.put(f'{BASE_URL}/message/pin/v1', json = payload2)
+    r = requests.post(f'{BASE_URL}/message/pin/v1', json = payload2)
     assert r.status_code == 200 

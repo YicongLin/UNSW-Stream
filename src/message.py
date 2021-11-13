@@ -23,6 +23,7 @@ def return_message_channel(message_id):
         for j in range(len(channel_messages)):
             if channel_messages[j]['message_id'] == int(message_id):
                 return channel_messages[j]['message']
+    return None
 
 # A function that returns the message dictionary for dms
 def return_message_dm(message_id):
@@ -34,7 +35,8 @@ def return_message_dm(message_id):
         for j in range(len(dms_messages)):
             if dms_messages[j]['message_id'] == int(message_id):
                 return dms_messages[j]['message']
-
+    return None
+    
 # Raises an error if the dm_id is invalid
 def valid_dm_id(dm_id):
     # obtaining data
@@ -198,7 +200,7 @@ def conditional_remove(token, message_id):
     auth_user_id = decoded_token['u_id']
 
     # determining what channel/DM the message is in and obtaining information
-    _, _, c = return_info(message_id)
+    _, _, c, _ = return_info(message_id)
 
     # raising the error 
     if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
@@ -214,11 +216,11 @@ def conditional_pin(token, message_id):
     auth_user_id = decoded_token['u_id']
 
     # determining what channel/DM the message is in and obtaining information
-    _, _, c = return_info(message_id)
+    _, _, c, _ = return_info(message_id)
 
     # raising the error 
     if int(c) != auth_user_id and owner_permissions(token, message_id) == False:
-        raise AccessError(description="You do not have access to the message")
+        raise AccessError(description="You do not have access to pin the message")
 
 # Editing a message in a DM
 def edit_message_dm(message, message_id, token):
@@ -927,6 +929,8 @@ def message_pin_v1(token, message_id):
     message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
 
     # checks for exceptions
     token_check(token)
@@ -947,13 +951,16 @@ def message_pin_v1(token, message_id):
     # unpin a message from a channel
     message_channel['is_pinned'] == True
 
+    # obtaining the time the pin is created
+    time = datetime.now()
+    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+
     # creating a dictionary with the message and corresponding information
     message_dict = {
         'message_id': message_id,
         'u_id': auth_user_id,
-        'message': message,
+        'message': "Goodbye World",
         'time_created': time_created,
-        'reacts': react_id,
         'is_pinned': True
     }
 
@@ -962,14 +969,12 @@ def message_pin_v1(token, message_id):
         if dm_details[i]['dm_id'] == int(dm_id):
             dm_details[i]['messages'].append(message_dict)
             data_store.set(data)
-            name = dm_details[i]['name']
     
     # finding the channel with given channel_id and appending the message to the channel's details
     for i in range(len(channel_details)):
         if channel_details[i]['channel_id'] == int(channel_id):
             channel_details[i]['messages'].append(message_dict)
             data_store.set(data)
-            name = channel_details[i]['name']
 
     return {}
 
@@ -1039,6 +1044,8 @@ def message_react_v1(token, message_id, react_id ):
     message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
+    decoded_token = decode_JWT(token)
+    auth_user_id = decoded_token['u_id']
     react_id = int(react_id)
 
     # checks for exceptions
@@ -1085,14 +1092,12 @@ def message_react_v1(token, message_id, react_id ):
         if dm_details[i]['dm_id'] == int(dm_id):
             dm_details[i]['messages'].append(reacts_dict)
             data_store.set(data)
-            name = dm_details[i]['name']
     
     # finding the channel with given channel_id and appending the message to the channel's details
     for i in range(len(channel_details)):
         if channel_details[i]['channel_id'] == int(channel_id):
             channel_details[i]['messages'].append(reacts_dict)
             data_store.set(data)
-            name = channel_details[i]['name']
 
     return {}
 

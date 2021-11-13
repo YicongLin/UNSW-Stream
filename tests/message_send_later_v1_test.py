@@ -198,7 +198,15 @@ def test_valid_message():
         "message_id": 1,
         "u_id": u_id2,
         "message": "hey guys how u going with project",
-        "time_created": time_created
+        "time_created": time_created,
+        "reacts": [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        "is_pinned": False
     }
     
     assert json.loads(r.text) == {"messages": [message], "start": 0, "end": -1}

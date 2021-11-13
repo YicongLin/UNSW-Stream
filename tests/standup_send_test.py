@@ -175,7 +175,15 @@ def test_valid_stand_up():
         "message_id": 1,
         "u_id": u_id1,
         "message": "kevinlin: hello\nkangliu: world\nkangliu: 12345",
-        "time_created": time_created
+        "time_created": time_created,
+        "reacts": [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        "is_pinned": False
     }
     
     assert json.loads(r.text) == {"messages": [message], "start": 0, "end": -1}

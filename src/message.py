@@ -1064,13 +1064,13 @@ def message_react_v1(token, message_id, react_id ):
     # checking if the message from DMS already has a react
     # if it does not, add a react
     if b == 'dm': 
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            if react['is_this_user_reacted']:
-                raise InputError("Message already has a react.")
-        if react_id == react['react_id']:
-            react['is_this_user_reacted'] = True
-            react['u_ids'].append(int(user['u_id'])) 
+        for react in message_dm['reacts']:
+            if react_id == react['react_id']:
+                if react['is_this_user_reacted']:
+                    raise InputError("Message already has a react.")
+            if react_id == react['react_id']:
+                react['is_this_user_reacted'] = True
+                react['u_ids'].append(int(user['u_id'])) 
 
     # checking if the message from channels already has a react
     # if it does not, add a react
@@ -1142,13 +1142,13 @@ def message_unreact_v1(token, message_id, react_id ):
     # checking if the message from DMS has a react
     # if it does, unreact to the message
     if b == 'dm': 
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            if not react['is_this_user_reacted']:
-                raise InputError("Message does not has a react.")
-        if react_id == react['react_id']:
-            react['is_this_user_reacted'] = False
-            react['u_ids'].remove(int(user['u_id']))
+        for react in message_dm['reacts']:
+            if react_id == react['react_id']:
+                if not react['is_this_user_reacted']:
+                    raise InputError("Message does not has a react.")
+            if react_id == react['react_id']:
+                react['is_this_user_reacted'] = False
+                react['u_ids'].remove(int(user['u_id']))
 
     # checking if the message from channels has a react
     # if it does, unreact to the message

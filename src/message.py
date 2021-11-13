@@ -13,26 +13,44 @@ import re
 # ================== HELPERS =====================
 # ================================================
 
-# A function that returns data from the data store
-def return_data():
-    data = data_store.get()
-    return data
+# # A function that returns data from the data store
+# def return_data():
+#     data = data_store.get()
+#     return data
 
 # A function that returns the message dictionary for channels
 def return_message_channel():
-    for channels_details in return_data()['channels_details']:
-        for message in channels_details['messages']:
-            if message['message_id'] == int('message_id'):
-                return message
-    return None
+    data = data_store.get()
+    channels = data['channels_details']
+
+    for i in range(len(channels)):
+        channel_messages = channels[i]['messages']
+        for j in range(len(channel_messages)):
+            if channel_messages[j]['message_id'] == int(message_id):
+                return channel_messages[j]['message']
+
+    # for channels_details in data()['channels_details']:
+    #     for message in channels_details['messages']:
+    #         if message['message_id'] == int('message_id'):
+    #             return message
+    # return None
 
 # A function that returns the message dictionary for dms
 def return_message_dm():
-    for dms_details in return_data()['dms_details']:
-        for message in dm_details['messages']:
-            if message['message_id'] == int('message_id'):
-                return message
-    return None
+    data = data_store.get()
+    dms = data['dms_details']
+
+    for i in range(len(dms)):
+        dms_messages = dms[i]['messages']
+        for j in range(len(dms_messages)):
+            if dms_messages[j]['message_id'] == int(message_id):
+                return dms_messages[j]['message']
+
+    # for dms_details in data()['dms_details']:
+    #     for message in dm_details['messages']:
+    #         if message['message_id'] == int('message_id'):
+    #             return message
+    # return None
 
 # Raises an error if the dm_id is invalid
 def valid_dm_id(dm_id):

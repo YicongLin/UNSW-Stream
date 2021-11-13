@@ -57,6 +57,26 @@ def check_active_standup(channel_id_element):
 # ============================================================
 
 def standup_start_v1(token, channel_id, length):
+    """An authorised user to start a standup in a channel
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        length (integer) - the seconds that standup run
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that channel
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in a negative length
+        InputError - Occurs when authorised user try to start a standup when another standup is running
+
+    Return Value:
+        {time_finish}
+            time_finish (unix timestamp) - the time this standup stop
+    """
+
     # Obtain data already existed
     data = data_store.get()
 
@@ -100,6 +120,23 @@ def standup_start_v1(token, channel_id, length):
 
 
 def standup_active_v1(token, channel_id):
+    """Show status of status of channel's current standup
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user is not a member of that channel
+        InputError - Occurs when authorised user type in an invalid channel id
+
+    Return Value:
+        {is_active, time_finish}
+            is_active (boolen) - status of channel's current standup
+            time_finish (unix timestamp) - the time this standup stop
+    """
 
     # Raise an AccessError if authorised user login with an invalid token
     check_valid_token(token)

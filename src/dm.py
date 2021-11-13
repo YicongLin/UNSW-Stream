@@ -19,7 +19,7 @@ secret = 'COMP1531'
 # ==================================
 # Check dm_id valid or not
 # Serach information at data['dms_details']
-# If dm_id is invalid then return False
+# If dm_id is invalid then return raise errors
 # If dm_id is valid then return dm_id_element (its index at dms_details_data[dms_element])
 def check_valid_dmid(dm_id):
     """ Check dm_id valid or not """
@@ -49,7 +49,7 @@ def check_valid_dmid(dm_id):
 # ==================================
 # Check authorised user is an member of dm or not
 # Serach information at data['dms_details'][dm_id_element]['dm_members']
-# If authorised user is a not member of dm then return False
+# If authorised user is a not member of dm then raise errors
 # If authorised user is a member of dm then return member_id_element (its index at dm_members[member_id_element])
 def check_valid_dm_token(auth_user_id, dm_id_element):    
     data = data_store.get()

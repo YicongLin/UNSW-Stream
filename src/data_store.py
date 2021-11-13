@@ -1,5 +1,3 @@
-import pickle
-import time
 '''
 data_store.py
 
@@ -362,16 +360,6 @@ initial_object = {
     }
 }
 
-# def persistence_data():
-#     with open('database.p', 'wb') as FILE:
-#         pickle.dump(initial_object, FILE)
-
-#     # with open('database.p', 'rb') as FILE:
-#     #     readable_data = pickle.load(FILE)
-#     #     print(readable_data)
-# while True:
-#     time.sleep(2)
-#     persistence_data()
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
 class Datastore:

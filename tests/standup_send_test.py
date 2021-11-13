@@ -179,6 +179,3 @@ def test_valid_stand_up():
     }
     
     assert json.loads(r.text) == {"messages": [message], "start": 0, "end": -1}
-    
-
-    

@@ -241,7 +241,7 @@ def pin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    result = message_pin_v1(token, message_id)
+    message_pin_v1(token, message_id)
 
     return dumps({})
 
@@ -251,7 +251,7 @@ def unpin_message():
     token = request_data['token']
     message_id = request_data['message_id']
 
-    result = message_unpin_v1(token, message_id)
+    message_unpin_v1(token, message_id)
 
     return dumps({})
 

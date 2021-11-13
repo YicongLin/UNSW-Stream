@@ -275,7 +275,6 @@ def handle_check_dm(handle, dm_id):
     # obtaining data
     data = data_store.get()
     dms = data['dms_details']
-    channels = data['channels_details']
     
     # finding the given DM and its details
     for i in range(len(dms)):
@@ -824,7 +823,6 @@ def message_pin_v1(token, message_id):
     data = data_store.get()
     dms = data['dms_details']
     channels = data['channels_details']
-    auth_user_id = decode_JWT(token)['u_id']
 
     # checks for exceptions
     token_check(token)
@@ -874,7 +872,6 @@ def message_unpin_v1(token, message_id):
     data = data_store.get()
     dms = data['dms_details']
     channels = data['channels_details']
-    auth_user_id = decode_JWT(token)['u_id']
 
     # checks for exceptions
     token_check(token)

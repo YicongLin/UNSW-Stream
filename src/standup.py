@@ -283,9 +283,9 @@ def standup_message_send(auth_user_id, channel_id_position, message):
         ],
         'is_pinned': False
     }
-    
-    data['channels_details'][channel_id_position]['messages'].append(message_dict)
-    data_store.set(data)
+    if len(data['channels_details']) != 0:
+        data['channels_details'][channel_id_position]['messages'].append(message_dict)
+        data_store.set(data)
 
     
     # for i in range(len(channel_details)):

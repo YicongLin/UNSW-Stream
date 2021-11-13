@@ -263,9 +263,7 @@ def test_successful_unreact_channel(setup_clear, registered_first, registered_se
     assert response == {"messages": [message], "start": 0, "end": -1}
     
 # Testing for a successful unreact in a channel
-def test_successful_unreact_dm(setup_clear, registered_first, registered_second, dm_one, dm_two):
-    # first user registers; obtain token
-    token_1 = registered_first['token']
+def test_successful_unreact_dm(setup_clear, registered_second, dm_one, dm_two):
     # second user registers; obtain token and u_id
     token_2 = registered_second['token']
     u_id_2 = registered_second['auth_user_id']

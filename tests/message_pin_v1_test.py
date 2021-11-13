@@ -170,9 +170,9 @@ def test_no_owner_permissions_channel(setup_clear, registered_first, registered_
         "channel_id": channel_id
     }
     requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
-    # second user sends a message to the channel
+    # first user sends a message to the channel
     payload2 = {
-        "token": token_2,
+        "token": token_1,
         "channel_id": channel_id,
         "message": "Hi"
     }

@@ -304,11 +304,19 @@ def standup_message_send(auth_user_id, channel_id_position, message):
         'message_id': message_id,
         'u_id': auth_user_id,
         'message': f"{message}",
-        'time_created': time_created
+        'time_created': time_created,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
-    
-    data['channels_details'][channel_id_position]['messages'].append(message_dict)
-    data_store.set(data)
+    if len(data['channels_details']) != 0:
+        data['channels_details'][channel_id_position]['messages'].append(message_dict)
+        data_store.set(data)
 
     
     # for i in range(len(channel_details)):

@@ -34,41 +34,12 @@ def user_stats_v1(token):
     dm_list = dm_list_v1(token) 
     num_dms_joined = len(dm_list['dms'])
 
-    # number of messages sent (only increases, removed messages does not affect)
-    # messages in channels
-
-    channel_msgs_sent = 0
-    i = 0
-    while i < len(store['channels_details']):
-        j = 0
-        while j < len(store['channels_details'][i]['messages']):
-            if store['channels_details'][i]['messages'][j]['u_id'] == u_id:
-                channel_msgs_sent += 1
-            j += 1
-        i += 1
-
-    # messages in dms
-    i = 0
-    j = 0
-    dms_msgs_sent = 0
-    while i < len(store['dms_details']):
-        while j < len(store['dms_details'][i]['messages']):
-            if store['dms_details'][i]['messages'][j]['u_id'] == u_id:
-                dms_msgs_sent += 1
-            j += 1
-        i += 1
-
-    # removed messages 
-    i = 0
-    rem_msgs_sent = 0
-    while i < len(store['removed_messages']):
-        if store['removed_messages'][i]['u_id'] == u_id:
-            rem_msgs_sent += 1
-        i += 1
-
-    # total user messages 
-    num_msgs_sent = channel_msgs_sent + dms_msgs_sent + rem_msgs_sent
-
+    
+    users = store['timestamps']['users']
+    for i in range(len(users)):
+        if users[i]['u_id'] == u_id:
+            num_msgs_sent = users[i]['messages_sent'][-1]['num_messages_sent']
+    
     # current number of channels 
     num_channels = len(store['channels_details'])
 
@@ -89,8 +60,7 @@ def user_stats_v1(token):
     while i < len(store['channels_details']):
         channels_msgs += len(store['channels_details'][i]['messages'])     
         i += 1
-
-    # DO NOT LOOP THROUGH REMOVED MESSAGES 
+    
     num_msgs = dms_msgs + channels_msgs
 
     # involvement rate 
@@ -176,5 +146,3 @@ def users_stats_v1(token):
             'utilization_rate' : utilization_rate
             }
     }
-
-

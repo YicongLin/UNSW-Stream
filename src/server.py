@@ -9,7 +9,7 @@ from src.channel import channel_addowner_v1, channel_details_v2, channel_removeo
 from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
 from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
-from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1, message_share_v1
+from src.message import message_senddm_v1, message_send_v1, message_edit_v1, message_remove_v1, message_share_v1, message_pin_v1, message_unpin_v1, message_react_v1, message_unreact_v1
 from src.admin import admin_userpermission_change_v1, admin_user_remove_v1
 from src.users import users_all_v1, user_profile_setname_v1, user_profile_v1, user_profile_setemail_v1, user_profile_sethandle_v1, user_profile_uploadphoto_v1
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
@@ -146,7 +146,6 @@ def dm_leave():
 
     return dumps({})
 
-
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_http():
     request_data = request.get_json()
@@ -213,6 +212,47 @@ def remove_message():
 
     return dumps(result)
 
+@APP.route("/message/react/v1", methods = ['POST'])
+def react_message():
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['message_id']
+    react_id = request_data['react_id']
+
+    message_react_v1(token, message_id, react_id)
+
+    return dumps({})
+
+@APP.route("/message/unreact/v1", methods = ['POST'])
+def unreact_message():
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['message_id']
+    react_id = request_data['react_id']
+
+    message_unreact_v1(token, message_id, react_id)
+
+    return dumps({})
+
+@APP.route("/message/pin/v1", methods = ['POST'])
+def pin_message():
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['message_id']
+
+    message_pin_v1(token, message_id)
+
+    return dumps({})
+
+@APP.route("/message/unpin/v1", methods = ['POST'])
+def unpin_message():
+    request_data = request.get_json()
+    token = request_data['token']
+    message_id = request_data['message_id']
+
+    message_unpin_v1(token, message_id)
+
+    return dumps({})
 
 @APP.route('/admin/user/remove/v1', methods=['DELETE'])
 def admin_user_remove_http():

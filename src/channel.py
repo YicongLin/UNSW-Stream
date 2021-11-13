@@ -449,8 +449,7 @@ def channel_messages_v2(token, channel_id, start):
     # obtaining data
     data = data_store.get()
     channels = data["channels_details"]
-    decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token['u_id']
+    auth_user_id = decode_JWT(token)['u_id']
 
     # defining the end index
     end = int(start) + 50
@@ -474,6 +473,13 @@ def channel_messages_v2(token, channel_id, start):
             for j in range(len(channel_messages)):
                 message_list.append(channel_messages[j])
     message_list.reverse()
+
+    for i in range(len(message_list)):
+        reacts = message_list[i]['reacts']
+        if auth_user_id in reacts[0]['u_ids']:
+            reacts[0]['is_this_user_reacted'] = True
+        else:
+            reacts[0]['is_this_user_reacted'] = False
 
     if len(message_list) < 50:
         return { 

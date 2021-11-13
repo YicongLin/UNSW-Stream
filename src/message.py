@@ -540,14 +540,22 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': auth_user_id,
         'message': message,
         'time_created': time_created,
+<<<<<<< HEAD
         'reacts': [
+=======
+        "reacts": [
+>>>>>>> origin/kevin/iter3
             {
                 'react_id': 1,
                 'u_ids': [],
                 'is_this_user_reacted': False
             }
         ],
+<<<<<<< HEAD
         'is_pinned': False
+=======
+        "is_pinned": False
+>>>>>>> origin/kevin/iter3
     }
 
     # finding the DM with given dm_id and appending the message to the DM's details
@@ -629,14 +637,22 @@ def message_send_v1(token, channel_id, message):
         'u_id': auth_user_id,
         'message': message,
         'time_created': time_created,
+<<<<<<< HEAD
         'reacts': [
+=======
+        "reacts": [
+>>>>>>> origin/kevin/iter3
             {
                 'react_id': 1,
                 'u_ids': [],
                 'is_this_user_reacted': False
             }
         ],
+<<<<<<< HEAD
         'is_pinned': False
+=======
+        "is_pinned": False
+>>>>>>> origin/kevin/iter3
     }
 
     # finding the channel with given channel_id and appending the message to the channel's details

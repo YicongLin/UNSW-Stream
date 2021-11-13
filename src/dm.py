@@ -374,7 +374,6 @@ def dm_create_v1(token, u_ids):
         'dm_id': new_dm_id
     }
 
-
 def decode_token(token):
     """ decode a token and get the u_id """
     secret = 'COMP1531'

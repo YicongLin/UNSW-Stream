@@ -176,5 +176,3 @@ def users_stats_v1(token):
             'utilization_rate' : utilization_rate
             }
     }
-
-

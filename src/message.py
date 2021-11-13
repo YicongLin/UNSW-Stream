@@ -799,6 +799,9 @@ def message_remove_v1(token, message_id):
         del messages[message_index]
     data_store.set(data)
 
+    # updating timestamps store
+    timestamps_update_removed_message()
+
     return {}
 
 def message_pin_v1(token, message_id):

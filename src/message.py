@@ -519,11 +519,13 @@ def not_a_member(u_id, channel_id):
 # function to check reacts for DMS
 def check_react_dm(react_id, message_id, user_id):
     data = data_store.get()
+    dms = data['dms_details']
 
-    for dms_details in return_data()['dms_details']:
-        for message in dms_details['messages']:
-            if message['message_id'] == int('message_id'):
-                for reacts in message['reacts']:
+    for i in range(len(dms)):
+        dms_messages = dms[i]['messages']
+        for j in range(len(dms_messages)):
+            if dms_messages[j]['message_id'] == int(message_id):
+                for reacts in dms_messages[j]['message']['reacts']:
                     if int(react_id) == int(reacts['react_id']):
                         for users in reacts['u_ids']:
                             if user_id == int(users):
@@ -533,11 +535,13 @@ def check_react_dm(react_id, message_id, user_id):
 # function to check reacts for channels
 def check_react_channel(react_id, message_id, user_id):
     data = data_store.get()
+    channels = data['channels_details']
 
-    for channels_details in return_data()['channels_details']:
-        for message in channels_details['messages']:
-            if message['message_id'] == int('message_id'):
-                for reacts in message['reacts']:
+    for i in range(len(channels)):
+        channel_messages = channels[i]['messages']
+        for j in range(len(channel_messages)):
+            if channel_messages[j]['message_id'] == int(message_id):
+                for reacts in channel_messages[j]['message']['reacts']:
                     if int(react_id) == int(reacts['react_id']):
                         for users in reacts['u_ids']:
                             if user_id == int(users):
@@ -1150,11 +1154,6 @@ def message_unreact_v1(token, message_id, react_id ):
             react['u_ids'].remove(int(user['u_id']))
 
     return {}
-
-    # updating timestamps store
-    timestamps_update_removed_message()
-
-    return {} 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     """

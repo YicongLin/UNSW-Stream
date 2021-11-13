@@ -937,18 +937,20 @@ def message_pin_v1(token, message_id):
     valid_message_id(token, message_id)
     conditional_pin(token, message_id)
 
-    # check to see if message from channels is already pinned 
-    if message_channel['is_pinned'] == True:
-        raise InputError("Message is already pinned")
+    # obtaining what channel/DM the message is in 
+    _, b, *_ = return_info(message_id)
 
-    # check to see if message from DMS is already pinned 
-    if message_dm['is_pinned'] == True:
-        raise InputError("Message is already pinned")
-
-    # unpin a message from a DM
+    # check to see if message from DMS is already pinned
+    # if it isn't, pin the message
+    if b == 'dm':
+        if message_dm['is_pinned'] == True:
+            raise InputError("Message is already pinned")
     message_dm['is_pinned'] == True
-    
-    # unpin a message from a channel
+
+    # check to see if message from channels is already pinned 
+    # if it isn't, pin the message
+    if message_channel['is_pinned'] == True:
+            raise InputError("Message is already pinned")
     message_channel['is_pinned'] == True
 
     # obtaining the time the pin is created
@@ -1005,18 +1007,18 @@ def message_unpin_v1(token, message_id):
     valid_message_id(token, message_id)
     conditional_pin(token, message_id)
 
-    # check to see if message from channels is pinned 
+    # obtaining what channel/DM the message is in 
+    _, b, *_ = return_info(message_id)
+
+    # check to see if message from DMS is pinned, if it is then unpin
+    if b == 'dm':
+        if message_dm['is_pinned'] == False:
+            raise InputError("Message is not already pinned")
+    message_dm['is_pinned'] == False
+
+    # check to see if message from channels is pinned, if it is then unpin
     if message_channel['is_pinned'] == False:
         raise InputError("Message is not already pinned")
-
-    # check to see if message from DMS is pinned 
-    if message_dm['is_pinned'] == False:
-        raise InputError("Message is not already pinned")
-
-    # unpin a message from a DM
-    message_dm['is_pinned'] == False
-    
-    # unpin a message from a channel
     message_channel['is_pinned'] == False
 
     return {}
@@ -1056,26 +1058,26 @@ def message_react_v1(token, message_id, react_id ):
     if react_id != 1:
         raise InputError("Invalid react_id")
 
+    # obtaining what channel/DM the message is in 
+    _, b, *_ = return_info(message_id)
+
+    # checking if the message from DMS already has a react
+    # if it does not, add a react
+    if b == 'dm': 
+    for react in message_dm['reacts']:
+        if react_id == react['react_id']:
+            if react['is_this_user_reacted']:
+                raise InputError("Message already has a react.")
+        if react_id == react['react_id']:
+            react['is_this_user_reacted'] = True
+            react['u_ids'].append(int(user['u_id'])) 
+
     # checking if the message from channels already has a react
+    # if it does not, add a react
     for react in message_channel['reacts']:
         if react_id == react['react_id']:
             if react['is_this_user_reacted']:
                 raise InputError("Message already has a react.")
-
-    # checking if the message from DMS already has a react
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            if react['is_this_user_reacted']:
-                raise InputError("Message already has a react.")
-
-    # adding a react to a message from a DM
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            react['is_this_user_reacted'] = True
-            react['u_ids'].append(int(user['u_id']))    
-
-    # adding a react to a message from a channel
-    for reacts in message_channel['reacts']:
         if react_id == reacts['react_id']:
             reacts['is_this_user_reacted'] = True
             reacts['u_ids'].append(int(user['u_id']))
@@ -1133,27 +1135,27 @@ def message_unreact_v1(token, message_id, react_id ):
     # checking for valid react_id
     if react_id != 1:
         raise InputError("Invalid react_id")
+    
+    # obtaining what channel/DM the message is in 
+    _, b, *_ = return_info(message_id)
+
+    # checking if the message from DMS has a react
+    # if it does, unreact to the message
+    if b == 'dm': 
+    for react in message_dm['reacts']:
+        if react_id == react['react_id']:
+            if not react['is_this_user_reacted']:
+                raise InputError("Message does not has a react.")
+        if react_id == react['react_id']:
+            react['is_this_user_reacted'] = False
+            react['u_ids'].remove(int(user['u_id']))
 
     # checking if the message from channels has a react
+    # if it does, unreact to the message
     for react in message_channel['reacts']:
         if react_id == react['react_id']:
             if not react['is_this_user_reacted']:
                 raise InputError("Message does not has a react.")
-
-    # checking if the message from DMS has a react
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            if not react['is_this_user_reacted']:
-                raise InputError("Message does not has a react.")
-    
-    # unreact to a message from a DM
-    for react in message_dm['reacts']:
-        if react_id == react['react_id']:
-            react['is_this_user_reacted'] = False
-            react['u_ids'].remove(int(user['u_id']))
-    
-    # unreact to a message from a channel
-    for react in message_dm['reacts']:
         if react_id == react['react_id']:
             react['is_this_user_reacted'] = False
             react['u_ids'].remove(int(user['u_id']))

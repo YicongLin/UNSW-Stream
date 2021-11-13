@@ -98,6 +98,18 @@ def dm_two(registered_first, registered_second):
 # ================================================
 # =================== TESTS ======================
 # ================================================
+
+# Testing for invalid token
+def test_invalid_token(setup_clear, registered_first):
+    # first user registers; obtain token
+    token = registered_first['token']
+    # first user logs out; this invalidates the token
+    requests.post(f'{BASE_URL}/auth/logout/v1', json = {"token": token})
+    # first user gets notifications
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token})
+    # this should raise an error message of "Invalid token"
+    assert r.status_code == 403
+
 # Testing for invalid message length
 def test_invalid_message_length(setup_clear, registered_second, channel_two):
     # second user registers; obtain token
@@ -405,11 +417,18 @@ def test_successful_edit_channel(setup_clear, registered_second, channel_one, ch
         'message_id': 1,
         'u_id': u_id,
         'message': 'Bye',
-        'time_created': time_created
+        'time_created': time_created,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}
-
 
 # Testing for a successful edit in a DM
 def test_successful_edit_dm(setup_clear, registered_second, dm_one, dm_two):
@@ -449,7 +468,15 @@ def test_successful_edit_dm(setup_clear, registered_second, dm_one, dm_two):
         'message_id': 1,
         'u_id': u_id,
         'message': 'Bye',
-        'time_created': time_created
+        'time_created': time_created,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}

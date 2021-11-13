@@ -643,6 +643,13 @@ def dm_messages_v1(token, dm_id, start):
                 message_list.append(dm_messages[j])
                 
     message_list.reverse()
+
+    for i in range(len(message_list)):
+        reacts = message_list[i]['reacts']
+        if auth_user_id in reacts[i]['u_ids']:
+            reacts[0]['is_this_user_reacted'] = True
+        else:
+            reacts[0]['is_this_user_reacted'] = False
    
     if len(message_list) < 50:
         return { 

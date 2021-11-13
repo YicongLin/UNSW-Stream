@@ -13,11 +13,6 @@ import re
 # ================== HELPERS =====================
 # ================================================
 
-# # A function that returns data from the data store
-# def return_data():
-#     data = data_store.get()
-#     return data
-
 # A function that returns the message dictionary for channels
 def return_message_channel(message_id):
     data = data_store.get()
@@ -29,12 +24,6 @@ def return_message_channel(message_id):
             if channel_messages[j]['message_id'] == int(message_id):
                 return channel_messages[j]['message']
 
-    # for channels_details in data()['channels_details']:
-    #     for message in channels_details['messages']:
-    #         if message['message_id'] == int('message_id'):
-    #             return message
-    # return None
-
 # A function that returns the message dictionary for dms
 def return_message_dm(message_id):
     data = data_store.get()
@@ -45,12 +34,6 @@ def return_message_dm(message_id):
         for j in range(len(dms_messages)):
             if dms_messages[j]['message_id'] == int(message_id):
                 return dms_messages[j]['message']
-
-    # for dms_details in data()['dms_details']:
-    #     for message in dm_details['messages']:
-    #         if message['message_id'] == int('message_id'):
-    #             return message
-    # return None
 
 # Raises an error if the dm_id is invalid
 def valid_dm_id(dm_id):
@@ -936,8 +919,8 @@ def message_pin_v1(token, message_id):
     """
     # obtaining data
     data = data_store.get()
-    message_channel = return_message_channel()
-    message_dm = return_message_dm()
+    message_channel = return_message_channel(message_id)
+    message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
@@ -1004,8 +987,8 @@ def message_unpin_v1(token, message_id):
     """
     # obtaining data
     data = data_store.get()
-    message_channel = return_message_channel()
-    message_dm = return_message_dm()
+    message_channel = return_message_channel(message_id)
+    message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
 
@@ -1048,8 +1031,8 @@ def message_react_v1(token, message_id, react_id ):
     """
     # obtaining data
     data = data_store.get()
-    message_channel = return_message_channel()
-    message_dm = return_message_dm()
+    message_channel = return_message_channel(message_id)
+    message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
     react_id = int(react_id)
@@ -1128,8 +1111,8 @@ def message_unreact_v1(token, message_id, react_id ):
     """
     # obtaining data
     data = data_store.get()
-    message_channel = return_message_channel()
-    message_dm = return_message_dm()
+    message_channel = return_message_channel(message_id)
+    message_dm = return_message_dm(message_id)
     dm_details = data['dms_details']
     channel_details = data['channels_details']
     react_id = int(react_id)

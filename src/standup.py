@@ -94,6 +94,24 @@ def standup_start_v1(token, channel_id, length):
     # Store new_standup to data_store
     data['channels_details'][channel_id_element]['channel_standup'].append(new_standup)
     
+    # find the id of the user who start this standup
+    standup_starter_uid = get_standup_starter_id(channel_id)
+    curr_standup_position = len(data['channels_details'][channel_id_element]['channel_standup']) - 1
+    message_list = data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message']
+    
+
+    sending = threading.Timer(length, standup_message_send, [standup_starter_uid, channel_id_element, message_list])
+    sending.start()
+
+    # while True:
+    #     time_now = datetime.now()
+    #     # time_create = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+        
+    #     if (time_now == time_finish):
+    #         standup_message_send(standup_starter_uid, channel_id_element, message_list)
+    #         break
+    data_store.set(data)
+
     return {
         "time_finish": int(time_finish)
     }
@@ -187,28 +205,28 @@ def standup_send_v1(token, channel_id, message):
     data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message'].append(message)
     
     # take out the list with all the messages stored
-    message_list = data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message']
+    # message_list = data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message']
     
     # find the id of the user who start this standup
-    standup_starter_uid = get_standup_starter_id(channel_id)
+    # standup_starter_uid = get_standup_starter_id(channel_id)
 
-    
+    # time_finish = standup['time_finish']
     #time_now = datetime.now()
     # time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
     
-    time_finish = standup['time_finish']
+    
     # waiting_time = int(time_finish) - time_created
 
     # sending = threading.Timer(waiting_time, standup_message_send, [standup_starter_uid, channel_id_element, message_list])
     # sending.start()
     
-    while True:
-        time_now = datetime.now()
-        time_create = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # while True:
+    #     time_now = datetime.now()
+    #     time_create = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
         
-        if (time_create == time_finish):
-            standup_message_send(standup_starter_uid, channel_id_element, message_list)
-            break
+    #     if (time_create == time_finish):
+    #         standup_message_send(standup_starter_uid, channel_id_element, message_list)
+    #         break
     
         
     

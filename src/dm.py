@@ -254,6 +254,9 @@ def dm_details_v1(token, dm_id):
     name = data['dms_details'][dm_id_element]['name']
     members = data['dms_details'][dm_id_element]['members']
 
+    # Store data into data_store
+    data_store.set(data)
+
     return {
         'name': name,
         'members': members
@@ -300,8 +303,6 @@ def dm_leave_v1(token, dm_id):
     data['dms_details'][dm_id_element]['members'].remove(leave_dm_member)
 
     dms_joined_num_leave(auth_user_id)
-
-    data_store.set(data)
 
     return {}
 

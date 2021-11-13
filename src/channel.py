@@ -610,6 +610,9 @@ def channel_addowner_v1(token, channel_id, u_id):
     new_owner = data['channels_details'][channel_id_element]['channel_members'][new_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].append(new_owner)
 
+    # Store data into data_store
+    data_store.set(data)
+
     return {}
     
 def channel_removeowner_v1(token, channel_id, u_id):
@@ -677,6 +680,9 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     remove_owner = data['channels_details'][channel_id_element]['owner_members'][remove_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
+
+    # Store data into data_store
+    data_store.set(data)
 
     return {}
 

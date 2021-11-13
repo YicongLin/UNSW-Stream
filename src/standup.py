@@ -76,7 +76,6 @@ def standup_start_v1(token, channel_id, length):
         {time_finish}
             time_finish (unix timestamp) - the time this standup stop
     """
-
     # Obtain data already existed
     data = data_store.get()
 
@@ -114,6 +113,9 @@ def standup_start_v1(token, channel_id, length):
     # Store new_standup to data_store
     data['channels_details'][channel_id_element]['channel_standup'].append(new_standup)
     
+    # Store data into data_store
+    data_store.set(data)
+
     return {
         "time_finish": int(time_finish)
     }
@@ -137,7 +139,6 @@ def standup_active_v1(token, channel_id):
             is_active (boolen) - status of channel's current standup
             time_finish (unix timestamp) - the time this standup stop
     """
-
     # Raise an AccessError if authorised user login with an invalid token
     check_valid_token(token)
 

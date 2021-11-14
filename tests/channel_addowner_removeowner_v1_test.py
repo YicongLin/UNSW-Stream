@@ -1,7 +1,6 @@
 import pytest
 import requests
 import json
-from src import config
 from src.token_helpers import decode_JWT
 from src.config import url
 

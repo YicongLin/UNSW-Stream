@@ -5,7 +5,7 @@ from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from src.error import AccessError, InputError
 from src import config
-from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_join_v2, channel_invite_v2, channel_messages_v2, channel_leave_v1
+from src.channel import channel_addowner_v1, channel_details_v2, channel_removeowner_v1, channel_join_v2, channel_invite_v2, channel_messages_v2, channel_leave_v1, channel_rename_v1
 from src.channels import channels_listall_v2, channels_create_v2, channels_list_v2
 from src.dm import dm_details_v1, dm_leave_v1, dm_create_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.auth import auth_register_v2, auth_login_v2, check_name_length, check_password_length, check_valid_email, check_duplicate_email
@@ -522,6 +522,18 @@ def message_share_http():
 
     result = message_share_v1(token, og_message_id, message, channel_id, dm_id)
     return dumps(result)
+
+@APP.route('/channel/rename/v1', methods=['PUT'])
+def change_channel_name():
+    request_data = request.get_json()
+
+    token = request_data['token']
+    channel_id = request_data['channel_id']
+    new_name = request_data['new_name']
+
+    channel_rename_v1(token, channel_id, new_name)
+
+    return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

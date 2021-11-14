@@ -258,13 +258,29 @@ def test_all_removed_from_channel(clear_setup, register_first, register_second, 
         "message_id": 1,
         "u_id": u_id_1,
         "message": "Hi",
-        "time_created": time_created1
+        "time_created": time_created1,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         "message_id": 2,
         "u_id": u_id_2,
         "message": "Removed user",
-        "time_created": time_created2
+        "time_created": time_created2,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message2, message1], "start": 0, "end": -1}
@@ -352,13 +368,29 @@ def test_all_removed_from_dm(clear_setup, register_first, register_second, regis
         "message_id": 1,
         "u_id": u_id_1,
         "message": "Hi",
-        "time_created": time_created1
+        "time_created": time_created1,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         "message_id": 2,
         "u_id": u_id_2,
         "message": "Removed user",
-        "time_created": time_created2
+        "time_created": time_created2,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message2, message1], "start": 0, "end": -1}

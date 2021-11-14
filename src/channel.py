@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 # ==================================
 # Check channel_id valid or not
 # Serach information at data['channels_details'] 
-# If chaneel_id is invalid then return False
+# If chaneel_id is invalid then raise errors
 # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
 def check_valid_channel_id(channel_id):
     data = data_store.get()
@@ -44,7 +44,7 @@ def check_valid_channel_id(channel_id):
 # ==================================
 # Check u_id valid or not
 # Serach information at data['users']
-# If u_id is invalid then return False
+# If u_id is invalid then raise errors
 # If u_id is valid then pass this function
 def check_valid_uid(u_id):
     data = data_store.get()
@@ -66,7 +66,7 @@ def check_valid_uid(u_id):
 # ==================================
 # Check user is a member of channel or not for user
 # Serach information at data['channels_details'][channel_id_element]['channel_members']
-# If the user with u_id is not a member of channel then return False
+# If the user with u_id is not a member of channel then raise errors
 # If the user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
 def check_member(channel_id_element, u_id):
     data = data_store.get()
@@ -89,7 +89,7 @@ def check_member(channel_id_element, u_id):
 # ==================================
 # Check user is a member of channel or not for authorised_user
 # Serach information at data['channels_details'][channel_id_element]['channel_members']
-# If the authorised_user with u_id is not a member of channel then return False
+# If the authorised_user with u_id is not a member of channel then raise errors
 # If the authorised_user with u_id is a member of channel then return each_member_id (a list conatins all memebers' u_id)
 def check_member_authorised_user(channel_id_element, token):
     data = data_store.get()
@@ -131,7 +131,7 @@ def channel_owners_ids(channel_id_element):
 # # ==================================
 # # Check token of authorised user is valid or not
 # # Search information at data['emailpw']
-# # If authorised user with invalid token then return False
+# # If authorised user with invalid token then raise errors
 # # If authorised user with valid token then return True
 def check_valid_token(token):
 
@@ -155,7 +155,7 @@ def check_valid_token(token):
 # ==================================
 # Check authorised user has channel owner permissions or not
 # Search information at each_owner_id(a list contains all owners' u_ids)
-# If authorised user has channel/global owener permissions then return False
+# If authorised user has channel/global owener permissions then raise errors
 # If authorised user has channel/global owener permissions then return True
 def check_channel_owner_permissions(token, each_owner_id):
 
@@ -449,8 +449,7 @@ def channel_messages_v2(token, channel_id, start):
     # obtaining data
     data = data_store.get()
     channels = data["channels_details"]
-    decoded_token = decode_JWT(token)
-    auth_user_id = decoded_token['u_id']
+    auth_user_id = decode_JWT(token)['u_id']
 
     # defining the end index
     end = int(start) + 50
@@ -474,6 +473,13 @@ def channel_messages_v2(token, channel_id, start):
             for j in range(len(channel_messages)):
                 message_list.append(channel_messages[j])
     message_list.reverse()
+
+    for i in range(len(message_list)):
+        reacts = message_list[i]['reacts']
+        if auth_user_id in reacts[0]['u_ids']:
+            reacts[0]['is_this_user_reacted'] = True
+        else:
+            reacts[0]['is_this_user_reacted'] = False
 
     if len(message_list) < 50:
         return { 
@@ -610,6 +616,9 @@ def channel_addowner_v1(token, channel_id, u_id):
     new_owner = data['channels_details'][channel_id_element]['channel_members'][new_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].append(new_owner)
 
+    # Store data into data_store
+    data_store.set(data)
+
     return {}
     
 def channel_removeowner_v1(token, channel_id, u_id):
@@ -677,6 +686,9 @@ def channel_removeowner_v1(token, channel_id, u_id):
 
     remove_owner = data['channels_details'][channel_id_element]['owner_members'][remove_owner_element]
     data['channels_details'][channel_id_element]['owner_members'].remove(remove_owner)
+
+    # Store data into data_store
+    data_store.set(data)
 
     return {}
 

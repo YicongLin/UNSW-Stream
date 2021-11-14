@@ -624,4 +624,3 @@ def test_users_stats_utilization():
             'num_messages_exist' : 2, 
             'time_stamp' : message4_time  
         }]
-    

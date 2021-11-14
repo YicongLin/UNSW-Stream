@@ -14,12 +14,10 @@ def test_rename_channel():
     # user_one ----> global owner
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testperson@email.com", "password": "password", "name_first": "Test", "name_last": "Person"})
     decoded_token_1 = decode_JWT(json.loads(response.text)['token'])
-    uid_1 = decoded_token_1['u_id']
 
     # user_two ----> channel creator
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersontwo@email.com", "password": "passwordtwo", "name_first": "Testtwo", "name_last": "Persontwo"})
     decoded_token_2 = decode_JWT(json.loads(response.text)['token']) 
-    uid_2 = decoded_token_2['u_id']
 
     # user_three ----> channel member
     response = requests.post(f'{BASE_URL}/auth/register/v2', json={"email": "testpersonthr@email.com", "password": "passwordthr", "name_first": "Testthr", "name_last": "Personthr"})

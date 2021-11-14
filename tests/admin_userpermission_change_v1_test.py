@@ -95,10 +95,12 @@ def test_invalid_token(clear_setup, register_first, register_second):
     
 # Testing for a case where u_id is the only global owner 
 # and they are being demoted
-def test_global_owner_demoted(clear_setup, register_first):
+def test_global_owner_demoted(clear_setup, register_first, register_second):
     # first user registers; obtain token and u_id
     token = register_first['token']
     u_id = register_first['auth_user_id']
+    # second user registers
+    register_second
     # first user attempts to demote themselves
     payload = {
         "token": token, 
@@ -160,8 +162,9 @@ def test_valid(clear_setup, register_first, register_second):
 
 # Test that permission_id has been changed
 def test_changed(clear_setup, register_first, register_second, register_third):
-    # first user registers; obtain token
+    # first user registers; obtain token and u_id
     token_1 = register_first['token']
+    u_id_1 = register_first['auth_user_id']
     # second user registers; obtain token and u_id
     token_2 = register_second['token']
     u_id_2 = register_second['auth_user_id']
@@ -175,12 +178,19 @@ def test_changed(clear_setup, register_first, register_second, register_third):
     }
     requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload1)
     # test that the second user's permissions have been changed;
-    # the second user should now be able to promote the third user
+    # the second user should now be able to demote the first and third users
     payload2 = {
         "token": token_2,
-        "u_id": u_id_3,
-        "permission_id": 1
+        "u_id": u_id_1,
+        "permission_id": 2
     }
     r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload2)
+    assert r.status_code == 200
+    payload3 = {
+        "token": token_2,
+        "u_id": u_id_3,
+        "permission_id": 2
+    }
+    r = requests.post(f'{BASE_URL}/admin/userpermission/change/v1', json = payload3)
     assert r.status_code == 200
  

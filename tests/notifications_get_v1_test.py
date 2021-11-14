@@ -393,7 +393,7 @@ def test_edit_with_new_tags_channel(clear_setup, register_first, register_second
     payload3 = {
         "token": token_1,
         "message_id": 1,
-        "message": "Hi @seconduser!!"
+        "message": "Hi @seconduser!! @seconduser"
     }
     requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)
     # test that the second user receives a notification
@@ -401,7 +401,7 @@ def test_edit_with_new_tags_channel(clear_setup, register_first, register_second
     notification = {
         "channel_id": channel_id,
         "dm_id": -1,
-        "notification_message": "firstuser tagged you in Channel one: Hi @seconduser!!"
+        "notification_message": "firstuser tagged you in Channel one: Hi @seconduser!! @se"
     }
     response = r.json()
     assert response == {"notifications": [notification]} 
@@ -426,7 +426,7 @@ def test_edit_with_new_tags_dm(clear_setup, register_first, register_second, dm_
     payload2 = {
         "token": token_2,
         "message_id": 1,
-        "message": "Hi @firstuser!!"
+        "message": "Hi @firstuser!! @firstuser"
     }
     requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
     # test that the first user receives a notification
@@ -434,7 +434,7 @@ def test_edit_with_new_tags_dm(clear_setup, register_first, register_second, dm_
     notification = {
         "channel_id": -1,
         "dm_id": dm_id,
-        "notification_message": "seconduser tagged you in firstuser, seconduser: Hi @firstuser!!"
+        "notification_message": "seconduser tagged you in firstuser, seconduser: Hi @firstuser!! @fir"
     }
     response = r.json()
     assert response == {"notifications": [notification]}
@@ -491,6 +491,78 @@ def test_duplicate_tags_dm(clear_setup, register_first, register_second, dm_one)
         "channel_id": -1,
         "dm_id": dm_id,
         "notification_message": "seconduser tagged you in firstuser, seconduser: I'm annoying @firstu"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]}
+
+# Testing for a case where the edited message in a channel contains an invalid tag, 
+# and a tag that was in the old message
+def test_invalid_tag_edit_channel(clear_setup, register_first, register_second, channel_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a public channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # second user joins the channel
+    payload1 = {
+        "token": token_2,
+        "channel_id": channel_id,
+    }
+    requests.post(f'{BASE_URL}/channel/join/v2', json = payload1)
+    # first user sends a message
+    payload2 = {
+        "token": token_1,
+        "channel_id": channel_id,
+        "message": "Hi @seconduser"
+    }
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user edits the message to tag an invalid user
+    payload3 = {
+        "token": token_1,
+        "message_id": 1,
+        "message": "Hi @seconduser @thirduser"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)
+    # test that the second user only receives the first notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    notification = {
+        "channel_id": channel_id,
+        "dm_id": -1,
+        "notification_message": "firstuser tagged you in Channel one: Hi @seconduser"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification]} 
+
+# Testing for a case where the edited message in a DM contains an invalid tag, 
+# and a tag that was in the old message
+def test_invalid_tag_edit_dm(clear_setup, register_first, register_second, dm_one):
+    # first user registers; obtain token
+    token_1 = register_first['token']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id = dm_one['dm_id']
+    # second user sends a message
+    payload1 = {
+        "token": token_2,
+        "dm_id": dm_id,
+        "message": "Hi @firstuser"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # second user edits the message to tag an invalid user
+    payload2 = {
+        "token": token_2,
+        "message_id": 1,
+        "message": "Hi @firstuser @thirduser"
+    }
+    requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
+    # test that the first user only receives the first notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_1})
+    notification = {
+        "channel_id": -1,
+        "dm_id": dm_id,
+        "notification_message": "seconduser tagged you in firstuser, seconduser: Hi @firstuser"
     }
     response = r.json()
     assert response == {"notifications": [notification]}

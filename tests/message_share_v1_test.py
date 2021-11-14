@@ -193,8 +193,8 @@ def test_both_ids_not_negative_one(clear_setup, register_first, channel_one, dm_
         'token': token,
         'og_message_id': 1,
         'message': "Bye",
-        "channel_id": 7,
-        "dm_id": 7
+        "channel_id": 1,
+        "dm_id": 1
     }
     r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
     assert r.status_code == 400
@@ -503,8 +503,8 @@ def test_successful_share_dm(clear_setup, register_first, dm_one, dm_two):
     assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
 
 # Testing for a case where a message is being shared to the same channel it was originally in, 
-# and the additional message containing a tag; the tagged user should receive a notification
-def test_additional_message_with_tags(clear_setup, register_first, register_second, channel_one):
+# and the additional message contains a tag; the tagged user should receive a notification
+def test_additional_message_with_tags_channel(clear_setup, register_first, register_second, channel_one):
     # first user registers; obtain token and u_id
     token_1 = register_first['token']
     u_id = register_first['auth_user_id']
@@ -585,3 +585,86 @@ def test_additional_message_with_tags(clear_setup, register_first, register_seco
     }
     response = r.json()
     assert response == {"notifications": [notification]}
+
+# Testing for a case where a message is being shared to the same DM it was originally in, 
+# and the additional message contains a tag; the tagged user should receive a notification
+def test_additional_message_with_tags_dm(clear_setup, register_first, register_second, dm_one):
+    # first user registers; obtain token and u_id
+    token_1 = register_first['token']
+    u_id = register_first['auth_user_id']
+    # second user registers; obtain token
+    token_2 = register_second['token']
+    # first user creates a DM with second user; obtain dm_id
+    dm_id = dm_one['dm_id']
+    # first user sends a message to the DM
+    payload = {
+        "token": token_1,
+        "dm_id": dm_id,
+        "message": "This is the original message"
+    }
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    # first user shares the message to the DM with an additional message, tagging the second user
+    payload = {
+        'token': token_1,
+        'og_message_id': 1,
+        'message': "Look @seconduser",
+        "channel_id": -1,
+        "dm_id": dm_id
+    }
+    r = requests.post(f'{BASE_URL}/message/share/v1', json = payload)
+    assert r.status_code == 200
+    # obtaining the time the message is shared
+    time = datetime.now()
+    time_shared = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    # test that the message has been shared to the DM; 
+    # first user requests DM messages
+    payload = {
+        'token': token_1,
+        'dm_id': dm_id,
+        'start': 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
+    message1 = {
+        'message_id': 1,
+        'u_id': u_id,
+        'message': "This is the original message",
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
+    }
+    message2 = {
+        'message_id': 2,
+        'u_id': u_id,
+        'message': "This is the original messageLook @seconduser",
+        'time_created': time_shared,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
+    }
+    response = r.json()
+    assert response == {'messages': [message2, message1], 'start': 0, 'end': -1}
+    # test that the second user receives a notification
+    r = requests.get(f'{BASE_URL}/notifications/get/v1', params = {"token": token_2})
+    notification1 = {
+        "channel_id": -1,
+        "dm_id": dm_id,
+        "notification_message": "firstuser added you to firstuser, seconduser"
+    }
+    notification2 = {
+        "channel_id": -1,
+        "dm_id": dm_id,
+        "notification_message": "firstuser tagged you in firstuser, seconduser: Look @seconduser"
+    }
+    response = r.json()
+    assert response == {"notifications": [notification2, notification1]}

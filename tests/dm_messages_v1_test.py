@@ -127,7 +127,7 @@ def test_not_a_member(setup_clear, registered_second, create_dm):
     r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
     assert r.status_code == 403
 
-def test_valid(setup_clear, registered_first, create_dm):
+def test_valid_less_than_fifty_messages(setup_clear, registered_first, create_dm):
     # first user registers; obtain token and u_id
     token = registered_first['token']
     u_id = registered_first['auth_user_id']
@@ -167,3 +167,27 @@ def test_valid(setup_clear, registered_first, create_dm):
     }
     response = r.json()
     assert response == {"messages": [message], "start": 0, "end": -1}
+
+def test_valid_greater_than_fifty_messages(setup_clear, registered_first, create_dm):
+    # first user registers; obtain token and u_id
+    token = registered_first['token']
+    u_id = registered_first['auth_user_id']
+    # first user creates DM; obtain dm_id
+    dm_id = create_dm['dm_id']
+    # first user sends 51 messages to the DM
+    for i in range(51):
+        payload = {
+            "token": token,
+            "dm_id": dm_id,
+            "message": "Goodnight"
+        }
+        requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+    # first user requests DM messages
+    payload = {
+        "token": token,
+        "dm_id": int(dm_id),
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
+    assert r.status_code == 200
+    

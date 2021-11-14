@@ -490,8 +490,8 @@ def channel_messages_v2(token, channel_id, start):
     else:
         return { 
             'messages': message_list[int(start):int(end)], 
-            'start': start,
-            'end': end 
+            'start': int(start),
+            'end': int(end) 
         }
 
 def channel_join_v2(token, channel_id):
@@ -724,18 +724,21 @@ def channel_leave_v1(token, channel_id):
         if channels[i]["channel_id"] == int(channel_id):
             channel_members = channels[i]["channel_members"]
             owner_members = channels[i]['owner_members']
+    
             # removing the user from the list of members
             for j in range(len(channel_members)):
                 if channel_members[j]["u_id"] == auth_user_id: 
-                    channel_members.remove(channel_members[j])
-                    data_store.set(data)
-                    break
+                    channel_index = j
+            del channel_members[channel_index]
             # if necessary, removing the user from the list of owners
+            remove_owner = False
             for j in range(len(owner_members)):
                 if owner_members[j]['u_id'] == auth_user_id:
-                    owner_members.remove(owner_members[j])
-                    data_store.set(data)
-                    break
+                    owner_index = j
+                    remove_owner = True
+            if remove_owner == True:
+                del owner_members[owner_index]
+    data_store.set(data)
 
     # updating timestamps store
     timestamps_update_channel_leave(auth_user_id)

@@ -308,10 +308,12 @@ def test_owner_permission_dm(setup_clear, registered_first, registered_second, d
         "message": "Hi"
     }
     requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
-    # second user edits the message
+    # first user sends another message to the DM
+    requests.post(f'{BASE_URL}/message/senddm/v1', json = payload1)
+    # second user edits the second message
     payload2 = {
         "token": token_2,
-        "message_id": 1,
+        "message_id": 2,
         "message": "Bye"
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload2)
@@ -370,10 +372,12 @@ def test_not_owner_valid(setup_clear, registered_first, channel_two):
         "message": "Hi"
     }
     requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
-    # first user edits the message
+    # first user sends another message to the channel
+    requests.post(f'{BASE_URL}/message/send/v1', json = payload2)
+    # first user edits the second message
     payload3 = {
         "token": token,
-        "message_id": 1,
+        "message_id": 2,
         "message": "Bye"
     }
     r = requests.put(f'{BASE_URL}/message/edit/v1', json = payload3)

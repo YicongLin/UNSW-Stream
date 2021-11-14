@@ -300,12 +300,9 @@ def channels_index(channel_id):
     data = data_store.get()
 
     channel_id = int(channel_id)
-    channels_element = 0
-
-    while True:
-        if channel_id == data['channels'][channels_element]['channel_id']:
-            break
-        channels_element += 1
+    for i in range(len(data['channels'])):
+        if data['channels'][i]['channel_id'] == channel_id:
+            channels_element = i
 
     return channels_element
 # ==================================
@@ -507,8 +504,8 @@ def channel_messages_v2(token, channel_id, start):
     else:
         return { 
             'messages': message_list[int(start):int(end)], 
-            'start': start,
-            'end': end 
+            'start': int(start),
+            'end': int(end) 
         }
 
 def channel_join_v2(token, channel_id):
@@ -740,18 +737,21 @@ def channel_leave_v1(token, channel_id):
         if channels[i]["channel_id"] == int(channel_id):
             channel_members = channels[i]["channel_members"]
             owner_members = channels[i]['owner_members']
+    
             # removing the user from the list of members
             for j in range(len(channel_members)):
                 if channel_members[j]["u_id"] == auth_user_id: 
-                    channel_members.remove(channel_members[j])
-                    data_store.set(data)
-                    break
+                    channel_index = j
+            del channel_members[channel_index]
             # if necessary, removing the user from the list of owners
+            remove_owner = False
             for j in range(len(owner_members)):
                 if owner_members[j]['u_id'] == auth_user_id:
-                    owner_members.remove(owner_members[j])
-                    data_store.set(data)
-                    break
+                    owner_index = j
+                    remove_owner = True
+            if remove_owner == True:
+                del owner_members[owner_index]
+    data_store.set(data)
 
     # updating timestamps store
     timestamps_update_channel_leave(auth_user_id)
@@ -760,7 +760,7 @@ def channel_leave_v1(token, channel_id):
 
 
 def channel_rename_v1(token, channel_id, new_name):
-    """An authorised user who is a owner of a channel to change channel's name
+    """An authorised user who is an owner of a channel to change channel's name
    
     Arguments:
         token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)

@@ -344,39 +344,7 @@ def not_a_member(u_id, channel_id):
                     is_member = True
     if is_member == False:
         raise AccessError("You are not a member of the channel")
-
-# function to check reacts for DMS
-def check_react_dm(react_id, message_id, user_id):
-    data = data_store.get()
-    dms = data['dms_details']
-
-    for i in range(len(dms)):
-        dms_messages = dms[i]['messages']
-        for j in range(len(dms_messages)):
-            if dms_messages[j]['message_id'] == int(message_id):
-                for reacts in dms_messages[j]['message']['reacts']:
-                    if int(react_id) == int(reacts['react_id']):
-                        for users in reacts['u_ids']:
-                            if user_id == int(users):
-                                return True
-    return False
-    
-# function to check reacts for channels
-def check_react_channel(react_id, message_id, user_id):
-    data = data_store.get()
-    channels = data['channels_details']
-
-    for i in range(len(channels)):
-        channel_messages = channels[i]['messages']
-        for j in range(len(channel_messages)):
-            if channel_messages[j]['message_id'] == int(message_id):
-                for reacts in channel_messages[j]['message']['reacts']:
-                    if int(react_id) == int(reacts['react_id']):
-                        for users in reacts['u_ids']:
-                            if user_id == int(users):
-                                return True
-    return False
-
+        
 # Raising an error if both channel_id and dm_id are invalid
 def check_valid_channel_and_dm_id(channel_id, dm_id):
     data = data_store.get()

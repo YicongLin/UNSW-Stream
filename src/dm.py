@@ -107,13 +107,11 @@ def check_dm_member(dm_id, u_id):
     dms = data["dms_details"]
 
     # Extracting the given DM's index
-    dm_count = 0
     for i in range(len(dms)):
         if dms[i]["dm_id"] == int(dm_id):
-            break
-        dm_count += 1
+            dm_index = i
 
-    members = dms[dm_count]['members']
+    members = dms[dm_index]['members']
     member_list = []
     for i in range(len(members)):
         member_list.append(members[i]['u_id'])
@@ -487,12 +485,10 @@ def dm_remove_v1(token, dm_id):
     if (access == 0):
         raise AccessError(description="Access denied, user is not a creator of this DM")
 
-    # Find the dm's index in dms_details
-    dms_index = 0
-    while dms_index < len(data['dms_details']):
-        if data['dms_details'][dms_index]['dm_id'] == dm_id:
-            break
-        dms_index += 1
+    # Extracting the given DM's index
+    for i in range(len(data['dms_details'])):
+        if data['dms_details'][i]["dm_id"] == int(dm_id):
+            dms_index = i
 
     # Recursion to update dms_joined
     dm_members_index = 0

@@ -1,3 +1,5 @@
+import pickle
+import time
 '''
 data_store.py
 
@@ -370,6 +372,13 @@ initial_object = {
         }
     }
 }
+
+with open('database.p', 'wb') as FILE:
+    pickle.dump(initial_object, FILE)
+
+# with open('database.p', 'rb') as FILE:
+# readable_data = pickle.load(FILE)
+# print(readable_data)
 
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

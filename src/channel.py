@@ -293,6 +293,23 @@ def timestamps_update_channel_leave(auth_user_id):
     data_store.set(data)
 # ==================================
 
+# ==================================
+# Return index of channel with channel_id in channels dict
+# Serach information at data['channels'] 
+def channels_index(channel_id):
+    data = data_store.get()
+
+    channel_id = int(channel_id)
+    channels_element = 0
+
+    while True:
+        if channel_id == data['channels'][channels_element]['channel_id']:
+            break
+        channels_element += 1
+
+    return channels_element
+# ==================================
+
 # ============================================================
 # =====================(Actual functions)=====================
 # ============================================================
@@ -707,7 +724,6 @@ def channel_leave_v1(token, channel_id):
     Return Value:
         Empty dictionary on all valid conditions
     """
-
     # obtaining data
     data = data_store.get() 
     channels = data["channels_details"]
@@ -744,3 +760,60 @@ def channel_leave_v1(token, channel_id):
     timestamps_update_channel_leave(auth_user_id)
 
     return {}
+
+
+def channel_rename_v1(token, channel_id, new_name):
+    """An authorised user who is a owner of a channel to change channel's name
+   
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        channel_id (integer) - the ID of an existing channel
+        new_name (string) - new channel's name that owner design to
+       
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        AccessError - Occurs authorised when user type in an valid id and valid channel id 
+            but user has not owner permission to rename channel
+
+        InputError - Occurs when authorised user type in an invalid channel id
+        InputError - Occurs when authorised user type in a new name with more than 20 characters
+    
+    Return Value:
+        Empty dictionary on all valid conditions
+    """
+
+    # Obtain data already existed
+    data = data_store.get()
+
+    # Raise an AccessError if authorised user login with an invalid token
+    check_valid_token(token)
+    auth_user_id = decode_JWT(token)['u_id']
+
+    # Raise a InputError if authorised user type in invalid channel_id
+    # If chaneel_id is valid then return channel_id_element (its index at data['channels_details'])
+    channel_id_element = check_valid_channel_id(channel_id)
+
+    # Raise a InputError if authorised user type in new name more than 20 characters
+    if len(new_name) > 20:
+        raise InputError(description="New name is too long")
+
+    # Obtain a list whcih contains all owners' id
+    each_owner_id = channel_owners_ids(channel_id_element)
+
+    # Raise an AccessError if authorised user type in a valid channel_id
+    # but the authorised user is not a member of channel
+    if auth_user_id not in each_owner_id:
+        raise AccessError(description="No permission to rename owner")
+
+    # Change channel name in channels
+    data['channels'][channels_index(channel_id)]['name'] = new_name
+
+    # Change channel name in channels_details
+    data['channels_details'][channel_id_element]['name'] = new_name
+
+    # Store data into data_store
+    data_store.set(data)
+
+    return {}
+
+    

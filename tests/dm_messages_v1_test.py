@@ -171,17 +171,18 @@ def test_valid_less_than_fifty_messages(setup_clear, registered_first, create_dm
 def test_valid_greater_than_fifty_messages(setup_clear, registered_first, create_dm):
     # first user registers; obtain token and u_id
     token = registered_first['token']
-    u_id = registered_first['auth_user_id']
     # first user creates DM; obtain dm_id
     dm_id = create_dm['dm_id']
     # first user sends 51 messages to the DM
-    for i in range(51):
+    i = 0
+    while i < 52:
         payload = {
             "token": token,
             "dm_id": dm_id,
             "message": "Goodnight"
         }
         requests.post(f'{BASE_URL}/message/senddm/v1', json = payload)
+        i += 1
     # first user requests DM messages
     payload = {
         "token": token,

@@ -202,17 +202,18 @@ def test_valid_less_than_fifty_messages(clear_setup, register_first, channel_one
 def test_valid_greater_than_fifty_messages(clear_setup, register_first, channel_one):
     # first user registers; obtain token and u_id
     token = register_first['token']
-    u_id = register_first['auth_user_id']
     # first user creates channel; obtain channel_id
     channel_id = channel_one['channel_id']
     # first user sends 51 messages to the channel
-    for i in range(51):
+    i = 0
+    while i < 52:
         payload = {
             "token": token,
             "channel_id": channel_id,
             "message": "Goodnight"
         }
         requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+        i += 1
     # first user requests channel messages
     payload = {
         "token": token,

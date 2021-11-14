@@ -6,6 +6,102 @@ from src.config import url
 
 BASE_URL = url
 
+# ================================================
+# ================= FIXTURES =====================
+# ================================================
+
+# Clear data store
+@pytest.fixture
+def clear_setup():
+    requests.delete(f'{BASE_URL}/clear/v1')
+
+# Register first user
+@pytest.fixture
+def register_first():
+    payload = {
+        "email": "first@email.com", 
+        "password": "password", 
+        "name_first": "first", 
+        "name_last": "user"
+        }
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# Register second user
+@pytest.fixture
+def register_second():
+    payload = {
+        "email": "second@email.com", 
+        "password": "password", 
+        "name_first": "second", 
+        "name_last": "user"
+        }
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# First user creates a public channel
+@pytest.fixture
+def channel_one(register_first):
+    token = register_first['token']
+    payload = {
+        "token": token,
+        "name": "Channel one",
+        "is_public": True
+    }
+    r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# Second user creates a public channel
+@pytest.fixture
+def channel_two(register_second):
+    token = register_second['token']
+    payload = {
+        "token": token,
+        "name": "Channel two",
+        "is_public": True
+    }
+    r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
+    resp = r.json()
+    return resp
+
+# ================================================
+# =================== TESTS ======================
+# ================================================
+
+def test_invalid_name(clear_setup, register_first, channel_one):
+    # first user registers; obtain token
+    token = register_first['token']
+    # first user creates a public channel; obtain channel_id
+    channel_id = channel_one['channel_id']
+    # first user attempts to the change the name of the channel with a new name
+    # greater than 20 characters
+    payload = {
+        'token': token,
+        'channel_id': channel_id,
+        'new_name': "Supercalifragilisticexpialidocious"
+    }
+    r = requests.put(f'{BASE_URL}/channel/rename/v1', json = payload)
+    assert r.status_code == 400
+
+def test_valid(clear_setup, register_second, channel_one, channel_two):
+    # second user registers; obtain token
+    token = register_second['token']
+    # first user creates a public channel
+    channel_one
+    # second user creates a public channel; obtain channel_id
+    channel_id = channel_two['channel_id']
+    # second user renames the second channel
+    payload = {
+        'token': token,
+        'channel_id': channel_id,
+        'new_name': "Hi"
+    }
+    r = requests.put(f'{BASE_URL}/channel/rename/v1', json = payload)
+    assert r.status_code == 200
+
 def test_rename_channel():
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
@@ -93,5 +189,4 @@ def test_rename_channel():
 
     # Clear
     requests.delete(f'{BASE_URL}/clear/v1')
-
 

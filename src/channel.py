@@ -300,12 +300,9 @@ def channels_index(channel_id):
     data = data_store.get()
 
     channel_id = int(channel_id)
-    channels_element = 0
-
-    while True:
-        if channel_id == data['channels'][channels_element]['channel_id']:
-            break
-        channels_element += 1
+    for i in range(len(data['channels'])):
+        if data['channels'][i]['channel_id'] == channel_id:
+            channels_element = i
 
     return channels_element
 # ==================================
@@ -763,7 +760,7 @@ def channel_leave_v1(token, channel_id):
 
 
 def channel_rename_v1(token, channel_id, new_name):
-    """An authorised user who is a owner of a channel to change channel's name
+    """An authorised user who is an owner of a channel to change channel's name
    
     Arguments:
         token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)

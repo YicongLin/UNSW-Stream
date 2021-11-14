@@ -116,7 +116,7 @@ def standup_start_v1(token, channel_id, length):
     
 
     # Find the id of the user who start this standup
-    standup_starter_uid = get_standup_starter_id(channel_id)
+    standup_starter_uid = get_standup_starter_id(channel_id_element)
     curr_standup_position = len(data['channels_details'][channel_id_element]['channel_standup']) - 1
     message_list = data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message']
     
@@ -234,55 +234,20 @@ def standup_send_v1(token, channel_id, message):
 
     # append the above message to the standup message list in the datastore, so it becomes a list of strings
     data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message'].append(message)
-    
-    # take out the list with all the messages stored
-    # message_list = data['channels_details'][channel_id_element]['channel_standup'][curr_standup_position]['standup_message']
-    
-    # find the id of the user who start this standup
-    # standup_starter_uid = get_standup_starter_id(channel_id)
-
-    # time_finish = standup['time_finish']
-    #time_now = datetime.now()
-    # time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    
-    
-    # waiting_time = int(time_finish) - time_created
-
-    # sending = threading.Timer(waiting_time, standup_message_send, [standup_starter_uid, channel_id_element, message_list])
-    # sending.start()
-    
-    # while True:
-    #     time_now = datetime.now()
-    #     time_create = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
         
-    #     if (time_create == time_finish):
-    #         standup_message_send(standup_starter_uid, channel_id_element, message_list)
-    #         break
-    
-        
-    
     data_store.set(data)
 
     return {}
 
 
 # check if the user is the person who start the standup
-def get_standup_starter_id(channel_id):
+def get_standup_starter_id(channel_id_position):
     
     data = data_store.get()
-    channel_detail = data['channels_details']
-
-    i = 0
-    while i < len(channel_detail):
-        if (channel_id == channel_detail[i]['channel_id']):
-            standup_info = channel_detail[i]['channel_standup']
-            # always check for the last position becasue that is the most recent standup
-            curr_standup_position = len(standup_info) - 1
-            u_id = standup_info[curr_standup_position]['start_uid']
-            break
-        i += 1
-
-    return u_id
+    if len(data['channels_details']) != 0:
+        curr_standup_position = len(data['channels_details'][channel_id_position]['channel_standup']) - 1
+        starter_id = data['channels_details'][channel_id_position]['channel_standup'][curr_standup_position]['start_uid']
+        return starter_id
 
 
 def standup_message_send(auth_user_id, channel_id_position, message):
@@ -314,30 +279,8 @@ def standup_message_send(auth_user_id, channel_id_position, message):
         ],
         'is_pinned': False
     }
+    
     if len(data['channels_details']) != 0:
         data['channels_details'][channel_id_position]['messages'].append(message_dict)
         data_store.set(data)
-
     
-    # for i in range(len(channel_details)):
-    #     if int(channel_details[i]['channel_id']) == int(channel_id):
-    #         data['channels_details'][i]['messages'].append(message_dict)
-    #         data_store.set(data)
-
-# def standup_message_sendlater(u_id, channel_id, message, time_sent):
-#     time_now = datetime.now()
-#     time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    
-#     waiting_time = time_sent - time_created
-    
-#     sending = threading.Timer(waiting_time, standup_message_send, [u_id, channel_id, message])
-#     sending.start()
-
-# def move_standup_message_to_channel_detail(standup_starter_id, channel_id_position):
-#     data = data_store.get()
-#     message_detail = data['channels_details'][channel_id_position]['messages']
-
-#     i = 0
-#     while i < len(message_detail):
-#         if (standup_starter_id == message_detail[i]['u_id']):
-

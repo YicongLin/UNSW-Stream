@@ -529,7 +529,7 @@ def test_additional_message_with_tags_channel(clear_setup, register_first, regis
     payload = {
         'token': token_1,
         'og_message_id': 1,
-        'message': "Look @seconduser",
+        'message': "Look @seconduser @seconduser @invalid",
         "channel_id": channel_id,
         "dm_id": -1
     }
@@ -563,7 +563,7 @@ def test_additional_message_with_tags_channel(clear_setup, register_first, regis
     message2 = {
         'message_id': 2,
         'u_id': u_id,
-        'message': "This is the original messageLook @seconduser",
+        'message': "This is the original messageLook @seconduser @seconduser @invalid",
         'time_created': time_shared,
         'reacts': [
             {
@@ -581,7 +581,7 @@ def test_additional_message_with_tags_channel(clear_setup, register_first, regis
     notification = {
         "channel_id": channel_id,
         "dm_id": -1,
-        "notification_message": "firstuser tagged you in Channel one: Look @seconduser"
+        "notification_message": "firstuser tagged you in Channel one: Look @seconduser @se"
     }
     response = r.json()
     assert response == {"notifications": [notification]}
@@ -607,7 +607,7 @@ def test_additional_message_with_tags_dm(clear_setup, register_first, register_s
     payload = {
         'token': token_1,
         'og_message_id': 1,
-        'message': "Look @seconduser",
+        'message': "Look @seconduser @seconduser @invalid",
         "channel_id": -1,
         "dm_id": dm_id
     }
@@ -641,7 +641,7 @@ def test_additional_message_with_tags_dm(clear_setup, register_first, register_s
     message2 = {
         'message_id': 2,
         'u_id': u_id,
-        'message': "This is the original messageLook @seconduser",
+        'message': "This is the original messageLook @seconduser @seconduser @invalid",
         'time_created': time_shared,
         'reacts': [
             {
@@ -664,7 +664,7 @@ def test_additional_message_with_tags_dm(clear_setup, register_first, register_s
     notification2 = {
         "channel_id": -1,
         "dm_id": dm_id,
-        "notification_message": "firstuser tagged you in firstuser, seconduser: Look @seconduser"
+        "notification_message": "firstuser tagged you in firstuser, seconduser: Look @seconduser @se"
     }
     response = r.json()
     assert response == {"notifications": [notification2, notification1]}

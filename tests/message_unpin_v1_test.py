@@ -71,6 +71,19 @@ def dm_one(registered_first, registered_second):
     resp = r.json()
     return resp
 
+# Second user creates a DM with first user
+@pytest.fixture
+def dm_two(registered_first, registered_second):
+    token = registered_second['token']
+    u_id_1 = registered_first['auth_user_id']
+    payload = {
+        "token": token,
+        "u_ids": [u_id_1]
+    }
+    r = requests.post(f'{BASE_URL}/dm/create/v1', json = payload)
+    resp = r.json()
+    return resp
+
 # ================================================
 # =================== TESTS ======================
 # ================================================
@@ -181,11 +194,13 @@ def test_no_owner_permissions_channel(setup_clear, registered_first, registered_
 
 # Testing for a case where the message ID is valid but the authorised user 
 # doesn't have owner permissions in the DM
-def test_no_owner_permissions_dm(setup_clear, registered_first, registered_second, dm_one):
+def test_no_owner_permissions_dm(setup_clear, registered_first, registered_second, dm_one, dm_two):
     # first user registers; obtain token
     token_1 = registered_first['token']
     # second user registers; obtain token
     token_2 = registered_second['token']
+    # second user creates DM
+    dm_two
     # first user creates DM with second user; obtain dm_id
     dm_id = dm_one['dm_id']
     # first user sends a message to the DM

@@ -107,8 +107,17 @@ initial_object = {
     #                 'message_id': 1,
     #                 'u_id': 1,
     #                 'message': 'Hello world',
-    #                 'time_created': 1582426789
-    #             },
+    #                 'time_created': 1582426789,
+    #                 'reacts': [
+    #                     {
+    #                         'react_id': 1,
+    #                         'u_ids': [u_id_1, u_id_2],
+    #                         'is_this_user_reacted': False
+    #                     }
+    #                 ],
+    #                 'is_pinned': False
+        
+    #             }
     #         ],
     #         'creator': [
     #             {
@@ -177,13 +186,23 @@ initial_object = {
         #             'u_id': 1,
         #             'message': 'Hello world',
         #             'time_created': 1582426789,
+        #             'reacts': [
+        #                 {
+        #                     'react_id': 1,
+        #                     'u_ids': [u_id_1, u_id_2],
+        #                     'is_this_user_reacted': False
+        #                 }
+        #             ],
+        #             'is_pinned': False
+        
         #         }
         #     ],
         #
         #     'channel_standup': [
         #         {
         #           'start_uid': 1,
-        #           'time_finish': 1636262035
+        #           'time_finish': 1636262035,
+        #           'standup_message': []
         #        },    
         #    ] 
         # },
@@ -230,14 +249,7 @@ initial_object = {
         #     'handle_str': ''
         # }
     ],
-    'removed_messages': [
-        # {
-        #     'message_id': 1,
-        #     'u_id': 1,
-        #     'message': 'Hello world',
-        #     'time_created': 1582426789,
-        # }
-    ],
+    
     'notifications_details': [
         # {
         #     'u_id': 1,
@@ -358,6 +370,7 @@ initial_object = {
         }
     }
 }
+
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
 class Datastore:

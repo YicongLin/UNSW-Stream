@@ -211,13 +211,29 @@ def test_search_found(clear_setup, register_first, register_second, channel_one,
         "message_id": 1,
         "u_id": u_id_1,
         "message": "Hi everyone, nice to meet you",
-        "time_created": time_created1
+        "time_created": time_created1,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     message2 = {
         "message_id": 2,
         "u_id": u_id_1,
         "message": "Hi everyone, this is a DM",
-        "time_created": time_created2
+        "time_created": time_created2,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()
     assert response == {"messages": [message1, message2]}
@@ -305,7 +321,15 @@ def test_search_combination(clear_setup, register_first, register_second, channe
         "message_id": 2,
         "u_id": u_id_1,
         "message": "Hi guys",
-        "time_created": time_created
+        "time_created": time_created,
+        'reacts': [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        'is_pinned': False
     }
     response = r.json()    
     assert response == {"messages": [message]}

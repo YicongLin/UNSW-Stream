@@ -138,8 +138,8 @@ def channels_create_v2(token, name, is_public):
     data['channels_details'].append(channels_detail_dict)
 
     # Update channels_joined
-    timestamps_update_channel_join(auth_user_id)
-    timestamps_update_create_channel(auth_user_id)
+    channels_joined_num_join(auth_user_id)
+    timestamps_update_create_channel()
 
     data_store.set(data)
     return { "channel_id": new_channel_id }

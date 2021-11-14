@@ -47,8 +47,6 @@ def test_start_active():
     assert (json.loads(resp.text)['is_active'] == True)
     assert (json.loads(resp.text)['time_finish'] in possible_time)
     
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')
 
 def test_start_active_errors():
     # Clear
@@ -112,5 +110,3 @@ def test_start_active_errors():
     resp = requests.post(f'{BASE_URL}/standup/start/v1', json={"token": token_1, "channel_id": channel_id, "length": 10})
     assert (resp.status_code == 403)
 
-    # Clear
-    requests.delete(f'{BASE_URL}/clear/v1')

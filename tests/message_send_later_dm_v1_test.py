@@ -4,7 +4,7 @@ from src.config import url
 BASE_URL = url
 import json
 import requests
-
+import time
 def test_invalid_token_message_send_later():
     requests.delete(f'{BASE_URL}/clear/v1')
     # a user register and login
@@ -172,13 +172,40 @@ def test_valid_message():
 
 
     # 2nd user send a message later to the dm
-    time = datetime.now()
-    time_created = math.floor(time.replace(tzinfo=timezone.utc).timestamp()) - 39600
-    time_sent = time_created + 5
+    time_now = datetime.now()
+    time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    time_sent = time_created + 1
 
     response = requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json={"token": token2, "dm_id": dm_id, "message": "hey guys how u going with project", "time_sent": time_sent})
     assert (response.status_code) == 200
 
+
+    time.sleep(1)
+    time_now = datetime.now()
+    time_created = math.floor(time_now.replace(tzinfo=timezone.utc).timestamp()) - 39600
+    
+    payload = {
+        "token": token2,
+        "dm_id": dm_id,
+        "start": 0
+    }
+    r = requests.get(f'{BASE_URL}/dm/messages/v1', params = payload)
+    message = {
+        "message_id": 1,
+        "u_id": u_id2,
+        "message": "hey guys how u going with project",
+        "time_created": time_created,
+        "reacts": [
+            {
+                'react_id': 1,
+                'u_ids': [],
+                'is_this_user_reacted': False
+            }
+        ],
+        "is_pinned": False
+    }
+    
+    assert json.loads(r.text) == {"messages": [message], "start": 0, "end": -1}
     # message_id = json.loads(response.text)['message_id']
     # resp = requests.put(f'{BASE_URL}/message/edit/v1', json={"token": token2, "message_id": message_id, "message": "have u finish the functions"})
     # assert (resp.status_code) == 200

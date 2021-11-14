@@ -7,8 +7,9 @@ from src.error import InputError, AccessError
 from src.token_helpers import decode_JWT
 import urllib.request
 from urllib.error import HTTPError, URLError
-
 from PIL import Image
+from src.config import url
+
 # HELPER FUNCTIONS 
 def token_check(token):
     store = data_store.get()
@@ -230,6 +231,28 @@ def user_profile_sethandle_v1(token, handle_str):
 
 
 def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
+    """An authorised user to upload photo(for showing in different secetions)
+    
+    Arguments:
+        token (string) - hashed information of authorised user (including: u_id, session_id, permission_id)
+        img_url (string) - the url of the photo that authorised user wanna upload
+        x_start (integer) - width crop start bound
+        y_start (integer) - width crop end bound
+        x_end (integer) - height crop start bound
+        y_end (integer) - height crop end bound
+
+    Exceptions:
+        AccessError - Occurs when authorised user with an invalid token
+        InputError - Occurs when authorised user type in an img_url which causes HTTPErros
+        InputError - Occurs when authorised user type in any crop bound out dimensions of the image at the URL
+        InputError - Occurs when authorised user type in any start crop bound is less than end bound
+        InputError - Occurs when authorised user upload a image is not with jpg or jpeg format
+
+    Return Value:
+        {}
+    """
+
+    # Obtain data already existed
     data = data_store.get()
     
     # Raise an AccessError if authorised user login with an invalid token
@@ -238,8 +261,6 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     auth_user_id = decode_JWT(token)['u_id']
 
     # Raise an InputError if authorised user pass in unavailable image url
-    
-
     try:
         # Get and store the image user upload
         urllib.request.urlretrieve(img_url, f"src/static/{auth_user_id}_temp.jpg")
@@ -270,11 +291,22 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
         # Obtain index of authorised user's user dict store in users list
         # Update image url to authorised user's user dict
         user_index = users_index(auth_user_id)
-        data['users'][user_index]['profile_img_url'] = url_for('static', filename=f'{auth_user_id}.jpg', _external=True)
+        data['users'][user_index]['profile_img_url'] = f'{url}static/{auth_user_id}.jpg'
+
+        # Store data into data_store
+        data_store.set(data)
 
     except (HTTPError, URLError):
         # if urllib.request.urlopen(img_url).status != 200 or urllib.request.urlretrieve.status != 200:
         raise InputError(description="Unavailable image url") from None
 
     return {}
+
+
+
+
+
+
+
+
 

@@ -70,7 +70,7 @@ def user_stats_v1(token):
         involvement_rate = (num_channels_joined + num_dms_joined + num_msgs_sent)/(num_channels + num_dms + num_msgs)
 
     if involvement_rate > 1:
-        involvement_rate == 1
+        involvement_rate = 1
 
     return {
         'user_stats' : 
@@ -132,10 +132,7 @@ def users_stats_v1(token):
     num_users_who_have_joined_at_least_one_channel_or_dm = len(common_list)
 
     # utilization rate 
-    if num_users == 0:
-        utilization_rate = 0
-    else:
-        utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
+    utilization_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
     return {
         'workspace_stats' : 

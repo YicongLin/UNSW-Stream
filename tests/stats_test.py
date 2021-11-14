@@ -624,3 +624,50 @@ def test_users_stats_utilization():
             'num_messages_exist' : 2, 
             'time_stamp' : message4_time  
         }]
+
+def test_involvement():
+    requests.delete(f'{BASE_URL}/clear/v1')
+
+    # register user 
+    # register user1 
+    payload = {
+        "email": "first@email.com", 
+        "password": "password", 
+        "name_first": "first", 
+        "name_last": "user"
+        }
+    r = requests.post(f'{BASE_URL}/auth/register/v2', json = payload)
+    resp = r.json()
+    token1 = resp['token']
+
+    # user1 creates & joins public channel 1
+    payload = {
+        "token": token1,
+        "name": "channel1",
+        "is_public": True
+    }
+    r = requests.post(f'{BASE_URL}/channels/create/v2', json = payload)
+    resp = r.json()
+    channel_one_id = resp['channel_id']
+
+    # user 1 sends message to channel 1 
+    payload = {
+        "token": token1,
+        "channel_id": channel_one_id,
+        "message": "first message to channel1"
+    }
+    r = requests.post(f'{BASE_URL}/message/send/v1', json = payload)
+
+    # user 1 removes message 1 
+    payload = {
+        "token": token1,
+        "message_id": 1
+    }
+    r = requests.delete(f'{BASE_URL}/message/remove/v1', json = payload)
+
+    # assert involvement == 1
+    r = requests.get(f'{BASE_URL}/user/stats/v1', params = payload)
+    assert r.status_code == 200 
+    resp = r.json()
+    # assert involvement rate 
+    assert resp['user_stats']['involvement_rate'] == 1

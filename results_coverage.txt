@@ -1,0 +1,20 @@
+Name                   Stmts   Miss Branch BrPart  Cover
+--------------------------------------------------------
+src/admin.py             140      0     88      0   100%
+src/auth.py               85      0     24      0   100%
+src/auth_pw.py            58     11     12      1    77%
+src/authpw.py              0      0      0      0   100%
+src/channel.py           326      0    128      0   100%
+src/channels.py           46      0     10      0   100%
+src/config.py              4      0      0      0   100%
+src/dm.py                281      0    100      0   100%
+src/error.py               7      0      0      0   100%
+src/iter3_message.py      75      0     24      0   100%
+src/message.py           518      0    308     12    99%
+src/other.py              61      0     26      0   100%
+src/standup.py            87      1     18      3    96%
+src/stats.py              65      0     20      0   100%
+src/token_helpers.py      12      0      0      0   100%
+src/users.py             176      2     56      4    97%
+--------------------------------------------------------
+TOTAL                   1941     14    814     20    99%
